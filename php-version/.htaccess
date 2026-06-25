@@ -1,0 +1,22 @@
+# PollingKita — konfigurasi Apache
+
+# Halaman default
+DirectoryIndex index.php
+
+# Lindungi file konfigurasi & database SQLite
+<FilesMatch "\.(sqlite|sqlite3|db)$">
+    Require all denied
+</FilesMatch>
+
+<Files "config.php">
+    # config tetap bisa di-include PHP, tapi cegah akses langsung tidak perlu;
+    # baris ini opsional — biarkan default agar PHP berjalan normal.
+</Files>
+
+# Naikkan batas upload (sesuaikan dengan hosting Anda)
+php_value upload_max_filesize 6M
+php_value post_max_size 8M
+
+# Keamanan dasar
+Options -Indexes
+ServerSignature Off
