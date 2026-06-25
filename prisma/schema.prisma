@@ -1,0 +1,108 @@
+// Prisma schema untuk PollingKita
+// Default SQLite — untuk produksi ganti provider ke "postgresql" / "mysql"
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Admin yang dapat membuat & mengelola polling
+model Admin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String // bcrypt hash
+  name      String?
+  createdAt DateTime @default(now())
+}
+
+// Polling / pemilihan
+model Poll {
+  id            String   @id @default(cuid())
+  slug          String   @unique // dipakai pada URL share
+  title         String
+  description   String?
+  bannerImage   String? // path banner opsional
+  type          String   @default("single") // "single" | "multiple"
+  maxChoices    Int      @default(1) // jumlah pilihan maksimal jika multiple
+  isActive      Boolean  @default(true)
+  isPrivate     Boolean  @default(false)
+  showResults   String   @default("always") // "always" | "afterVote" | "afterClose"
+  allowComments Boolean  @default(true)
+  startDate     DateTime?
+  endDate       DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  candidates Candidate[]
+  ballots    Ballot[]
+  comments   Comment[]
+
+  @@index([slug])
+}
+
+// Kandidat / pilihan dalam sebuah polling
+model Candidate {
+  id          String   @id @default(cuid())
+  pollId      String
+  name        String
+  description String?
+  photo       String? // path foto
+  ballotNo    Int      @default(0) // nomor urut
+  order       Int      @default(0)
+  // custom field tambahan disimpan sebagai JSON string
+  // contoh: [{"label":"Visi","value":"..."},{"label":"Asal Dusun","value":"..."}]
+  extraFields String?
+  createdAt   DateTime @default(now())
+
+  poll  Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes Vote[]
+
+  @@index([pollId])
+}
+
+// Satu "surat suara" per perangkat per polling — kunci anti vote ganda
+model Ballot {
+  id          String   @id @default(cuid())
+  pollId      String
+  deviceHash  String // hash gabungan fingerprint + IP + salt
+  fingerprint String? // visitorId dari FingerprintJS
+  ipHash      String? // hash IP (privasi)
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  poll  Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes Vote[]
+
+  @@unique([pollId, deviceHash]) // 1 perangkat hanya 1 surat suara per polling
+  @@index([pollId])
+}
+
+// Pilihan kandidat di dalam sebuah surat suara
+model Vote {
+  id          String   @id @default(cuid())
+  ballotId    String
+  candidateId String
+  createdAt   DateTime @default(now())
+
+  ballot    Ballot    @relation(fields: [ballotId], references: [id], onDelete: Cascade)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([candidateId])
+  @@index([ballotId])
+}
+
+// Komentar publik pada polling
+model Comment {
+  id        String   @id @default(cuid())
+  pollId    String
+  name      String
+  message   String
+  createdAt DateTime @default(now())
+
+  poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
+  @@index([pollId])
+}
