@@ -1,0 +1,18 @@
+<!-- bottom_menu.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/mn_home"
+        android:title="@string/menu_home"
+        app:cnb_iconColor="@color/black"/>
+    <item
+        android:id="@+id/fab"
+        android:title="Kirim"
+        android:enabled="false"/>
+    <item
+        android:id="@+id/order"
+        android:icon="@drawable/ic_pembayaran"
+        android:title="@string/menu_fav"
+        app:cnb_iconColor="@color/black" />
+</menu>

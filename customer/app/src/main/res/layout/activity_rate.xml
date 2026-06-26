@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:shimmer="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/bgrate"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:background="@color/white"
+                android:paddingTop="20dp"
+                android:scaleType="fitCenter" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="130dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="@color/bgtema"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                app:contentPaddingBottom="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/Saldoku"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:visibility="gone" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/image"
+                            android:layout_width="70dp"
+                            android:layout_height="100dp"
+                            android:scaleType="centerCrop"
+                            android:src="@color/graybackground" />
+
+                        <com.facebook.shimmer.ShimmerFrameLayout
+                            android:id="@+id/shimmername"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:orientation="horizontal"
+                            shimmer:duration="800">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <include
+                                    layout="@layout/shimerpromo"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="20dp"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_marginBottom="10dp" />
+                            </LinearLayout>
+
+                        </com.facebook.shimmer.ShimmerFrameLayout>
+
+                        <TextView
+                            android:id="@+id/namadriver"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:text="Nama"
+                            android:textSize="15dp"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/txtTotal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/dmsans_bold"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textSize="20dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtwallet"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/dmsans_bold"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textSize="25dp"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/txtfitur"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/dmsans_bold"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textSize="25dp"
+                            android:visibility="gone" />
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:gravity="center"
+                            android:text="Berikan Nilai Untuk Driver Kamu."
+                            android:textAlignment="center"
+                            android:textAllCaps="false"
+                            android:textColor="@color/black"
+                            android:textSize="15dp" />
+
+                        <RatingBar
+                            android:id="@+id/ratingView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:max="5"
+                            android:numStars="5"
+                            android:rating="3"
+                            android:stepSize="1"
+                            android:theme="@style/RatingBar"
+                            android:visibility="visible" />
+
+                        <LinearLayout
+                            android:id="@+id/tiplayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:layout_marginLeft="7dp"
+                                android:layout_marginRight="7dp"
+                                android:layout_marginBottom="5dp"
+                                android:fontFamily="@font/dmsans_bold"
+                                android:gravity="center"
+                                android:text="Berikan Tip Untuk Driver Favorit Anda." />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginLeft="3dp"
+                                android:layout_marginRight="3dp"
+                                android:layout_weight="5"
+                                android:orientation="horizontal"
+                                android:weightSum="5">
+
+                                <TextView
+                                    android:id="@+id/rp1000"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/background_chat_other"
+                                    android:gravity="center"
+                                    android:padding="3dp"
+                                    android:text="Rp1000"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:textSize="11dp" />
+
+                                <TextView
+                                    android:id="@+id/rp2000"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="2dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/background_chat_other"
+                                    android:gravity="center"
+                                    android:padding="3dp"
+                                    android:text="Rp2000"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:textSize="11dp" />
+
+                                <TextView
+                                    android:id="@+id/rp3000"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="2dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/background_chat_other"
+                                    android:gravity="center"
+                                    android:padding="3dp"
+                                    android:text="Rp3000"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:textSize="11dp" />
+
+                                <TextView
+                                    android:id="@+id/rp4000"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="2dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/background_chat_other"
+                                    android:gravity="center"
+                                    android:padding="3dp"
+                                    android:text="Rp4000"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:textSize="11dp" />
+
+                                <TextView
+                                    android:id="@+id/rp5000"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="2dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/background_chat_other"
+                                    android:gravity="center"
+                                    android:padding="3dp"
+                                    android:text="Rp5000"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:textSize="11dp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/txtsaldo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/txtnominal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:visibility="gone" />
+
+                        <EditText
+                            android:id="@+id/addComment"
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:layout_margin="15dp"
+                            android:background="@drawable/background_chat_other"
+                            android:gravity="top"
+                            android:hint="Berikan Komentar"
+                            android:inputType="textMultiLine"
+                            android:maxLines="4"
+                            android:padding="10dp"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/darkgray"
+                            android:textSize="14dp" />
+
+                        <Button
+                            android:id="@+id/submit"
+                            android:layout_width="200dp"
+                            android:layout_height="40dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="20dp"
+                            android:background="@drawable/button_round_1"
+                            android:text="Kirim"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="18dp" />
+
+                        <TextView
+                            android:id="@+id/txtRating"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:text="0"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/TxtPoint"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:text="0"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>
+

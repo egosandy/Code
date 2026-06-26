@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name">RCDriver</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+AIzaSyBchBGhi_Bm4A3zqX0b-Zcn5nrTtQN2oTU
+    </string>
+    <string name="facebook_app_id">/</string>
+    <string name="fb_login_protocol_scheme">/</string>
+    <string name="facebookId">/</string>
+    <string name="googleIdToken">/</string>
+    <string name="introtext1">Daftar sekarang!</string>
+    <string name="introdesc1">Kemana kamu pergi hari ini? kami akan siap berkendara dimana saja dan kapan saja</string>
+    <string name="introtext2">Dapat dilacak</string>
+    <string name="introdesc2">Lacak lokasi dan driver paket Anda, secara real-time.</string>
+    <string name="introtext3">Pengiriman cepat</string>
+    <string name="introdesc3">Anda dapat tetap produktif saat kami mengambil dan mengantar paket Anda, semuanya dalam hitungan jam!</string>
+
+    <string name="exit">Apakah Anda yakin ingin keluar dari aplikasi?</string>
+    <string name="yes">YAH</string>
+    <string name="no">TIDAK</string>
+
+    <string name="confirm">Confirm</string>
+    <string name="privacy">Dengan Mendaftar anda telah membuat Akun Agar Bisa Menggunakan Aplikasi  <![CDATA[<b><font color=#293873>syarat dan Ketentuan</font></b>]]></string>
+    <string name="text_with_bullet">\u2022</string>
+    <string name="button_signUp"> Register</string>
+    <string name="phoneemailwrong">telepon atau kata sandi salah</string>
+    <string name="phonepass">Telepon dan Kata Sandi tidak boleh kosong!</string>
+    <string name="phoneempty">Telepon tidak boleh kosong!</string>
+    <string name="passempty">Kata sandi tidak boleh kosong!</string>
+    <string name="emailempty">Email tidak boleh kosong!</string>
+
+    <string name="hint_name">Nama</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_phone">Kontak</string>
+    <string name="hint_birthday">Tgl Lahir</string>
+    <string name="hint_password">Password</string>
+
+    <string name="menu_home">Beranda</string>
+    <string name="menu_trans">Aktivitas</string>
+    <string name="menu_fav">Order</string>
+    <string name="menu_chat">Pesan</string>
+    <string name="menu_profil">Profil</string>
+
+    <string name="ride_location">Location</string>
+
+    <string name="text_order">Memesan</string>
+    <string name="waiting_desc">Kami sedang mencari pengemudi terdekat</string>
+    <string name="waiting_pleaseWait">Harap tunggu....</string>
+    <string name="text_noInternet">Tidak ada akses internet</string>
+
+    <string name="notification_cancel">Pesanan Telah Dibatalkan</string>
+    <string name="waiting_otp">Permintaan kode baru dalam  </string>
+    <!-- elearning -->
+</resources>
