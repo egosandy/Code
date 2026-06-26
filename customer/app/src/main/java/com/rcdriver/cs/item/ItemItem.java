@@ -22,9 +22,6 @@ import com.mikepenz.fastadapter.items.AbstractItem;
 
 import java.util.List;
 import java.util.Objects;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import com.rcdriver.cs.R;
 import com.rcdriver.cs.constants.BaseApp;
 import com.rcdriver.cs.constants.Constants;
@@ -216,45 +213,44 @@ public class ItemItem extends AbstractItem<ItemItem, ItemItem.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.namalayanan)
         TextView namaText;
 
-        @BindView(R.id.deskripsi)
         TextView deskripsiText;
 
-        @BindView(R.id.harga)
         TextView hargaText;
 
-        @BindView(R.id.catatan)
         EditText notesText;
 
-        @BindView(R.id.add_quantity)
         TextView addQuantity;
 
-        @BindView(R.id.quantity_text)
         TextView quantityText;
 
-        @BindView(R.id.icon)
         RoundedImageView image;
 
-        @BindView(R.id.remove_quantity)
         TextView removeQuantity;
 
-        @BindView(R.id.hargapromo)
         TextView hargadasar;
 
-        @BindView(R.id.list_item)
         LinearLayout itemButton;
 
-        @BindView(R.id.shimreview)
         ShimmerFrameLayout shimmerbadge;
 
-        @BindView(R.id.promobadge)
         FrameLayout shimmerbadgeicon;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            namaText = itemView.findViewById(R.id.namalayanan);
+            deskripsiText = itemView.findViewById(R.id.deskripsi);
+            hargaText = itemView.findViewById(R.id.harga);
+            notesText = itemView.findViewById(R.id.catatan);
+            addQuantity = itemView.findViewById(R.id.add_quantity);
+            quantityText = itemView.findViewById(R.id.quantity_text);
+            image = itemView.findViewById(R.id.icon);
+            removeQuantity = itemView.findViewById(R.id.remove_quantity);
+            hargadasar = itemView.findViewById(R.id.hargapromo);
+            itemButton = itemView.findViewById(R.id.list_item);
+            shimmerbadge = itemView.findViewById(R.id.shimreview);
+            shimmerbadgeicon = itemView.findViewById(R.id.promobadge);
         }
     }
 

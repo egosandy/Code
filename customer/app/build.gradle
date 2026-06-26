@@ -139,10 +139,8 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
     implementation 'com.google.guava:guava:24.1-jre'
 
-    // Butterknife kept here through Stage 1; usages are converted to ViewBinding
-    // in Stage 2, after which these two lines are removed.
-    implementation 'com.jakewharton:butterknife:10.2.3'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
+    // Butterknife removed (Stage 2): all @BindView/ButterKnife.bind usages were
+    // converted to findViewById. ViewBinding is enabled in buildFeatures.
 
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.7.2'

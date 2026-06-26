@@ -16,9 +16,6 @@ import java.util.List;
 
 import com.rcdriver.cs.R;
 import com.rcdriver.cs.models.VoucherModel;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class PromoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private static final String TAG = "PromoAdapter";
     public static final int VIEW_TYPE_EMPTY = 0;
@@ -83,20 +80,19 @@ public class PromoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     public class ViewHolder extends BaseViewHolder {
 
-        @BindView(R.id.thumbnail)
         ImageView coverImageView;
 
-        @BindView(R.id.title)
         TextView titleTextView;
 
-        @BindView(R.id.Kode)
         TextView newsTextView;
 
 
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            coverImageView = itemView.findViewById(R.id.thumbnail);
+            titleTextView = itemView.findViewById(R.id.title);
+            newsTextView = itemView.findViewById(R.id.Kode);
         }
 
         protected void clear() {
@@ -143,14 +139,13 @@ public class PromoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     public class EmptyViewHolder extends BaseViewHolder {
 
-        @BindView(R.id.tv_message)
         TextView messageTextView;
-        @BindView(R.id.buttonRetry)
         TextView buttonRetry;
 
         EmptyViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            messageTextView = itemView.findViewById(R.id.tv_message);
+            buttonRetry = itemView.findViewById(R.id.buttonRetry);
             buttonRetry.setOnClickListener(v -> mCallback.onEmptyViewRetryClick());
         }
 

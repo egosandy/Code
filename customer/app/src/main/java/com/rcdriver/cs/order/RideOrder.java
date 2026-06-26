@@ -58,8 +58,6 @@ import com.rcdriver.cs.utils.NetworkManager;
 import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.BookService;
 import com.rcdriver.cs.utils.api.service.UserService;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import es.dmoral.toasty.Toasty;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -90,17 +88,16 @@ public class RideOrder extends AppCompatActivity {
     private List<StatusTransaksiModel> availablestatus;
     private String NamaAlamat;
     Handler handler;
-    @BindView(R.id.imganimasi)
     ImageView imganimasi;
-    @BindView(R.id.waktu)
     TextView waktu;
-    @BindView(R.id.rootLayout)
     RelativeLayout rootLayout;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_ride);
-        ButterKnife.bind(this);
+        imganimasi = findViewById(R.id.imganimasi);
+        waktu = findViewById(R.id.waktu);
+        rootLayout = findViewById(R.id.rootLayout);
         realm = Realm.getDefaultInstance();
         driverAvailable = new ArrayList<>();
         Intent intent = getIntent();

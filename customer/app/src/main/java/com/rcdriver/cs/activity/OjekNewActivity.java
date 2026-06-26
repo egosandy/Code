@@ -108,9 +108,6 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import retrofit2.Call;
@@ -126,100 +123,68 @@ public class OjekNewActivity extends AppCompatActivity implements OnMapReadyCall
     private boolean isMapReady = false;
 
 
-    @BindView(R.id.rootLayout)
     CoordinatorLayout rootLayout;
 
-    @BindView(R.id.pickUpContainer)
     LinearLayout setPickUpContainer;
 
-    @BindView(R.id.destinationContainer)
     LinearLayout setDestinationContainer;
 
-    @BindView(R.id.pickUpButton)
     Button setPickUpButton;
 
-    @BindView(R.id.destinationButton)
     Button setDestinationButton;
 
-    @BindView(R.id.fiturtext)
     TextView fiturtext;
 
-    @BindView(R.id.back_btn)
     ImageView backbtn;
 
-    @BindView(R.id.bottom_sheet)
     LinearLayout bottomsheet;
 
-    @BindView(R.id.rlprogress)
     RelativeLayout rlprogress;
 
-    @BindView(R.id.NameAsal)
     TextView NameAsal;
 
-    @BindView(R.id.pickUpText)
     TextView pickUpText;
 
-    @BindView(R.id.NameTujuan)
     TextView NameTujuan;
 
-    @BindView(R.id.destinationText)
     TextView destinationText;
 
-    @BindView(R.id.promocode)
     EditText promokode;
 
-    @BindView(R.id.btnpromo)
     Button btnpromo;
 
-    @BindView(R.id.mRecyclerView)
     RecyclerView mRecycler;
 
-    @BindView(R.id.SetMetode)
     RadioGroup SetMetode;
 
-    @BindView(R.id.rTunai)
     RadioButton SetTunai;
 
-    @BindView(R.id.rSaldo)
     RadioButton SetSaldo;
 
-    @BindView(R.id.distance)
     TextView jarak;
 
-    @BindView(R.id.estimasi)
     TextView estimasi;
 
-    @BindView(R.id.cost)
     TextView cost;
 
-    @BindView(R.id.numdiskon)
     TextView numdiskon;
 
-    @BindView(R.id.diskon)
     TextView diskon;
 
-    @BindView(R.id.price)
     TextView priceText;
 
-    @BindView(R.id.btnorder)
     Button btnOrder;
 
-    @BindView(R.id.Step2)
     LinearLayout StepLayout2;
 
-    @BindView(R.id.Step3)
     LinearLayout StepLayout3;
 
-    @BindView(R.id.mDriverRec)
     RecyclerView mDriverRec;
 
-    @BindView(R.id.close_driver)
     ImageView closeDriver;
 
-    @BindView(R.id.autoPickUpText)
     AutoCompleteTextView autoPickUpText;
 
-    @BindView(R.id.autodestinationText)
     AutoCompleteTextView autoDestionationText;
 
     private GoogleMap gMap;
@@ -338,7 +303,38 @@ public class OjekNewActivity extends AppCompatActivity implements OnMapReadyCall
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ojek_new);
-        ButterKnife.bind(this);
+        rootLayout = findViewById(R.id.rootLayout);
+        setPickUpContainer = findViewById(R.id.pickUpContainer);
+        setDestinationContainer = findViewById(R.id.destinationContainer);
+        setPickUpButton = findViewById(R.id.pickUpButton);
+        setDestinationButton = findViewById(R.id.destinationButton);
+        fiturtext = findViewById(R.id.fiturtext);
+        backbtn = findViewById(R.id.back_btn);
+        bottomsheet = findViewById(R.id.bottom_sheet);
+        rlprogress = findViewById(R.id.rlprogress);
+        NameAsal = findViewById(R.id.NameAsal);
+        pickUpText = findViewById(R.id.pickUpText);
+        NameTujuan = findViewById(R.id.NameTujuan);
+        destinationText = findViewById(R.id.destinationText);
+        promokode = findViewById(R.id.promocode);
+        btnpromo = findViewById(R.id.btnpromo);
+        mRecycler = findViewById(R.id.mRecyclerView);
+        SetMetode = findViewById(R.id.SetMetode);
+        SetTunai = findViewById(R.id.rTunai);
+        SetSaldo = findViewById(R.id.rSaldo);
+        jarak = findViewById(R.id.distance);
+        estimasi = findViewById(R.id.estimasi);
+        cost = findViewById(R.id.cost);
+        numdiskon = findViewById(R.id.numdiskon);
+        diskon = findViewById(R.id.diskon);
+        priceText = findViewById(R.id.price);
+        btnOrder = findViewById(R.id.btnorder);
+        StepLayout2 = findViewById(R.id.Step2);
+        StepLayout3 = findViewById(R.id.Step3);
+        mDriverRec = findViewById(R.id.mDriverRec);
+        closeDriver = findViewById(R.id.close_driver);
+        autoPickUpText = findViewById(R.id.autoPickUpText);
+        autoDestionationText = findViewById(R.id.autodestinationText);
 
         BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomsheet);
         behavior.setState(BottomSheetBehavior.STATE_EXPANDED);

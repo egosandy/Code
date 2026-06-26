@@ -34,8 +34,6 @@ import java.util.TimerTask;
 import com.rcdriver.cs.json.PoinRequest;
 import com.rcdriver.cs.json.RequestJson;
 import com.rcdriver.cs.json.TipRequestJson;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import com.rcdriver.cs.R;
 import com.rcdriver.cs.constants.BaseApp;
 import com.rcdriver.cs.constants.Constants;
@@ -68,47 +66,26 @@ public class RateActivity extends AppCompatActivity {
     String iddriver, idtrans, response,pakewallet, namadriver,totalbiaya, submit, idfitur, fotodriver, pointdriver;
     float rate = 3;
     boolean pakaiwallet;
-    @BindView(R.id.image)
     ImageView image;
-    @BindView(R.id.namadriver)
     TextView nama;
-    @BindView(R.id.addComment)
     EditText comment;
-    @BindView(R.id.submit)
     Button button;
-    @BindView(R.id.shimmername)
     ShimmerFrameLayout shimmername;
-    @BindView(R.id.ratingView)
     RatingBar ratingview;
-    @BindView(R.id.rp1000)
     TextView Rp1000;
-    @BindView(R.id.rp2000)
     TextView Rp2000;
-    @BindView(R.id.rp3000)
     TextView Rp3000;
-    @BindView(R.id.rp4000)
     TextView Rp4000;
-    @BindView(R.id.rp5000)
     TextView Rp5000;
-    @BindView(R.id.txtnominal)
     TextView TxtNominal;
-    @BindView(R.id.txtsaldo)
     TextView TxtSaldo;
-    @BindView(R.id.TxtPoint)
     TextView TxtPoint;
-    @BindView(R.id.txtRating)
     TextView TxtRating;
-    @BindView(R.id.txtTotal)
     TextView TxtTotal;
-    @BindView(R.id.txtwallet)
     TextView TxtWallet;
-    @BindView(R.id.txtfitur)
     TextView TxtFitur;
-    @BindView(R.id.Saldoku)
     TextView Saldoku;
-    @BindView(R.id.bgrate)
     ImageView BGRate;
-    @BindView(R.id.tiplayout)
     LinearLayout tiplayout;
     Timer timer = new Timer();
     private ProgressDialog progress;
@@ -192,7 +169,27 @@ public class RateActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rate);
-        ButterKnife.bind(this);
+        image = findViewById(R.id.image);
+        nama = findViewById(R.id.namadriver);
+        comment = findViewById(R.id.addComment);
+        button = findViewById(R.id.submit);
+        shimmername = findViewById(R.id.shimmername);
+        ratingview = findViewById(R.id.ratingView);
+        Rp1000 = findViewById(R.id.rp1000);
+        Rp2000 = findViewById(R.id.rp2000);
+        Rp3000 = findViewById(R.id.rp3000);
+        Rp4000 = findViewById(R.id.rp4000);
+        Rp5000 = findViewById(R.id.rp5000);
+        TxtNominal = findViewById(R.id.txtnominal);
+        TxtSaldo = findViewById(R.id.txtsaldo);
+        TxtPoint = findViewById(R.id.TxtPoint);
+        TxtRating = findViewById(R.id.txtRating);
+        TxtTotal = findViewById(R.id.txtTotal);
+        TxtWallet = findViewById(R.id.txtwallet);
+        TxtFitur = findViewById(R.id.txtfitur);
+        Saldoku = findViewById(R.id.Saldoku);
+        BGRate = findViewById(R.id.bgrate);
+        tiplayout = findViewById(R.id.tiplayout);
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         if (bundle != null) {

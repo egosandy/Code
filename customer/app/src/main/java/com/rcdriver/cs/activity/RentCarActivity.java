@@ -68,8 +68,6 @@ import com.rcdriver.cs.activity.payment.TopupSaldoActivity;
 import com.rcdriver.cs.json.FcmResponse;
 import com.rcdriver.cs.json.SendFcmRequest;
 import com.rcdriver.cs.utils.SettingPreference;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import com.rcdriver.cs.R;
 import com.rcdriver.cs.constants.BaseApp;
 import com.rcdriver.cs.json.CheckStatusTransaksiRequest;
@@ -114,73 +112,40 @@ public class RentCarActivity extends AppCompatActivity
     Thread thread;
     boolean threadRun = true;
     Context context = RentCarActivity.this;
-    @BindView(R.id.pickUpContainer)
     LinearLayout setPickUpContainer;
-    @BindView(R.id.pickUpButton)
     Button setPickUpButton;
-    @BindView(R.id.pickUpText)
     TextView pickUpText;
-    @BindView(R.id.bottom_sheet)
     LinearLayout bottomsheet;
-    @BindView(R.id.detail)
     LinearLayout detail;
-    @BindView(R.id.price)
     TextView priceText;
-    @BindView(R.id.topUp)
     TextView topUp;
-    @BindView(R.id.order)
     Button orderButton;
 
-    @BindView(R.id.layanan)
     TextView layanan;
-    @BindView(R.id.layanandes)
     TextView layanandesk;
-    @BindView(R.id.cost)
     TextView cost;
-    @BindView(R.id.ketsaldo)
     TextView diskontext;
-    @BindView(R.id.diskon)
     TextView diskon;
-    @BindView(R.id.saldo)
     TextView saldotext;
-    @BindView(R.id.checkedcash)
     ImageButton checkedcash;
-    @BindView(R.id.checkedwallet)
     ImageButton checkedwallet;
-    @BindView(R.id.cashPayment)
     TextView cashpayment;
-    @BindView(R.id.walletpayment)
     TextView walletpayment;
-    @BindView(R.id.llcheckedwallet)
     LinearLayout llcheckedwallet;
-    @BindView(R.id.llcheckedcash)
     LinearLayout llcheckedcash;
-    @BindView(R.id.back_btn)
     ImageView backbtn;
-    @BindView(R.id.rlprogress)
     RelativeLayout rlprogress;
-    @BindView(R.id.rlnotif)
     RelativeLayout rlnotif;
-    @BindView(R.id.textnotif)
     TextView textnotif;
-    @BindView(R.id.textprogress)
     TextView textprogress;
-    @BindView(R.id.fitur)
     TextView fiturtext;
-    @BindView(R.id.enamjam)
     Button enamjam;
-    @BindView(R.id.duabelasjam)
     Button duabelasjam;
-    @BindView(R.id.satuhari)
     Button satuhari;
-    @BindView(R.id.promocode)
     EditText promokode;
-    @BindView(R.id.btnpromo)
     Button btnpromo;
-    @BindView(R.id.promonotif)
     TextView promonotif;
 
-    @BindView(R.id.bar)
     ProgressBar Bar;
     String fitur, getbiaya, biayaminimum, biayaakhir, icondrver;
     private Location mLastLocation;
@@ -205,7 +170,39 @@ public class RentCarActivity extends AppCompatActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rent);
-        ButterKnife.bind(this);
+        setPickUpContainer = findViewById(R.id.pickUpContainer);
+        setPickUpButton = findViewById(R.id.pickUpButton);
+        pickUpText = findViewById(R.id.pickUpText);
+        bottomsheet = findViewById(R.id.bottom_sheet);
+        detail = findViewById(R.id.detail);
+        priceText = findViewById(R.id.price);
+        topUp = findViewById(R.id.topUp);
+        orderButton = findViewById(R.id.order);
+        layanan = findViewById(R.id.layanan);
+        layanandesk = findViewById(R.id.layanandes);
+        cost = findViewById(R.id.cost);
+        diskontext = findViewById(R.id.ketsaldo);
+        diskon = findViewById(R.id.diskon);
+        saldotext = findViewById(R.id.saldo);
+        checkedcash = findViewById(R.id.checkedcash);
+        checkedwallet = findViewById(R.id.checkedwallet);
+        cashpayment = findViewById(R.id.cashPayment);
+        walletpayment = findViewById(R.id.walletpayment);
+        llcheckedwallet = findViewById(R.id.llcheckedwallet);
+        llcheckedcash = findViewById(R.id.llcheckedcash);
+        backbtn = findViewById(R.id.back_btn);
+        rlprogress = findViewById(R.id.rlprogress);
+        rlnotif = findViewById(R.id.rlnotif);
+        textnotif = findViewById(R.id.textnotif);
+        textprogress = findViewById(R.id.textprogress);
+        fiturtext = findViewById(R.id.fitur);
+        enamjam = findViewById(R.id.enamjam);
+        duabelasjam = findViewById(R.id.duabelasjam);
+        satuhari = findViewById(R.id.satuhari);
+        promokode = findViewById(R.id.promocode);
+        btnpromo = findViewById(R.id.btnpromo);
+        promonotif = findViewById(R.id.promonotif);
+        Bar = findViewById(R.id.bar);
         BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomsheet);
         behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         promocode = 0;
