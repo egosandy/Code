@@ -1,34 +1,31 @@
+// Top-level build file — migrated to AGP 8.x for compileSdk/targetSdk 36.
 buildscript {
     ext {
-        agp_version = '7.4.2'
+        agp_version = '8.11.1'
     }
     repositories {
         google()
-        jcenter()
-        maven { url "https://plugins.gradle.org/m2/" }
-        maven { url "https://maven.aliyun.com/repository/jcenter" }
         mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$agp_version"
-        classpath 'com.jakewharton:butterknife-gradle-plugin:10.2.3'
         classpath 'com.google.gms:google-services:4.4.2'
-        classpath "io.realm:realm-gradle-plugin:10.15.1"
+        // Removed for the SDK 36 migration:
+        //  - butterknife-gradle-plugin (incompatible with AGP 8; replaced by ViewBinding)
+        //  - realm-gradle-plugin       (EOL, incompatible with AGP 8; replaced by Room)
     }
 }
+
 allprojects {
     repositories {
+        google()
         mavenCentral()
         maven { url "https://jitpack.io" }
-        maven {
-            url = uri("https://www.jitpack.io" )
-        }
-        google()
-        maven { url "https://maven.aliyun.com/repository/jcenter" }
-        jcenter()
-//        maven { url "https://dl.bintray.com/pt-midtrans/maven" } // Ganti dengan HTTPS
+        // jcenter() removed: the repository is sunset/read-only and no longer served.
     }
 }
-task clean(type: Delete) {
-    delete rootProject.buildDir
+
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
 }
