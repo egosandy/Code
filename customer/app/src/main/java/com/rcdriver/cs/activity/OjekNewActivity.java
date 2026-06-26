@@ -1021,46 +1021,43 @@ public class OjekNewActivity extends AppCompatActivity implements OnMapReadyCall
         updateLastLocation(true);
     }
 
-    Timer timer = new Timer();
+    private boolean isDriverPolling = false;
+    // Single self-reposting 4s poll loop. Previously every onStart/onResume scheduled
+    // ANOTHER Timer.scheduleAtFixedRate task on the same timer, so the pollers stacked
+    // up and flooded list_driver/list_ride (many concurrent requests -> main-thread
+    // starvation/ANR). fetchNearDriver() is already async (Retrofit enqueue).
     private final Runnable updateDriverRunnable = new Runnable() {
         @Override
         public void run() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if(pickUpLatLang != null){
-                            fetchNearDriver(pickUpLatLang);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    timer.scheduleAtFixedRate(new TimerTask() {
-                        @Override
-                        public void run() {
-                            if (NetworkManager.isConnectToInternet(OjekNewActivity.this)) {
-                                try {
-                                    if(pickUpLatLang != null){
-                                        fetchNearDriver(pickUpLatLang);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }, 0, 4000);
+            if (NetworkManager.isConnectToInternet(OjekNewActivity.this) && pickUpLatLang != null) {
+                try {
+                    fetchNearDriver(pickUpLatLang);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }).start();
+            }
+            if (isDriverPolling && handler != null) {
+                handler.postDelayed(this, 4000);
+            }
         }
     };
 
     private void startIsDriver() {
-        handler = new Handler();
+        if (isDriverPolling) {
+            return; // already polling; do not stack another loop
+        }
+        isDriverPolling = true;
+        if (handler == null) {
+            handler = new Handler();
+        }
         handler.postDelayed(updateDriverRunnable, 4000);
     }
 
     private void stopIsDriver() {
-        handler.removeCallbacks(updateDriverRunnable);
+        isDriverPolling = false;
+        if (handler != null) {
+            handler.removeCallbacks(updateDriverRunnable);
+        }
     }
 
     @Override
