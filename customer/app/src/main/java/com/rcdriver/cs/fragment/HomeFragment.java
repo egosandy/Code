@@ -654,7 +654,8 @@ LocalStore.get().saveUser(user);
                 double longitude = gps.getLongitude();
                 LatLng latLng = new LatLng(latitude, longitude);
                 LokasiSaya = latLng;
-                getCompleteAddressString(latLng);
+                // (removed a duplicate, result-ignored getCompleteAddressString() call:
+                //  Geocoder.getFromLocation is a blocking main-thread call.)
                 sp.updatemylat(String.valueOf(latitude));
                 sp.updatemylong(String.valueOf(longitude));
                 String Alamat = getCompleteAddressString(latLng);
@@ -792,17 +793,15 @@ LocalStore.get().saveUser(user);
                             TransaksiList.clear();
                         }
                         TransaksiList = response.body().getData();
-                        for (int i = 0; i < TransaksiList.size(); ) {
-                            Log.e("mProgress", String.valueOf(TransaksiList.get(i).getStatus()));
-                            if (TransaksiList.isEmpty() && TransaksiList.size() < 0) {
-                                llrating.setVisibility(View.GONE);
-                            } else {
-                                llrating.setVisibility(View.VISIBLE);
-                                progressItem = new ProgressItem(getActivity(), TransaksiList, R.layout.item_review);
-                                rvreview.setAdapter(progressItem);
-                                progressItem.notifyDataSetChanged();
-                            }
-                            i++;
+                        // Build the adapter ONCE (previously this ran once per list item,
+                        // recreating the adapter N times on the main thread each poll).
+                        if (TransaksiList == null || TransaksiList.isEmpty()) {
+                            llrating.setVisibility(View.GONE);
+                        } else {
+                            llrating.setVisibility(View.VISIBLE);
+                            progressItem = new ProgressItem(getActivity(), TransaksiList, R.layout.item_review);
+                            rvreview.setAdapter(progressItem);
+                            progressItem.notifyDataSetChanged();
                         }
                     }
                 }
@@ -1022,7 +1021,14 @@ LocalStore.get().saveUser(user);
     }
 
     private void stopCekPPOB() {
-        handler.removeCallbacks(updateCekPPOB);
+        if (handler != null) {
+            handler.removeCallbacks(updateCekPPOB);
+            // Also stop the 3s cekData() poller; previously it was never cancelled,
+            // so every onResume stacked another loop -> many concurrent polls.
+            if (runnable != null) {
+                handler.removeCallbacks(runnable);
+            }
+        }
     }
 
     private final Runnable updateCekPPOB = new Runnable() {
