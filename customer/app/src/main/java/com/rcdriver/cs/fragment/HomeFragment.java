@@ -652,15 +652,28 @@ LocalStore.get().saveUser(user);
             if (gps.canGetLocation()) {
                 double latitude = gps.getLatitude();
                 double longitude = gps.getLongitude();
-                LatLng latLng = new LatLng(latitude, longitude);
+                final LatLng latLng = new LatLng(latitude, longitude);
                 LokasiSaya = latLng;
-                // (removed a duplicate, result-ignored getCompleteAddressString() call:
-                //  Geocoder.getFromLocation is a blocking main-thread call.)
                 sp.updatemylat(String.valueOf(latitude));
                 sp.updatemylong(String.valueOf(longitude));
-                String Alamat = getCompleteAddressString(latLng);
-                sp.updateAlamat(Alamat);
-                android.util.Log.e("CekAlamat", Alamat);
+                // Reverse-geocode OFF the main thread: Geocoder.getFromLocation is a
+                // blocking network call that otherwise freezes the UI (ANR) when
+                // returning to Home, especially on slow/loaded devices.
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final String alamat = getCompleteAddressString(latLng);
+                        if (getActivity() != null) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    sp.updateAlamat(alamat);
+                                    android.util.Log.e("CekAlamat", alamat);
+                                }
+                            });
+                        }
+                    }
+                }).start();
                 gethome(new LatLng(latitude, longitude));
             } else {
                 gps.showSettingsAlert();
