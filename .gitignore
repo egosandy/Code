@@ -19,3 +19,6 @@ local.properties
 *.keystore
 keystore.properties
 signing.properties
+
+# GitHub Packages credentials (PAT) — never commit
+github.properties
