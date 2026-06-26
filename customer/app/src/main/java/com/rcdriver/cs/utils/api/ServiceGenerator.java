@@ -116,7 +116,9 @@ public class ServiceGenerator {
 
         if (Log.LOG) {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+            // BASIC instead of BODY: BODY buffers and stringifies the full request/
+            // response body on every call, which noticeably slows large responses.
+            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
             httpClient.addInterceptor(logging);
         }
 

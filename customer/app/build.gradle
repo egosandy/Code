@@ -166,7 +166,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.28'
+    // Removed pl.droidsonroids.gif:android-gif-drawable: it was unused (GIFs are
+    // rendered via Glide's GifDrawable) and its libpl_droidsonroids_gif.so was not
+    // 16 KB page-aligned, which blocks Android 15+ / Play submission.
 
     implementation 'com.google.android.gms:play-services-vision:20.1.3'
 
