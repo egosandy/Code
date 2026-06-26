@@ -1,5 +1,7 @@
 package com.rcdriver.cs.activity;
 
+import com.rcdriver.cs.utils.LocalStore;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -103,8 +105,6 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import io.realm.Realm;
-import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -242,7 +242,6 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
     private List<Marker> driverMarkers;
     private ArrayList<DriverModel> driverAvailable;
     private FiturModel designedFitur;
-    private Realm realm;
 
     private double mjarak;
     private long harga, promocode, maksimum;
@@ -449,7 +448,6 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
         setPickUpContainer.setVisibility(View.VISIBLE);
         setDestinationContainer.setVisibility(View.GONE);
 
-        realm = Realm.getDefaultInstance();
 
         driverAvailable = new ArrayList<>();
         pilihdriver = new ArrayList<>();
@@ -471,8 +469,8 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
 
 //        set fitur
         if (FITURID != -1)
-            designedFitur = realm.where(FiturModel.class).equalTo("idFitur", FITURID).findFirst();
-        RealmResults<FiturModel> fiturs = realm.where(FiturModel.class).findAll();
+            designedFitur = LocalStore.get().getFitur(FITURID);
+        List<FiturModel> fiturs = LocalStore.get().getAllFitur();
         for (FiturModel fitur : fiturs) {
             Log.e("ID_FITUR", fitur.getIdFitur() + " " + fitur.getFitur() + " " + fitur.getBiayaAkhir() + " " + ICONFITUR);
         }

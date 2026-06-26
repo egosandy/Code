@@ -9,8 +9,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.rcdriver.cs.models.FirebaseToken;
 import com.rcdriver.cs.models.User;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
+import com.rcdriver.cs.utils.LocalStore;
 
 /**
  * Created by Maswend Team on 10/13/2019.
@@ -18,11 +17,8 @@ import io.realm.RealmConfiguration;
 
 public class BaseApp extends Application {
 
-    private static final int SCHEMA_VERSION = 0;
-
     private User loginUser;
 
-    private Realm realmInstance;
     private String deviceToken = null;
     public static BaseApp getInstance(Context context) {
         return (BaseApp) context.getApplicationContext();
@@ -31,22 +27,13 @@ public class BaseApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .schemaVersion(SCHEMA_VERSION)
-                .deleteRealmIfMigrationNeeded()
-                .build();
+        // Local persistence (replaces the former Realm layer).
+        LocalStore.init(this);
+
         FirebaseToken token = new FirebaseToken(FirebaseInstanceId.getInstance().getToken());
         FirebaseMessaging.getInstance().subscribeToTopic("gojasa");
         FirebaseMessaging.getInstance().subscribeToTopic("pelanggan");
-        Realm.setDefaultConfiguration(config);
-
-//        realmInstance = Realm.getInstance(config);
-        realmInstance = Realm.getDefaultInstance();
-        realmInstance.beginTransaction();
-        realmInstance.delete(FirebaseToken.class);
-        realmInstance.copyToRealm(token);
-        realmInstance.commitTransaction();
+        LocalStore.get().saveToken(token);
 
         start();
     }
@@ -65,13 +52,13 @@ public class BaseApp extends Application {
         this.loginUser = loginUser;
     }
 
-    public final Realm getRealmInstance() {
-        return realmInstance;
+    /** Backing local store (replaces the former getRealmInstance()). */
+    public final LocalStore getStore() {
+        return LocalStore.get();
     }
 
     private void start() {
-        Realm realm = getRealmInstance();
-        User user = realm.where(User.class).findFirst();
+        User user = LocalStore.get().getUser();
         if (user != null) {
             setLoginUser(user);
         }

@@ -1,5 +1,7 @@
 package com.rcdriver.cs.fragment;
 
+import com.rcdriver.cs.utils.LocalStore;
+
 
 import android.Manifest;
 import android.app.Dialog;
@@ -50,7 +52,6 @@ import com.rcdriver.cs.utils.PicassoTrustAll;
 import com.rcdriver.cs.utils.SettingPreference;
 import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.UserService;
-import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -182,10 +183,7 @@ public class ProfileFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         SetLogin(0);
-                        Realm realm = BaseApp.getInstance(context).getRealmInstance();
-                        realm.beginTransaction();
-                        realm.delete(User.class);
-                        realm.commitTransaction();
+LocalStore.get().deleteUser();
                         removeNotif();
                         BaseApp.getInstance(context).setLoginUser(null);
                         startActivity(new Intent(getContext(), WalkthroughActivity.class)

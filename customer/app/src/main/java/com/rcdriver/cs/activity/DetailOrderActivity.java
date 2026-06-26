@@ -1,5 +1,7 @@
 package com.rcdriver.cs.activity;
 
+import com.rcdriver.cs.utils.LocalStore;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -99,8 +101,6 @@ import com.rcdriver.cs.utils.api.service.BookService;
 import com.rcdriver.cs.utils.api.service.UserService;
 
 import es.dmoral.toasty.Toasty;
-import io.realm.Realm;
-import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -150,7 +150,6 @@ public class DetailOrderActivity extends AppCompatActivity implements GoogleApiC
     private LatLng pickUpLatLang;
     private LatLng destinationLatLang;
     private FastItemAdapter<ItemItem> itemAdapter;
-    private Realm realm;
     private List<DriverModel> driverAvailable;
     private long foodCostLong = 0, maksimum;
     private long deliveryCostLong = 0;
@@ -267,7 +266,6 @@ public class DetailOrderActivity extends AppCompatActivity implements GoogleApiC
         Waktu = new Date().getTime() + "";
         Log.d("WaktuOrder",Waktu);
         promocode = Long.parseLong(Constants.Potongan);
-        realm = Realm.getDefaultInstance();
         sp = new SettingPreference(this);
         Bar = findViewById(R.id.bar);
         //qrcode
@@ -378,7 +376,7 @@ public class DetailOrderActivity extends AppCompatActivity implements GoogleApiC
         namamerchant = intent.getStringExtra("namamerchant");
         fitur = intent.getIntExtra(FITUR_KEY, -1);
         if (fitur != -1)
-            designedFitur = realm.where(FiturModel.class).equalTo("idFitur", fitur).findFirst();
+            designedFitur = LocalStore.get().getFitur(fitur);
         home = Objects.requireNonNull(designedFitur).getHome();
         IDFITUR = String.valueOf(designedFitur.getIdFitur());
         layanan = designedFitur.getFitur();
@@ -387,7 +385,7 @@ public class DetailOrderActivity extends AppCompatActivity implements GoogleApiC
         textJarak.setText(distance + "");
 
         Log.d("CekFitur",IDFITUR);
-        RealmResults<FiturModel> fiturs = realm.where(FiturModel.class).findAll();
+        List<FiturModel> fiturs = LocalStore.get().getAllFitur();
 
         for (FiturModel fitur : fiturs) {
             Log.e("ID_FITUR", fitur.getIdFitur() + " " + fitur.getFitur() + " " + fitur.getBiayaAkhir());
@@ -514,7 +512,7 @@ public class DetailOrderActivity extends AppCompatActivity implements GoogleApiC
             return false;
         }
 
-        List<PesananMerchant> existingFood = realm.copyFromRealm(realm.where(PesananMerchant.class).findAll());
+        List<PesananMerchant> existingFood = LocalStore.get().getAllCart();
 
         int quantity = 0;
         for (int p = 0; p < existingFood.size(); p++) {
@@ -555,8 +553,8 @@ public class DetailOrderActivity extends AppCompatActivity implements GoogleApiC
         return formatRupiah.format(number);
     }
     private void loadItem() {
-        List<ItemModel> makananList = realm.copyFromRealm(realm.where(ItemModel.class).findAll());
-        List<PesananMerchant> pesananFoods = realm.copyFromRealm(realm.where(PesananMerchant.class).findAll());
+        List<ItemModel> makananList = LocalStore.get().getAllItems();
+        List<PesananMerchant> pesananFoods = LocalStore.get().getAllCart();
         itemAdapter.clear();
         for (PesananMerchant pesanan : pesananFoods) {
             ItemItem makananItem = new ItemItem(this, this);
@@ -673,7 +671,7 @@ public class DetailOrderActivity extends AppCompatActivity implements GoogleApiC
     }
 
     private void updateEstimatedItemCost() {
-        List<PesananMerchant> existingFood = realm.copyFromRealm(realm.where(PesananMerchant.class).findAll());
+        List<PesananMerchant> existingFood = LocalStore.get().getAllCart();
         long cost = 0;
         for (int p = 0; p < existingFood.size(); p++) {
             cost += existingFood.get(p).getTotalHarga();
@@ -810,7 +808,7 @@ public class DetailOrderActivity extends AppCompatActivity implements GoogleApiC
 
 
     private void sendOrder() {
-        List<PesananMerchant> existingItem = realm.copyFromRealm(realm.where(PesananMerchant.class).findAll());
+        List<PesananMerchant> existingItem = LocalStore.get().getAllCart();
         for (PesananMerchant pesanan : existingItem) {
             if (pesanan.getCatatan() == null || pesanan.getCatatan().trim().equals("")){
                 pesanan.setCatatan("");
@@ -874,7 +872,7 @@ public class DetailOrderActivity extends AppCompatActivity implements GoogleApiC
                             dAdapter.setOnItemClickListener(new ListDriverClick() {
                                 @Override
                                 public void onItemClick(DriverModel item) {
-                                    List<PesananMerchant> existingItem = realm.copyFromRealm(realm.where(PesananMerchant.class).findAll());
+                                    List<PesananMerchant> existingItem = LocalStore.get().getAllCart();
                                     for (PesananMerchant pesanan : existingItem) {
                                         if (pesanan.getCatatan() == null || pesanan.getCatatan().trim().equals("")){
                                             pesanan.setCatatan("");

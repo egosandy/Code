@@ -3,11 +3,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-public class ListModels extends RealmObject implements Serializable{
-    @PrimaryKey
+public class ListModels implements Serializable{
     @Expose
     @SerializedName("pulsa_code")
     private String kode;

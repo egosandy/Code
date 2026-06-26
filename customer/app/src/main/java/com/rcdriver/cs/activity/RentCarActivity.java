@@ -1,5 +1,7 @@
 package com.rcdriver.cs.activity;
 
+import com.rcdriver.cs.utils.LocalStore;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -89,8 +91,6 @@ import com.rcdriver.cs.utils.api.MapDirectionAPI;
 import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.BookService;
 import com.rcdriver.cs.utils.api.service.UserService;
-import io.realm.Realm;
-import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -157,7 +157,6 @@ public class RentCarActivity extends AppCompatActivity
     private Marker pickUpMarker;
     private List<DriverModel> driverAvailable;
     private List<Marker> driverMarkers;
-    private Realm realm;
     private FiturModel designedFitur;
     private double jarak;
     private long harga, promocode;
@@ -277,16 +276,15 @@ public class RentCarActivity extends AppCompatActivity
                     .build();
         }
 
-        realm = Realm.getDefaultInstance();
 
         Intent intent = getIntent();
         int fiturId = intent.getIntExtra(FITUR_KEY, -1);
         ICONFITUR = intent.getStringExtra("icon");
         Log.e("FITUR_ID", fiturId + "");
         if (fiturId != -1)
-            designedFitur = realm.where(FiturModel.class).equalTo("idFitur", fiturId).findFirst();
+            designedFitur = LocalStore.get().getFitur(fiturId);
 
-        RealmResults<FiturModel> fiturs = realm.where(FiturModel.class).findAll();
+        List<FiturModel> fiturs = LocalStore.get().getAllFitur();
 
         for (FiturModel fitur : fiturs) {
             Log.e("ID_FITUR", fitur.getIdFitur() + " " + fitur.getFitur() + " " + fitur.getBiayaAkhir() + " " + ICONFITUR);
@@ -683,7 +681,6 @@ public class RentCarActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        realm.close();
     }
 
     private void fetchNearDriver(double latitude, double longitude) {

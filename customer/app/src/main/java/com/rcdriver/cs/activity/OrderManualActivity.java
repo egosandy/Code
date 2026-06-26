@@ -1,5 +1,7 @@
 package com.rcdriver.cs.activity;
 
+import com.rcdriver.cs.utils.LocalStore;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -24,9 +26,6 @@ import com.rcdriver.cs.utils.Utility;
 
 import java.util.List;
 import java.util.Objects;
-
-import io.realm.Realm;
-
 public class OrderManualActivity extends AppCompatActivity {
     private Context context;
     private EditText edtPesanan, edtHarga;
@@ -36,7 +35,6 @@ public class OrderManualActivity extends AppCompatActivity {
     private ImageView imageView;
     int itemQty = 0, maxIdItem = 0, idItem = 0;
     boolean isEdit = false;
-    private Realm realm;
     CardView pricecountainer;
     String id, resume, alamat, tutupki, idresto, alamatresto, namamerchant;
     double merlat, merlon, distance, lat, lon;
@@ -48,7 +46,6 @@ public class OrderManualActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_manual);
         context = this;
-        realm = BaseApp.getInstance(context).getRealmInstance();
         edtPesanan = findViewById(R.id.edt_nama);
         edtHarga = findViewById(R.id.edt_harga);
         btnAdd = findViewById(R.id.button6);
@@ -211,32 +208,25 @@ public class OrderManualActivity extends AppCompatActivity {
         pesananfood.setTotalHarga(totalHarga);
         pesananfood.setQty(qty);
         pesananfood.setNamaPesanan(notes);
-        realm.beginTransaction();
-        realm.copyToRealm(pesananfood);
-        realm.commitTransaction();
+LocalStore.get().upsertCart(pesananfood);
 
     }
 
     private void UpdatePesanan(int idMakanan, long totalHarga, int qty, String notes) {
-        realm.beginTransaction();
-        PesananMerchant updateFood = realm.where(PesananMerchant.class).equalTo("idItem", idMakanan).findFirst();
+PesananMerchant updateFood = LocalStore.get().getCartByItem(idMakanan);
         Objects.requireNonNull(updateFood).setTotalHarga(totalHarga);
         updateFood.setQty(qty);
         updateFood.setNamaPesanan(notes);
-        realm.copyToRealm(updateFood);
-        realm.commitTransaction();
+LocalStore.get().upsertCart(updateFood);
 
     }
 
     private void DeletePesanan(int idMakanan) {
-        realm.beginTransaction();
-        PesananMerchant deleteFood = realm.where(PesananMerchant.class).equalTo("idItem", idMakanan).findFirst();
-        Objects.requireNonNull(deleteFood).deleteFromRealm();
-        realm.commitTransaction();
+LocalStore.get().deleteCartByItem(idMakanan);
     }
 
     public void calculatePrice() {
-        List<PesananMerchant> existingFood = realm.where(PesananMerchant.class).findAll();
+        List<PesananMerchant> existingFood = LocalStore.get().getAllCart();
 
         int quantity = 0;
         long cost = 0;

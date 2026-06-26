@@ -4,10 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-
-import io.realm.RealmObject;
-
-public class SaveLokasiModel extends RealmObject implements Serializable {
+public class SaveLokasiModel implements Serializable {
     @Expose
     @SerializedName("id_pelanggan")
     private String id;

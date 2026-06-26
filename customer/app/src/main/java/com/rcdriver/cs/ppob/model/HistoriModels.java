@@ -4,12 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
-public class HistoriModels  extends RealmObject implements Serializable {
-    @PrimaryKey
+public class HistoriModels implements Serializable {
     @Expose
     @SerializedName("trx")
     private String trx;

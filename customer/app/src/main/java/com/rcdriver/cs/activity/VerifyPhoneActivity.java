@@ -1,4 +1,6 @@
 package com.rcdriver.cs.activity;
+
+import com.rcdriver.cs.utils.LocalStore;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -34,8 +36,6 @@ import com.rcdriver.cs.R;
 import com.rcdriver.cs.constants.BaseApp;
 import com.rcdriver.cs.models.FirebaseToken;
 import com.rcdriver.cs.models.User;
-import io.realm.Realm;
-
 public class VerifyPhoneActivity extends AppCompatActivity {
 
     private String verificationId;
@@ -150,20 +150,12 @@ public class VerifyPhoneActivity extends AppCompatActivity {
         }
     };
     private void saveUser(User user) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.delete(User.class);
-        realm.copyToRealm(user);
-        realm.commitTransaction();
+        LocalStore.get().saveUser(user);
         BaseApp.getInstance(VerifyPhoneActivity.this).setLoginUser(user);
     }
     @SuppressWarnings("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(FirebaseToken response) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.delete(FirebaseToken.class);
-        realm.copyToRealm(response);
-        realm.commitTransaction();
+        LocalStore.get().saveToken(response);
     }
 }

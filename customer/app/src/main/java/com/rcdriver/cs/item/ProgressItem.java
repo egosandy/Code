@@ -1,5 +1,7 @@
 package com.rcdriver.cs.item;
 
+import com.rcdriver.cs.utils.LocalStore;
+
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -23,8 +25,6 @@ import com.rcdriver.cs.utils.Log;
 import com.rcdriver.cs.utils.PicassoTrustAll;
 import com.rcdriver.cs.utils.Utility;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.realm.Realm;
-
 public class ProgressItem extends RecyclerView.Adapter<ProgressItem.ItemRowHolder> {
 
     private final List<ProgressModel> dataList;
@@ -33,7 +33,6 @@ public class ProgressItem extends RecyclerView.Adapter<ProgressItem.ItemRowHolde
     private static String TeksStatus = "Pesanan Di Terima";
     private static String Alamat = "Alamat";
     private String gethome;
-    Realm realm;
     public ProgressItem(Context context, List<ProgressModel> dataList, int rowLayout) {
         this.dataList = dataList;
         this.mContext = context;
@@ -50,11 +49,10 @@ public class ProgressItem extends RecyclerView.Adapter<ProgressItem.ItemRowHolde
     @Override
     public void onBindViewHolder(@NonNull final ItemRowHolder holder, final int position) {
         final ProgressModel singleItem = dataList.get(position);
-        realm = Realm.getDefaultInstance();
         holder.name.setText(singleItem.getFitur() + "#" + singleItem.getIdtrans());
         holder.namadriver.setText(singleItem.getNamadriver());
         Utility.currencyTXT(holder.biaya, singleItem.getBiaya_akhir(), mContext);
-        FiturModel designedFitur = realm.where(FiturModel.class).equalTo("idFitur", Integer.valueOf(singleItem.getOrderFitur())).findFirst();
+        FiturModel designedFitur = LocalStore.get().getFitur(Integer.valueOf(singleItem.getOrderFitur()));
         android.util.Log.e("GetHome ", String.valueOf(singleItem.getStatus()));
         //--------------------------------------------------------------------------
         gethome = designedFitur.getHome();

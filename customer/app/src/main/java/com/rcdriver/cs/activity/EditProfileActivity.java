@@ -1,5 +1,7 @@
 package com.rcdriver.cs.activity;
 
+import com.rcdriver.cs.utils.LocalStore;
+
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -53,7 +55,6 @@ import com.rcdriver.cs.models.User;
 import com.rcdriver.cs.utils.PicassoTrustAll;
 import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.UserService;
-import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -406,11 +407,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void saveUser(User user) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.delete(User.class);
-        realm.copyToRealm(user);
-        realm.commitTransaction();
+        LocalStore.get().saveUser(user);
         BaseApp.getInstance(EditProfileActivity.this).setLoginUser(user);
     }
 }

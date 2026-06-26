@@ -4,12 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
-public class TopupModels extends RealmObject implements Serializable {
-    @PrimaryKey
+public class TopupModels implements Serializable {
     @Expose
     @SerializedName("ref_id")
     private String noreff;

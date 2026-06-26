@@ -1,5 +1,7 @@
 package com.rcdriver.cs.activity;
 
+import com.rcdriver.cs.utils.LocalStore;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -42,8 +44,6 @@ import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.UserService;
 
 import java.util.Objects;
-
-import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -195,10 +195,7 @@ public class ProfileActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         SetLogin(0);
-                        Realm realm = BaseApp.getInstance(context).getRealmInstance();
-                        realm.beginTransaction();
-                        realm.delete(User.class);
-                        realm.commitTransaction();
+LocalStore.get().deleteUser();
                         removeNotif();
                         BaseApp.getInstance(context).setLoginUser(null);
                         startActivity(new Intent(context, WalkthroughActivity.class)

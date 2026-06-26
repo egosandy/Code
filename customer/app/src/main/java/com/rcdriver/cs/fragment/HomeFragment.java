@@ -1,5 +1,7 @@
 package com.rcdriver.cs.fragment;
 
+import com.rcdriver.cs.utils.LocalStore;
+
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 import android.Manifest;
@@ -137,8 +139,6 @@ import com.rcdriver.cs.utils.Utility;
 import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.UserService;
 import com.onurciner.toastox.ToastOXDialog;
-
-import io.realm.Realm;
 import me.relex.circleindicator.CircleIndicator;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -208,7 +208,6 @@ public class HomeFragment extends Fragment implements GoogleApiClient.Connection
     private RelativeLayout promo, transfer, pindahdonasi;
 
     private ImageView topup, Ikon;
-    private Realm realm;
 
     private CatMerchantItem catMerchantItem;
     private LatLng LokasiSaya;
@@ -229,7 +228,6 @@ public class HomeFragment extends Fragment implements GoogleApiClient.Connection
         View getView = inflater.inflate(R.layout.fragment_home, container, false);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        realm = Realm.getDefaultInstance();
         context = getContext();
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_PHONE_STATE}, 101);
@@ -541,16 +539,10 @@ public class HomeFragment extends Fragment implements GoogleApiClient.Connection
                         User user = response.body().getData().get(0);
                         saveUser(user);
 //                        if (HomeFragment.this.getActivity() != null) {
-//                            Realm realm = BaseApp.getInstance(context).getRealmInstance();
-//                            realm.beginTransaction();
 //                            login.setWalletSaldo(Long.parseLong(response.body().getSaldo()));
-//                            realm.commitTransaction();
 //                        }
                     } else {
-                        Realm realm = BaseApp.getInstance(context).getRealmInstance();
-                        realm.beginTransaction();
-                        realm.delete(User.class);
-                        realm.commitTransaction();
+                        LocalStore.get().deleteUser();
                         BaseApp.getInstance(context).setLoginUser(null);
                         startActivity(new Intent(context, IntroActivity.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -617,11 +609,7 @@ public class HomeFragment extends Fragment implements GoogleApiClient.Connection
     }
 
     private void saveUser(User user) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.delete(User.class);
-        realm.copyToRealm(user);
-        realm.commitTransaction();
+LocalStore.get().saveUser(user);
         BaseApp.getInstance(context).setLoginUser(user);
     }
 

@@ -4,17 +4,12 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by Maswend Team on 10/17/2019.
  */
 
-public class MerchantNearModel extends RealmObject implements Serializable {
+public class MerchantNearModel implements Serializable {
 
-    @PrimaryKey
     @Expose
     @SerializedName("id_merchant")
     private String id_merchant;

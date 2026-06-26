@@ -4,14 +4,11 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-
-import io.realm.RealmObject;
-
 /**
  * Created by Maswend Team on 10/17/2019.
  */
 
-public class ItemPesananModel extends RealmObject implements Serializable {
+public class ItemPesananModel implements Serializable {
 
     @Expose
     @SerializedName("nama_item")

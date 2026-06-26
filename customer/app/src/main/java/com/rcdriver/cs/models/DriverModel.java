@@ -5,14 +5,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import io.realm.RealmObject;
-
 /**
  * Created by Maswend Team on 10/17/2019.
  */
 
-public class DriverModel extends RealmObject implements Serializable {
+public class DriverModel implements Serializable {
     @Expose
     @SerializedName("id")
     private String id;

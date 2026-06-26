@@ -1,5 +1,7 @@
 package com.rcdriver.cs.activity;
 
+import com.rcdriver.cs.utils.LocalStore;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
@@ -127,7 +129,6 @@ import com.rcdriver.cs.utils.api.service.BookService;
 import com.rcdriver.cs.utils.api.service.UserService;
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
-import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -141,7 +142,6 @@ public class ActivityProgress  extends AppCompatActivity implements OnMapReadyCa
     private DatabaseReference mReff;
     Timer timer = new Timer();
     Bundle orderBundle;
-    Realm realm;
     String icondriver;
     String gethome;
     String complete,iddriver,idtrans,isWallet,response,fitur,regdriver,imagedriver;
@@ -195,7 +195,6 @@ public class ActivityProgress  extends AppCompatActivity implements OnMapReadyCa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress_order);
-        realm = Realm.getDefaultInstance();
         sp = new SettingPreference(this);
         mDatabase = FirebaseDatabase.getInstance();
         mReff = mDatabase.getReference();
@@ -319,7 +318,7 @@ public class ActivityProgress  extends AppCompatActivity implements OnMapReadyCa
             public void onResponse(@NonNull Call<DetailTransResponseJson> call, @NonNull Response<DetailTransResponseJson> responsedata) {
                 if (responsedata.isSuccessful()) {
                     final TransaksiModel transaksi = Objects.requireNonNull(responsedata.body()).getData().get(0);
-                    FiturModel designedFitur = realm.where(FiturModel.class).equalTo("idFitur", Integer.valueOf(transaksi.getOrderFitur())).findFirst();
+                    FiturModel designedFitur = LocalStore.get().getFitur(Integer.valueOf(transaksi.getOrderFitur()));
                     icondriver = Objects.requireNonNull(designedFitur).getIcon_driver();
                     //--------------------------------------------------------------------------
                     gethome = designedFitur.getHome();

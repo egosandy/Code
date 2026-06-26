@@ -1,5 +1,7 @@
 package com.rcdriver.cs.activity;
 
+import com.rcdriver.cs.utils.LocalStore;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -25,7 +27,6 @@ import com.rcdriver.cs.models.FirebaseToken;
 import com.rcdriver.cs.models.User;
 import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.UserService;
-import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -145,22 +146,14 @@ public class ChangepassActivity extends AppCompatActivity {
     }
 
     private void saveUser(User user) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.delete(User.class);
-        realm.copyToRealm(user);
-        realm.commitTransaction();
+        LocalStore.get().saveUser(user);
         BaseApp.getInstance(ChangepassActivity.this).setLoginUser(user);
     }
 
     @SuppressWarnings("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(FirebaseToken response) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.delete(FirebaseToken.class);
-        realm.copyToRealm(response);
-        realm.commitTransaction();
+        LocalStore.get().saveToken(response);
     }
 
 

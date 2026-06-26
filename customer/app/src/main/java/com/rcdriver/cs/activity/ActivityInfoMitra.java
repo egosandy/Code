@@ -1,5 +1,7 @@
 package com.rcdriver.cs.activity;
 
+import com.rcdriver.cs.utils.LocalStore;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -19,8 +21,6 @@ import com.rcdriver.cs.models.ItemModel;
 import com.rcdriver.cs.models.PesananMerchant;
 import com.rcdriver.cs.models.User;
 import com.rcdriver.cs.utils.Utility;
-import io.realm.Realm;
-import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -95,14 +95,12 @@ public class ActivityInfoMitra extends AppCompatActivity implements ItemItem.OnC
 
     private FastItemAdapter<ItemItem> itemAdapter;
     private List<ItemModel> itemRealmResults;
-    private Realm realm;
     private Button orderManual;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_mitra);
-        realm = Realm.getDefaultInstance();
 
         bottom_sheet = findViewById(R.id.bottom_sheet);
         BottomSheetBehavior.from(bottom_sheet);
@@ -245,7 +243,7 @@ public class ActivityInfoMitra extends AppCompatActivity implements ItemItem.OnC
     @SuppressLint("SetTextI18n")
     @Override
     public void calculatePrice() {
-        List<PesananMerchant> existingFood = realm.where(PesananMerchant.class).findAll();
+        List<PesananMerchant> existingFood = LocalStore.get().getAllCart();
 
         int quantity = 0;
         long cost = 0;
@@ -381,11 +379,7 @@ public class ActivityInfoMitra extends AppCompatActivity implements ItemItem.OnC
                         itemRealmResults = response.body().getData();
                         resume = "1";
                         LoadItem();
-                        Realm realm = BaseApp.getInstance(ActivityInfoMitra.this).getRealmInstance();
-                        realm.beginTransaction();
-                        realm.delete(ItemModel.class);
-                        realm.copyToRealm(response.body().getData());
-                        realm.commitTransaction();
+LocalStore.get().saveItems(response.body().getData());
                         itemAdapter.notifyDataSetChanged();
                         itemAdapter.withSelectable(true);
                         itemAdapter.withItemEvent(new ClickEventHook<ItemItem>() {
@@ -478,16 +472,13 @@ public class ActivityInfoMitra extends AppCompatActivity implements ItemItem.OnC
     }
 
     private void DeletePesanan() {
-        RealmResults<PesananMerchant> deleteFood = realm.where(PesananMerchant.class).findAll();
-        realm.beginTransaction();
-        deleteFood.deleteAllFromRealm();
-        realm.commitTransaction();
+LocalStore.get().clearCart();
     }
 
     int[] exiF;
     private void LoadItem() {
         itemAdapter.clear();
-        RealmResults<PesananMerchant> existingItemMenu = realm.where(PesananMerchant.class).findAll();
+        List<PesananMerchant> existingItemMenu = LocalStore.get().getAllCart();
 
 
         exiF = new int[itemRealmResults.size()];
@@ -542,7 +533,6 @@ public class ActivityInfoMitra extends AppCompatActivity implements ItemItem.OnC
     protected void onDestroy() {
         super.onDestroy();
         DeletePesanan();
-        realm.close();
     }
 
     @Override
@@ -556,7 +546,7 @@ public class ActivityInfoMitra extends AppCompatActivity implements ItemItem.OnC
 
     @Override
     public void onBackPressed() {
-        List<PesananMerchant> existingItem = realm.where(PesananMerchant.class).findAll();
+        List<PesananMerchant> existingItem = LocalStore.get().getAllCart();
 
         int quantity = 0;
         for (int p = 0; p < existingItem.size(); p++) {
@@ -585,7 +575,7 @@ public class ActivityInfoMitra extends AppCompatActivity implements ItemItem.OnC
         BottomSheetBehavior behavior = BottomSheetBehavior.from(bottom_sheet);
         behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
-        ItemModel selectedItem = realm.where(ItemModel.class).equalTo("id_item", itemAdapter.getAdapterItem(position).id).findFirst();
+        ItemModel selectedItem = LocalStore.get().getItem(itemAdapter.getAdapterItem(position).id);
         @SuppressLint("InflateParams") final View mDialog = getLayoutInflater().inflate(R.layout.sheet_detail_item, null);
         TextView text = mDialog.findViewById(R.id.title);
         ImageView imageView = mDialog.findViewById(R.id.imageview);

@@ -1,5 +1,7 @@
 package com.rcdriver.cs.order;
 
+import com.rcdriver.cs.utils.LocalStore;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -59,8 +61,6 @@ import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.BookService;
 import com.rcdriver.cs.utils.api.service.UserService;
 import es.dmoral.toasty.Toasty;
-import io.realm.Realm;
-import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -68,7 +68,6 @@ import retrofit2.Response;
 import static com.rcdriver.cs.json.fcm.FCMType.ORDER;
 
 public class RideOrder extends AppCompatActivity {
-    private Realm realm;
     private String idpelanggan,biaya,fiturdesc,ICONFITUR,fitur,estimasi,diskon,alamatasal,alamattujuan,token;
     private int pakaisaldo = 0;
     private double jarak = 0;
@@ -98,7 +97,6 @@ public class RideOrder extends AppCompatActivity {
         imganimasi = findViewById(R.id.imganimasi);
         waktu = findViewById(R.id.waktu);
         rootLayout = findViewById(R.id.rootLayout);
-        realm = Realm.getDefaultInstance();
         driverAvailable = new ArrayList<>();
         Intent intent = getIntent();
         idpelanggan = intent.getStringExtra("idpelanggan");
@@ -126,7 +124,7 @@ public class RideOrder extends AppCompatActivity {
         Log.d("NamaAlamat",NamaAlamat);
         fetchNearDriver(picklat,picklng,fitur);
         if (FITURID != -1)
-            designedFitur = realm.where(FiturModel.class).equalTo("idFitur", FITURID).findFirst();
+            designedFitur = LocalStore.get().getFitur(FITURID);
             if(designedFitur.getHome() != null){
                 if(designedFitur.getHome().equals("4")){
                     SaveLok(picklat,picklng,alamatasal,NamaAlamat);
@@ -134,7 +132,7 @@ public class RideOrder extends AppCompatActivity {
                     SaveLok(destlat,destlng,alamattujuan,NamaAlamat);
                 }
             }
-        RealmResults<FiturModel> fiturs = realm.where(FiturModel.class).findAll();
+        List<FiturModel> fiturs = LocalStore.get().getAllFitur();
         for (FiturModel fitur : fiturs) {
             Log.e("ID_FITUR", fitur.getIdFitur() + " " + fitur.getFitur() + " " + fitur.getBiayaAkhir() + " " + ICONFITUR);
         }
