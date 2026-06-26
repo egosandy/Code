@@ -195,3 +195,11 @@ dependencies {
     //  - org.parceler:parceler(-api):1.1.12   (0 usages; AP breaks on AGP 8/JDK 17)
     //  - com.mobsandgeeks:android-saripaar:2.0.3 (0 usages)
 }
+
+configurations.all {
+    resolutionStrategy.dependencySubstitution {
+        // animatedbottombar 1.0.4 requests the old jcenter-only flexbox coordinates
+        // (com.google.android:flexbox), which are gone. Redirect to the current artifact.
+        substitute module('com.google.android:flexbox') using module('com.google.android.flexbox:flexbox:3.0.0')
+    }
+}
