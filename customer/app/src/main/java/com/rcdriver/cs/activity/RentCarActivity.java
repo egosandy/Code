@@ -289,6 +289,11 @@ public class RentCarActivity extends AppCompatActivity
         for (FiturModel fitur : fiturs) {
             Log.e("ID_FITUR", fitur.getIdFitur() + " " + fitur.getFitur() + " " + fitur.getBiayaAkhir() + " " + ICONFITUR);
         }
+        if (designedFitur == null) {
+            android.widget.Toast.makeText(this, "Data fitur belum siap. Buka ulang dari beranda.", android.widget.Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
         fitur = String.valueOf(designedFitur.getIdFitur());
         getbiaya = String.valueOf(designedFitur.getBiaya());
         biayaminimum = String.valueOf(designedFitur.getBiaya_minimum());

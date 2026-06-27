@@ -377,7 +377,12 @@ public class DetailOrderActivity extends AppCompatActivity implements GoogleApiC
         fitur = intent.getIntExtra(FITUR_KEY, -1);
         if (fitur != -1)
             designedFitur = LocalStore.get().getFitur(fitur);
-        home = Objects.requireNonNull(designedFitur).getHome();
+        if (designedFitur == null) {
+            android.widget.Toast.makeText(this, "Data fitur belum siap. Buka ulang dari beranda.", android.widget.Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+        home = designedFitur.getHome();
         IDFITUR = String.valueOf(designedFitur.getIdFitur());
         layanan = designedFitur.getFitur();
         keterangan = designedFitur.getKeterangan();
