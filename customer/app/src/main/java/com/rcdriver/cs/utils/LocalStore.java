@@ -20,9 +20,9 @@ import java.util.List;
  *
  * <p>Backed by SharedPreferences + Gson, with an in-memory cache so repeated reads
  * are as cheap as the old Realm layer (Realm kept managed objects in memory). The
- * data is parsed from disk ONCE; subsequent getAll*/get* calls return the cached
+ * data is parsed from disk ONCE; subsequent getAll/get calls return the cached
  * objects without touching SharedPreferences or Gson again. The cache is only
- * refreshed when the app stores new backend data via a save*/upsert/delete call.
+ * refreshed when the app stores new backend data via a save/upsert/delete call.
  * This is what keeps the app light: fetch from backend -> store once -> read from
  * memory; only re-parse when the data actually changes.
  *
