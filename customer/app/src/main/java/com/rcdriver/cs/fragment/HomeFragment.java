@@ -451,8 +451,11 @@ public class HomeFragment extends Fragment implements GoogleApiClient.Connection
         userService.home(param).enqueue(new Callback<GetHomeResponseJson>() {
             @Override
             public void onResponse(@NonNull Call<GetHomeResponseJson> call, @NonNull Response<GetHomeResponseJson> response) {
-                if (response.isSuccessful()) {
-                    if (Objects.requireNonNull(response.body()).getMessage().equalsIgnoreCase("success")) {
+                if (response.isSuccessful() && response.body() != null) {
+                    if ("success".equalsIgnoreCase(response.body().getMessage())) {
+                        // Mark loaded only on a successful response, so a failed/empty
+                        // load can retry on the next return to Home.
+                        homeLoaded = true;
 
                         sp.updateCurrency(response.body().getCurrency());
                         sp.updateabout(response.body().getAboutus());
@@ -683,15 +686,17 @@ LocalStore.get().saveUser(user);
                         }
                     }
                 }).start();
-                homeLoaded = true;
                 gethome(new LatLng(latitude, longitude));
             } else {
                 gps.showSettingsAlert();
+                // Still load Home data with a fallback location so the page is never
+                // stuck empty when GPS/permission is not ready yet. Fitur, saldo,
+                // slider and berita do not need a precise location.
+                gethome(new LatLng(0, 0));
             }
         } else {
             LatLng latLng = new LatLng(Double.parseDouble(sp.getSetting()[6]), Double.parseDouble(sp.getSetting()[7]));
             LokasiSaya = latLng;
-            homeLoaded = true;
             gethome(latLng);
         }
     }
