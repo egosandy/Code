@@ -75,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private SettingPreference sp;
     public static String apikey;
     private FragmentManager fragmentManager;
+    // Bottom-nav fragments are created once and reused via show/hide, so switching
+    // tabs (and returning to Home) does not recreate them and re-fetch their data.
+    private Fragment activeFragment;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private String mLat, mLng, mAlamat;
@@ -138,7 +141,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         if (savedInstanceState == null) {
             HomeFragment homeFragment = new HomeFragment();
-            loadFrag(homeFragment, getString(R.string.menu_home), fragmentManager);
+            fragmentManager.beginTransaction()
+                    .add(R.id.Container, homeFragment, "home")
+                    .commit();
+            activeFragment = homeFragment;
+        } else {
+            activeFragment = fragmentManager.findFragmentByTag("home");
         }
         sp.updateNotif("Null");
         sp.updateTitle("Null");
@@ -162,18 +170,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment fragment = null;
                 switch (item.getItemId()) {
                     case R.id.home:
-                        fragment = new HomeFragment();
+                        showTab("home");
                         break;
 
                     case R.id.order:
-                        fragment = new HistoryFragment();
+                        showTab("order");
                         break;
 
                 }
-                getSupportFragmentManager().beginTransaction().replace(R.id.Container, fragment).commit();
                 return true;
             }
         });
@@ -320,6 +326,26 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.Container, f1, name);
         ft.commit();
+    }
+
+    // Reuse fragments via show/hide so a tab switch never recreates them (and never
+    // re-fetches their data). Each fragment is created lazily the first time it is
+    // selected, then kept alive.
+    private void showTab(String tag) {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment target = fm.findFragmentByTag(tag);
+        FragmentTransaction ft = fm.beginTransaction();
+        if (activeFragment != null) {
+            ft.hide(activeFragment);
+        }
+        if (target == null) {
+            target = "order".equals(tag) ? new HistoryFragment() : new HomeFragment();
+            ft.add(R.id.Container, target, tag);
+        } else {
+            ft.show(target);
+        }
+        ft.commit();
+        activeFragment = target;
     }
 
 
