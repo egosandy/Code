@@ -232,6 +232,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     @Override
+    private boolean initialDataLoaded = false;
+
     protected void onStart() {
         super.onStart();
         if (mGoogleApiClient != null) {
@@ -245,8 +247,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onResume();
 //        Check_version();
         mGoogleApiClient.connect();
-        update();
-        GetSetting();
+        // Fitur list + app settings change rarely, so fetch them ONCE per session
+        // instead of on every return to Home (which re-ran the heavy settings UI
+        // processing each time and made navigating back feel slow).
+        if (!initialDataLoaded) {
+            initialDataLoaded = true;
+            update();
+            GetSetting();
+        }
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
         int success = googleApiAvailability.isGooglePlayServicesAvailable(this);
         if (success != ConnectionResult.SUCCESS) {
