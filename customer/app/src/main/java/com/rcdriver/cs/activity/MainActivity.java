@@ -231,9 +231,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     }
 
-    @Override
     private boolean initialDataLoaded = false;
 
+    @Override
     protected void onStart() {
         super.onStart();
         if (mGoogleApiClient != null) {
