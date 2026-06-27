@@ -57,9 +57,7 @@ public class HomeDigiActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // getdata() removed here: it already runs in onCreate(). Calling it on every
-        // onResume re-fetched digital/kategori (a slow ~3-7s endpoint) every time the
-        // user navigated back to this screen, causing the stutter/long loads.
+        getdata();
     }
 
     private void getdata(){

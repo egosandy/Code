@@ -151,21 +151,36 @@ public class RideOrder extends AppCompatActivity {
         updateFitur();
     }
     //------------------------------- Near Driver ---------------------------
-    private boolean isDriverPolling = false;
-    // Single self-reposting 4s poll loop (was a stacking Timer that flooded list_ride).
+    Timer timer = new Timer();
     private final Runnable updateDriverRunnable = new Runnable() {
         @Override
         public void run() {
-            if (NetworkManager.isConnectToInternet(RideOrder.this) && pickuplatlng != null) {
-                try {
-                    fetchNearDriver(pickuplatlng.latitude, pickuplatlng.longitude, fitur);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if(pickuplatlng != null){
+                            fetchNearDriver(pickuplatlng.latitude, pickuplatlng.longitude, fitur);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    timer.scheduleAtFixedRate(new TimerTask() {
+                        @Override
+                        public void run() {
+                            if (NetworkManager.isConnectToInternet(RideOrder.this)) {
+                                try {
+                                    if(pickuplatlng != null){
+                                        fetchNearDriver(pickuplatlng.latitude, pickuplatlng.longitude, fitur);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }, 0, 4000);
                 }
-            }
-            if (isDriverPolling && handler != null) {
-                handler.postDelayed(this, 4000);
-            }
+            }).start();
         }
     };
     private void updateFitur() {
@@ -203,21 +218,12 @@ public class RideOrder extends AppCompatActivity {
         });
     }
     private void startIsDriver() {
-        if (isDriverPolling) {
-            return; // already polling; do not stack another loop
-        }
-        isDriverPolling = true;
-        if (handler == null) {
-            handler = new Handler();
-        }
+        handler = new Handler();
         handler.postDelayed(updateDriverRunnable, 4000);
     }
 
     private void stopIsDriver() {
-        isDriverPolling = false;
-        if (handler != null) {
-            handler.removeCallbacks(updateDriverRunnable);
-        }
+        handler.removeCallbacks(updateDriverRunnable);
     }
     //------------------------------- Respon order ----------------------------
     private void buildDriverRequest(RideCarResponseJson response) {

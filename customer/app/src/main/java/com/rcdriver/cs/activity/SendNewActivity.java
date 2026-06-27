@@ -474,11 +474,6 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
         for (FiturModel fitur : fiturs) {
             Log.e("ID_FITUR", fitur.getIdFitur() + " " + fitur.getFitur() + " " + fitur.getBiayaAkhir() + " " + ICONFITUR);
         }
-        if (designedFitur == null) {
-            android.widget.Toast.makeText(this, "Data fitur belum siap. Buka ulang dari beranda.", android.widget.Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
         fitur = String.valueOf(designedFitur.getIdFitur());
         getbiaya = String.valueOf(designedFitur.getBiaya());
         biayaminimum = String.valueOf(designedFitur.getBiaya_minimum());
@@ -1024,40 +1019,46 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
         updateLastLocation(true);
     }
 
-    private boolean isDriverPolling = false;
-    // Single self-reposting 4s poll loop (was a stacking Timer that flooded list_driver).
+    Timer timer = new Timer();
     private final Runnable updateDriverRunnable = new Runnable() {
         @Override
         public void run() {
-            if (NetworkManager.isConnectToInternet(SendNewActivity.this) && pickUpLatLang != null) {
-                try {
-                    fetchNearDriver(pickUpLatLang);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if(pickUpLatLang != null){
+                            fetchNearDriver(pickUpLatLang);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    timer.scheduleAtFixedRate(new TimerTask() {
+                        @Override
+                        public void run() {
+                            if (NetworkManager.isConnectToInternet(SendNewActivity.this)) {
+                                try {
+                                    if(pickUpLatLang != null){
+                                        fetchNearDriver(pickUpLatLang);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }, 0, 4000);
                 }
-            }
-            if (isDriverPolling && handler != null) {
-                handler.postDelayed(this, 4000);
-            }
+            }).start();
         }
     };
 
     private void startIsDriver() {
-        if (isDriverPolling) {
-            return; // already polling; do not stack another loop
-        }
-        isDriverPolling = true;
-        if (handler == null) {
-            handler = new Handler();
-        }
+        handler = new Handler();
         handler.postDelayed(updateDriverRunnable, 4000);
     }
 
     private void stopIsDriver() {
-        isDriverPolling = false;
-        if (handler != null) {
-            handler.removeCallbacks(updateDriverRunnable);
-        }
+        handler.removeCallbacks(updateDriverRunnable);
     }
 
     @Override

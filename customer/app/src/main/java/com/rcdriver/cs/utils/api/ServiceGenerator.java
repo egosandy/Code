@@ -29,18 +29,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Maswend Team on 10/13/2019.
- *
- * Reworked: a SINGLE OkHttpClient is built once and shared. Per-request clients are
- * derived with newBuilder(), which reuses the shared client's connection pool,
- * dispatcher and thread pools. Previously a brand-new OkHttpClient was built on every
- * createService() call from a shared, mutable Builder, so there was no HTTP keep-alive
- * (a fresh TCP/TLS handshake per request -> slow loads) and concurrent calls raced on
- * the shared Builder's interceptor list (auth header sometimes missing -> failed loads).
  */
 
 public class ServiceGenerator {
     private static final BooleanSerializerDeserializer booleanSerializerDeserializer = new BooleanSerializerDeserializer();
-
+    private static final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
     public static Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd HH:mm:ss")
             .serializeNulls()
@@ -48,13 +41,15 @@ public class ServiceGenerator {
             .registerTypeAdapter(Boolean.class, booleanSerializerDeserializer)
             .registerTypeAdapter(boolean.class, booleanSerializerDeserializer)
             .create();
+    private static final Retrofit.Builder builder =
+            new Retrofit.Builder()
+                    .baseUrl(Constants.CONNECTION)
+                    .client(getUnsafeOkHttpClient())
+                    .addConverterFactory(GsonConverterFactory.create(gson));
 
-    /** Built once; shared by every request so connections are pooled/kept alive. */
-    private static final OkHttpClient SHARED_CLIENT = buildSharedClient();
-
-    private static OkHttpClient buildSharedClient() {
+    public static OkHttpClient getUnsafeOkHttpClient() {
         try {
-            // Trust manager that does not validate certificate chains (unchanged behavior).
+            // Create a trust manager that does not validate certificate chains
             final TrustManager[] trustAllCerts = new TrustManager[]{
                     new X509TrustManager() {
                         @Override
@@ -72,71 +67,69 @@ public class ServiceGenerator {
                     }
             };
 
+            // Install the all-trusting trust manager
             final SSLContext sslContext = SSLContext.getInstance("SSL");
             sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            // Create an ssl socket factory with our all-trusting manager
             final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
-            OkHttpClient.Builder b = new OkHttpClient.Builder()
-                    .sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0])
-                    .hostnameVerifier(new HostnameVerifier() {
-                        @Override
-                        public boolean verify(String hostname, SSLSession session) {
-                            return true;
-                        }
-                    })
-                    .retryOnConnectionFailure(true)
-                    .connectTimeout(20, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .writeTimeout(30, TimeUnit.SECONDS);
+            httpClient.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+            httpClient.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
 
-            if (Log.LOG) {
-                HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-                logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
-                b.addInterceptor(logging);
-            }
-
-            return b.build();
+            OkHttpClient okHttpClient = httpClient.build();
+            return okHttpClient;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    /** Kept for backward compatibility; returns the shared client. */
-    public static OkHttpClient getUnsafeOkHttpClient() {
-        return SHARED_CLIENT;
-    }
-
     public static <S> S createService(Class<S> serviceClass, String username, String password) {
-        OkHttpClient client;
+        if (!httpClient.interceptors().isEmpty()) {
+            httpClient.interceptors().clear();
+        }
         if (username != null && password != null) {
             String credentials = username + ":" + password;
             final String basic =
                     "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
-            // newBuilder() shares the connection pool / dispatcher / thread pools.
-            client = SHARED_CLIENT.newBuilder()
-                    .addInterceptor(new Interceptor() {
-                        @Override
-                        public Response intercept(Interceptor.Chain chain) throws IOException {
-                            Request original = chain.request();
-                            Request request = original.newBuilder()
-                                    .header("Authorization", basic)
-                                    .header("Accept", "application/json")
-                                    .method(original.method(), original.body())
-                                    .build();
-                            return chain.proceed(request);
-                        }
-                    })
-                    .build();
-        } else {
-            client = SHARED_CLIENT;
+            httpClient.addInterceptor(new Interceptor() {
+                @Override
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Request original = chain.request();
+
+                    Request.Builder requestBuilder = original.newBuilder()
+                            .header("Authorization", basic)
+                            .header("Accept", "application/json")
+                            .method(original.method(), original.body());
+
+                    Request request = requestBuilder.build();
+                    return chain.proceed(request);
+                }
+            });
         }
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.CONNECTION)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create(gson))
+        if (Log.LOG) {
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            // BASIC instead of BODY: BODY buffers and stringifies the full request/
+            // response body on every call, which noticeably slows large responses.
+            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            httpClient.addInterceptor(logging);
+        }
+
+        OkHttpClient client = httpClient
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
                 .build();
+        Retrofit retrofit = builder.client(client).build();
         return retrofit.create(serviceClass);
     }
+
+
 }

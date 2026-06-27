@@ -451,11 +451,8 @@ public class HomeFragment extends Fragment implements GoogleApiClient.Connection
         userService.home(param).enqueue(new Callback<GetHomeResponseJson>() {
             @Override
             public void onResponse(@NonNull Call<GetHomeResponseJson> call, @NonNull Response<GetHomeResponseJson> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    if ("success".equalsIgnoreCase(response.body().getMessage())) {
-                        // Mark loaded only on a successful response, so a failed/empty
-                        // load can retry on the next return to Home.
-                        homeLoaded = true;
+                if (response.isSuccessful()) {
+                    if (Objects.requireNonNull(response.body()).getMessage().equalsIgnoreCase("success")) {
 
                         sp.updateCurrency(response.body().getCurrency());
                         sp.updateabout(response.body().getAboutus());
@@ -563,10 +560,6 @@ public class HomeFragment extends Fragment implements GoogleApiClient.Connection
 
 //-----------mengaturslider--------------//
     Runnable runnable;
-    // Home data is loaded ONCE per fragment session; returning to Home no longer
-    // re-fetches gethome (and re-runs GPS/geocoding), which was the main cause of
-    // the stutter/slow reload when navigating back to the home screen.
-    private boolean homeLoaded = false;
 
     @Override
     public void onResume() {
@@ -650,11 +643,6 @@ LocalStore.get().saveUser(user);
     public void onStart() {
         super.onStart();
         googleApiClient.connect();
-        // Load the home data only once per session; on every return to Home this
-        // used to re-run GPS + reverse-geocode + a full gethome() reload.
-        if (homeLoaded) {
-            return;
-        }
         if (sp.getSetting()[6].equals("0") || sp.getSetting()[7].equals("0")) {
             gps = new GPSTracker(context);
 
@@ -664,35 +652,17 @@ LocalStore.get().saveUser(user);
             if (gps.canGetLocation()) {
                 double latitude = gps.getLatitude();
                 double longitude = gps.getLongitude();
-                final LatLng latLng = new LatLng(latitude, longitude);
+                LatLng latLng = new LatLng(latitude, longitude);
                 LokasiSaya = latLng;
+                getCompleteAddressString(latLng);
                 sp.updatemylat(String.valueOf(latitude));
                 sp.updatemylong(String.valueOf(longitude));
-                // Reverse-geocode OFF the main thread: Geocoder.getFromLocation is a
-                // blocking network call that otherwise freezes the UI (ANR) when
-                // returning to Home, especially on slow/loaded devices.
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final String alamat = getCompleteAddressString(latLng);
-                        if (getActivity() != null) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    sp.updateAlamat(alamat);
-                                    android.util.Log.e("CekAlamat", alamat);
-                                }
-                            });
-                        }
-                    }
-                }).start();
+                String Alamat = getCompleteAddressString(latLng);
+                sp.updateAlamat(Alamat);
+                android.util.Log.e("CekAlamat", Alamat);
                 gethome(new LatLng(latitude, longitude));
             } else {
                 gps.showSettingsAlert();
-                // Still load Home data with a fallback location so the page is never
-                // stuck empty when GPS/permission is not ready yet. Fitur, saldo,
-                // slider and berita do not need a precise location.
-                gethome(new LatLng(0, 0));
             }
         } else {
             LatLng latLng = new LatLng(Double.parseDouble(sp.getSetting()[6]), Double.parseDouble(sp.getSetting()[7]));
@@ -822,15 +792,17 @@ LocalStore.get().saveUser(user);
                             TransaksiList.clear();
                         }
                         TransaksiList = response.body().getData();
-                        // Build the adapter ONCE (previously this ran once per list item,
-                        // recreating the adapter N times on the main thread each poll).
-                        if (TransaksiList == null || TransaksiList.isEmpty()) {
-                            llrating.setVisibility(View.GONE);
-                        } else {
-                            llrating.setVisibility(View.VISIBLE);
-                            progressItem = new ProgressItem(getActivity(), TransaksiList, R.layout.item_review);
-                            rvreview.setAdapter(progressItem);
-                            progressItem.notifyDataSetChanged();
+                        for (int i = 0; i < TransaksiList.size(); ) {
+                            Log.e("mProgress", String.valueOf(TransaksiList.get(i).getStatus()));
+                            if (TransaksiList.isEmpty() && TransaksiList.size() < 0) {
+                                llrating.setVisibility(View.GONE);
+                            } else {
+                                llrating.setVisibility(View.VISIBLE);
+                                progressItem = new ProgressItem(getActivity(), TransaksiList, R.layout.item_review);
+                                rvreview.setAdapter(progressItem);
+                                progressItem.notifyDataSetChanged();
+                            }
+                            i++;
                         }
                     }
                 }
@@ -1050,14 +1022,7 @@ LocalStore.get().saveUser(user);
     }
 
     private void stopCekPPOB() {
-        if (handler != null) {
-            handler.removeCallbacks(updateCekPPOB);
-            // Also stop the 3s cekData() poller; previously it was never cancelled,
-            // so every onResume stacked another loop -> many concurrent polls.
-            if (runnable != null) {
-                handler.removeCallbacks(runnable);
-            }
-        }
+        handler.removeCallbacks(updateCekPPOB);
     }
 
     private final Runnable updateCekPPOB = new Runnable() {

@@ -75,9 +75,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private SettingPreference sp;
     public static String apikey;
     private FragmentManager fragmentManager;
-    // Bottom-nav fragments are created once and reused via show/hide, so switching
-    // tabs (and returning to Home) does not recreate them and re-fetch their data.
-    private Fragment activeFragment;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private String mLat, mLng, mAlamat;
@@ -141,12 +138,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         if (savedInstanceState == null) {
             HomeFragment homeFragment = new HomeFragment();
-            fragmentManager.beginTransaction()
-                    .add(R.id.Container, homeFragment, "home")
-                    .commit();
-            activeFragment = homeFragment;
-        } else {
-            activeFragment = fragmentManager.findFragmentByTag("home");
+            loadFrag(homeFragment, getString(R.string.menu_home), fragmentManager);
         }
         sp.updateNotif("Null");
         sp.updateTitle("Null");
@@ -170,16 +162,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment = null;
                 switch (item.getItemId()) {
                     case R.id.home:
-                        showTab("home");
+                        fragment = new HomeFragment();
                         break;
 
                     case R.id.order:
-                        showTab("order");
+                        fragment = new HistoryFragment();
                         break;
 
                 }
+                getSupportFragmentManager().beginTransaction().replace(R.id.Container, fragment).commit();
                 return true;
             }
         });
@@ -237,8 +231,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     }
 
-    private boolean initialDataLoaded = false;
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -253,14 +245,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onResume();
 //        Check_version();
         mGoogleApiClient.connect();
-        // Fitur list + app settings change rarely, so fetch them ONCE per session
-        // instead of on every return to Home (which re-ran the heavy settings UI
-        // processing each time and made navigating back feel slow).
-        if (!initialDataLoaded) {
-            initialDataLoaded = true;
-            update();
-            GetSetting();
-        }
+        update();
+        GetSetting();
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
         int success = googleApiAvailability.isGooglePlayServicesAvailable(this);
         if (success != ConnectionResult.SUCCESS) {
@@ -326,26 +312,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.Container, f1, name);
         ft.commit();
-    }
-
-    // Reuse fragments via show/hide so a tab switch never recreates them (and never
-    // re-fetches their data). Each fragment is created lazily the first time it is
-    // selected, then kept alive.
-    private void showTab(String tag) {
-        FragmentManager fm = getSupportFragmentManager();
-        Fragment target = fm.findFragmentByTag(tag);
-        FragmentTransaction ft = fm.beginTransaction();
-        if (activeFragment != null) {
-            ft.hide(activeFragment);
-        }
-        if (target == null) {
-            target = "order".equals(tag) ? new HistoryFragment() : new HomeFragment();
-            ft.add(R.id.Container, target, tag);
-        } else {
-            ft.show(target);
-        }
-        ft.commit();
-        activeFragment = target;
     }
 
 
