@@ -560,6 +560,10 @@ public class HomeFragment extends Fragment implements GoogleApiClient.Connection
 
 //-----------mengaturslider--------------//
     Runnable runnable;
+    // Home data is loaded ONCE per fragment session; returning to Home no longer
+    // re-fetches gethome (and re-runs GPS/geocoding), which was the main cause of
+    // the stutter/slow reload when navigating back to the home screen.
+    private boolean homeLoaded = false;
 
     @Override
     public void onResume() {
@@ -643,6 +647,11 @@ LocalStore.get().saveUser(user);
     public void onStart() {
         super.onStart();
         googleApiClient.connect();
+        // Load the home data only once per session; on every return to Home this
+        // used to re-run GPS + reverse-geocode + a full gethome() reload.
+        if (homeLoaded) {
+            return;
+        }
         if (sp.getSetting()[6].equals("0") || sp.getSetting()[7].equals("0")) {
             gps = new GPSTracker(context);
 
@@ -674,6 +683,7 @@ LocalStore.get().saveUser(user);
                         }
                     }
                 }).start();
+                homeLoaded = true;
                 gethome(new LatLng(latitude, longitude));
             } else {
                 gps.showSettingsAlert();
@@ -681,6 +691,7 @@ LocalStore.get().saveUser(user);
         } else {
             LatLng latLng = new LatLng(Double.parseDouble(sp.getSetting()[6]), Double.parseDouble(sp.getSetting()[7]));
             LokasiSaya = latLng;
+            homeLoaded = true;
             gethome(latLng);
         }
     }
