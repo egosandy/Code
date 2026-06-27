@@ -18,17 +18,15 @@ import java.util.List;
 /**
  * Lightweight local persistence facade that replaces the previous Realm layer.
  *
- * <p>Backed by SharedPreferences + Gson. The persisted data set is tiny (a single
- * logged-in user, the FCM token, the feature list, the merchant item list and the
- * shopping cart), so this mirrors the exact read/write semantics the app relied on
- * while staying compatible with AGP 8 / SDK 36 (Realm Java is EOL).
+ * <p>Backed by SharedPreferences + Gson, with an in-memory cache so repeated reads
+ * are as cheap as the old Realm layer (Realm kept managed objects in memory). The
+ * data is parsed from disk ONCE; subsequent getAll*/get* calls return the cached
+ * objects without touching SharedPreferences or Gson again. The cache is only
+ * refreshed when the app stores new backend data via a save*/upsert/delete call.
+ * This is what keeps the app light: fetch from backend -> store once -> read from
+ * memory; only re-parse when the data actually changes.
  *
- * <p>Behaviour is intentionally identical to the old Realm usage:
- * primary-keyed collections (cart by {@code idItem}, fitur by {@code idFitur}) are
- * upsert/replace-by-key, and "save list" operations replace the whole collection.
- *
- * <p>The whole app talks to this single facade, so swapping the backing store for a
- * real Room database later only touches this class — no call sites change.
+ * <p>The whole app talks to this single facade; the public API is unchanged.
  */
 public final class LocalStore {
 
@@ -43,6 +41,15 @@ public final class LocalStore {
 
     private final SharedPreferences prefs;
     private final Gson gson = new Gson();
+
+    // ---- in-memory caches (parsed once, reused until the data changes) ----
+    private User userCache;
+    private boolean userLoaded;
+    private FirebaseToken tokenCache;
+    private boolean tokenLoaded;
+    private List<FiturModel> fiturCache;
+    private List<ItemModel> itemCache;
+    private List<PesananMerchant> cartCache;
 
     private LocalStore(Context ctx) {
         prefs = ctx.getApplicationContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
@@ -71,37 +78,55 @@ public final class LocalStore {
     // ---------------------------------------------------------------- User
 
     public synchronized void saveUser(User user) {
-        prefs.edit().putString(K_USER, gson.toJson(user)).apply();
+        userCache = user;
+        userLoaded = true;
+        prefs.edit().putString(K_USER, user == null ? null : gson.toJson(user)).apply();
     }
 
     public synchronized User getUser() {
-        String s = prefs.getString(K_USER, null);
-        return s == null ? null : gson.fromJson(s, User.class);
+        if (!userLoaded) {
+            String s = prefs.getString(K_USER, null);
+            userCache = s == null ? null : gson.fromJson(s, User.class);
+            userLoaded = true;
+        }
+        return userCache;
     }
 
     public synchronized void deleteUser() {
+        userCache = null;
+        userLoaded = true;
         prefs.edit().remove(K_USER).apply();
     }
 
     // ---------------------------------------------------------------- FCM token
 
     public synchronized void saveToken(FirebaseToken token) {
+        tokenCache = token;
+        tokenLoaded = true;
         prefs.edit().putString(K_TOKEN, token == null ? null : gson.toJson(token)).apply();
     }
 
     public synchronized FirebaseToken getToken() {
-        String s = prefs.getString(K_TOKEN, null);
-        return s == null ? null : gson.fromJson(s, FirebaseToken.class);
+        if (!tokenLoaded) {
+            String s = prefs.getString(K_TOKEN, null);
+            tokenCache = s == null ? null : gson.fromJson(s, FirebaseToken.class);
+            tokenLoaded = true;
+        }
+        return tokenCache;
     }
 
     // ---------------------------------------------------------------- Fitur
 
     public synchronized void saveFitur(List<FiturModel> list) {
-        prefs.edit().putString(K_FITUR, gson.toJson(list)).apply();
+        fiturCache = list != null ? new ArrayList<>(list) : new ArrayList<FiturModel>();
+        prefs.edit().putString(K_FITUR, gson.toJson(fiturCache)).apply();
     }
 
     public synchronized List<FiturModel> getAllFitur() {
-        return readList(K_FITUR, new TypeToken<ArrayList<FiturModel>>() {}.getType());
+        if (fiturCache == null) {
+            fiturCache = readList(K_FITUR, new TypeToken<ArrayList<FiturModel>>() {}.getType());
+        }
+        return fiturCache;
     }
 
     public synchronized FiturModel getFitur(int idFitur) {
@@ -116,11 +141,15 @@ public final class LocalStore {
     // ---------------------------------------------------------------- Merchant items
 
     public synchronized void saveItems(List<ItemModel> list) {
-        prefs.edit().putString(K_ITEM, gson.toJson(list)).apply();
+        itemCache = list != null ? new ArrayList<>(list) : new ArrayList<ItemModel>();
+        prefs.edit().putString(K_ITEM, gson.toJson(itemCache)).apply();
     }
 
     public synchronized List<ItemModel> getAllItems() {
-        return readList(K_ITEM, new TypeToken<ArrayList<ItemModel>>() {}.getType());
+        if (itemCache == null) {
+            itemCache = readList(K_ITEM, new TypeToken<ArrayList<ItemModel>>() {}.getType());
+        }
+        return itemCache;
     }
 
     public synchronized ItemModel getItem(int idItem) {
@@ -135,7 +164,10 @@ public final class LocalStore {
     // ---------------------------------------------------------------- Cart (PesananMerchant, keyed by idItem)
 
     public synchronized List<PesananMerchant> getAllCart() {
-        return readList(K_CART, new TypeToken<ArrayList<PesananMerchant>>() {}.getType());
+        if (cartCache == null) {
+            cartCache = readList(K_CART, new TypeToken<ArrayList<PesananMerchant>>() {}.getType());
+        }
+        return cartCache;
     }
 
     public synchronized PesananMerchant getCartByItem(int idItem) {
@@ -156,12 +188,12 @@ public final class LocalStore {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i) != null && list.get(i).getIdItem() == item.getIdItem()) {
                 list.set(i, item);
-                saveCart(list);
+                persistCart();
                 return;
             }
         }
         list.add(item);
-        saveCart(list);
+        persistCart();
     }
 
     public synchronized void deleteCartByItem(int idItem) {
@@ -172,15 +204,16 @@ public final class LocalStore {
                 break;
             }
         }
-        saveCart(list);
+        persistCart();
     }
 
     public synchronized void clearCart() {
+        cartCache = new ArrayList<>();
         prefs.edit().remove(K_CART).apply();
     }
 
-    private void saveCart(List<PesananMerchant> list) {
-        prefs.edit().putString(K_CART, gson.toJson(list)).apply();
+    private void persistCart() {
+        prefs.edit().putString(K_CART, gson.toJson(getAllCart())).apply();
     }
 
     // ---------------------------------------------------------------- helpers
