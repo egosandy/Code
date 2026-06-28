@@ -832,7 +832,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:elevation="10dp"
-                android:src="@drawable/namalogo" />
+                android:src="@drawable/ic_ogotbar" />
         </LinearLayout>
 
     </RelativeLayout>

@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">RCDriver</string>
+    <string name="app_name">RCDrive</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
-AIzaSyBchBGhi_Bm4A3zqX0b-Zcn5nrTtQN2oTU
+AIzaSyCmp0axjnVtxH7JMdMW26frFaw-7AQJ1zg
     </string>
     <string name="facebook_app_id">/</string>
     <string name="fb_login_protocol_scheme">/</string>

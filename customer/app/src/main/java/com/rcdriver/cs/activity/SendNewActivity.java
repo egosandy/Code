@@ -1,17 +1,13 @@
 package com.rcdriver.cs.activity;
 
-import com.rcdriver.cs.utils.LocalStore;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -25,45 +21,23 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.rcdriver.cs.adapter.ListDriverClick;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.snackbar.Snackbar;
 import com.rcdriver.cs.R;
 import com.rcdriver.cs.adapter.FiturPromoAdapter;
 import com.rcdriver.cs.adapter.ListDriverAdapter;
+import com.rcdriver.cs.adapter.ListDriverClick;
 import com.rcdriver.cs.constants.BaseApp;
+import com.rcdriver.cs.databinding.ActivitySendNewBinding; // <-- IMPORT BARU UNTUK VIEWBINDING
 import com.rcdriver.cs.gmap.directions.Directions;
 import com.rcdriver.cs.gmap.directions.Route;
 import com.rcdriver.cs.json.CheckStatusTransaksiRequest;
@@ -89,6 +63,27 @@ import com.rcdriver.cs.utils.api.MapDirectionAPI;
 import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.BookService;
 import com.rcdriver.cs.utils.api.service.UserService;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
@@ -105,14 +100,16 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import android.text.InputFilter;
-import android.text.Spanned;
 
 import static com.rcdriver.cs.json.fcm.FCMType.ORDER;
 import static com.rcdriver.cs.utils.Utility.fixPembulatan;
+
 public class SendNewActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static final String FITUR_KEY = "FiturKey";
     private static final String TAG = "SendNewActivity";
@@ -122,100 +119,13 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
     Thread thread;
     boolean threadRun = true;
     TransaksiSendModel transaksi;
-    CoordinatorLayout rootLayout;
 
-    LinearLayout setPickUpContainer;
-
-    LinearLayout setDestinationContainer;
-
-    Button setPickUpButton;
-
-    Button setDestinationButton;
-
-    TextView fiturtext;
-
-    ImageView backbtn;
-
-    LinearLayout bottomsheet;
-
-    RelativeLayout rlprogress;
-
-    TextView NameAsal;
-
-    TextView pickUpText;
-
-    TextView NameTujuan;
-
-    TextView destinationText;
-
-    TextView jarak;
-
-    TextView estimasi;
-
-    TextView cost;
-
-    TextView numdiskon;
-
-    TextView diskon;
-
-    TextView priceText;
-
-    Button btnOrder;
-
-    Button dokument;
-    Button fashion;
-    Button box;
-    Button other;
-
-    EditText othertext;
+    // SEMUA @BindView DIHAPUS dan digantikan dengan satu objek binding
+    private ActivitySendNewBinding binding;
 
     String itemdetail;
 
-    EditText promokode;
-
-    Button btnpromo;
-
-    TextView promonotif;
-
-    ImageButton checkedcash;
-
-    ImageButton checkedwallet;
-
-    TextView cashpayment;
-
-    TextView walletpayment;
-
-    RadioButton llcheckedwallet;
-
-    RadioButton llcheckedcash;
-
-    RelativeLayout rlnotif;
-
-    TextView textnotif;
-
-    EditText sendername;
-
-    EditText recievername;
-
-    EditText senderphone;
-
-    EditText recieverphone;
-
-    TextView saldotext;
-
-    LinearLayout stepLayout2;
-
-    LinearLayout stepLayout3;
-
-    RecyclerView mDriverRec;
-
-    ImageView closeDriver;
-
-    //    @BindView(R.id.Step2)
-//    LinearLayout StepLayout2;
     private Button submit;
-
-
     private String senderName = "";
     private String phoneNumber = "";
     private String receiverName = "";
@@ -233,8 +143,8 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
     int FITURID = -1;
     double dLatitude = 0;
     double dLongitude = 0;
-    private double Latitude,Longitude;
-    private String fitur,ICONFITUR, NamaAlamat, NamaAsal, dAlamat, checkedpaywallet,
+    private double Latitude, Longitude;
+    private String fitur, ICONFITUR, NamaAlamat, NamaAsal, dAlamat, checkedpaywallet,
             biayaminimum, saldoWallet, getbiaya, biayaakhir, fiturdesc, icondriver;
     private SettingPreference sp;
 
@@ -242,6 +152,7 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
     private List<Marker> driverMarkers;
     private ArrayList<DriverModel> driverAvailable;
     private FiturModel designedFitur;
+    private Realm realm;
 
     private double mjarak;
     private long harga, promocode, maksimum;
@@ -255,16 +166,13 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
     private DriverRequest request;
 
 
-
-
-
     private final okhttp3.Callback updateRouteCallback = new okhttp3.Callback() {
 
         @Override
         public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
-            setDestinationContainer.setVisibility(View.VISIBLE);
-            rlprogress.setVisibility(View.GONE);
-            Snackbar snackbar = Snackbar.make(rootLayout, "error connection, please select destination again!", Snackbar.LENGTH_LONG);
+            binding.pickUpContainer.setVisibility(View.VISIBLE);
+            binding.rlprogress.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar.make(binding.rootLayout, "error connection, please select destination again!", Snackbar.LENGTH_LONG);
             snackbar.getView().setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
             snackbar.show();
         }
@@ -281,87 +189,56 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-
-
-                            sendername.setText(senderName);
-                            senderphone.setText(phoneNumber);
-                            recievername.setText(receiverName);
-                            recieverphone.setText(phoneNumberReceiver);
+                            binding.sendername.setText(senderName);
+                            binding.phonenumber.setText(phoneNumber);
+                            binding.recievername.setText(receiverName);
+                            binding.phonenumberreceiever.setText(phoneNumberReceiver);
 
                             String format = String.format(Locale.US, "%.0f", (double) distance / 1000f);
                             long dist = Long.parseLong(format);
                             float km = ((float) (distance)) / 1000f;
                             if (dist < maksimum) {
-                                rlprogress.setVisibility(View.GONE);
+                                binding.rlprogress.setVisibility(View.GONE);
                                 promocode = 0;
                                 updateLineDestination(json);
                                 updateDistance(distance);
-                                estimasi.setText(time);
-                                numdiskon.setText(String.valueOf(promocode));
-                                Utility.currencyDiskon(diskon, String.valueOf(promocode), SendNewActivity.this);
+                                binding.fitur.setText(time); // estimasi
+                                binding.numdiskon.setText(String.valueOf(promocode));
+                                Utility.currencyDiskon(binding.diskon, String.valueOf(promocode), SendNewActivity.this);
                                 fetchNearDriver(pickUpLatLang);
-                                btnOrder.setOnClickListener(new View.OnClickListener() {
+                                binding.order.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         {
                                             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
-                                                    switch (which){
+                                                    switch (which) {
                                                         case DialogInterface.BUTTON_POSITIVE:
                                                             onOrderButton(true, "");
                                                             break;
                                                         case DialogInterface.BUTTON_NEGATIVE:
-                                                            stepLayout2.setVisibility(View.GONE);
-                                                            stepLayout3.setVisibility(View.VISIBLE);
+                                                            binding.step2.setVisibility(View.GONE);
+                                                            binding.Step3.setVisibility(View.VISIBLE);
                                                             driverterdekat(pickUpLatLang);
                                                             break;
                                                     }
                                                 }
                                             };
 
-
-
-
-
                                             AlertDialog.Builder builder = new AlertDialog.Builder(SendNewActivity.this);
                                             builder.setMessage("PILIH METODE PEMESANAN")
                                                     .setPositiveButton("Otomatis", dialogClickListener)
                                                     .setNegativeButton("Pilih Driver", dialogClickListener).show();
-
                                         }
-
-
-
-
-
-//                                        Intent intent = new Intent(context, DetailSendNewActivity.class);
-//                                        intent.putExtra("distance", km);//double
-//                                        intent.putExtra("price", getbiaya);//long
-//                                        intent.putExtra("pickup_latlng", pickUpLatLang);
-//                                        intent.putExtra("destination_latlng", destinationLatLang);
-//                                        intent.putExtra("pickup", sp.getSetting()[8]);
-//                                        intent.putExtra("destination", destinationText.getText().toString());
-//                                        intent.putExtra("driver", driverAvailable);
-//                                        intent.putExtra("biaya_minimum", biayaminimum);
-//                                        intent.putExtra("time_distance", time);
-//                                        intent.putExtra("driver", driverAvailable);
-//                                        intent.putExtra("icon", ICONFITUR);
-//                                        intent.putExtra("layanan", fiturtext.getText().toString());
-//                                        intent.putExtra("layanandesk", designedFitur.getKeterangan());
-//                                        intent.putExtra(FITUR_KEY, FITURID);
-//                                        startActivity(intent);
-//                                        finish();
                                     }
                                 });
-                            }
-                            else {
-                                rlprogress.setVisibility(View.GONE);
-                                setDestinationContainer.setVisibility(View.VISIBLE);
-                                Snackbar snackbar = Snackbar.make(rootLayout, "Jarak Tujuan Terlalu Jauh.", Snackbar.LENGTH_LONG);
+                            } else {
+                                binding.rlprogress.setVisibility(View.GONE);
+                                binding.destinationContainer.setVisibility(View.VISIBLE);
+                                Snackbar snackbar = Snackbar.make(binding.rootLayout, "Jarak Tujuan Terlalu Jauh.", Snackbar.LENGTH_LONG);
                                 snackbar.getView().setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
                                 snackbar.show();
-
                             }
                         }
                     });
@@ -373,57 +250,11 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Inisialisasi ViewBinding
+        binding = ActivitySendNewBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        setContentView(R.layout.activity_send_new);
-        rootLayout = findViewById(R.id.rootLayout);
-        setPickUpContainer = findViewById(R.id.pickUpContainer);
-        setDestinationContainer = findViewById(R.id.destinationContainer);
-        setPickUpButton = findViewById(R.id.pickUpButton);
-        setDestinationButton = findViewById(R.id.destinationButton);
-        fiturtext = findViewById(R.id.fiturtext);
-        backbtn = findViewById(R.id.back_btn);
-        bottomsheet = findViewById(R.id.bottom_sheet);
-        rlprogress = findViewById(R.id.rlprogress);
-        NameAsal = findViewById(R.id.NameAsal);
-        pickUpText = findViewById(R.id.pickUpText);
-        NameTujuan = findViewById(R.id.NameTujuan);
-        destinationText = findViewById(R.id.destinationText);
-        jarak = findViewById(R.id.distance);
-        estimasi = findViewById(R.id.fitur);
-        cost = findViewById(R.id.cost);
-        numdiskon = findViewById(R.id.numdiskon);
-        diskon = findViewById(R.id.diskon);
-        priceText = findViewById(R.id.price);
-        btnOrder = findViewById(R.id.order);
-        dokument = findViewById(R.id.dokumen);
-        fashion = findViewById(R.id.fashion);
-        box = findViewById(R.id.box);
-        other = findViewById(R.id.other);
-        othertext = findViewById(R.id.otherdetail);
-        promokode = findViewById(R.id.promocode);
-        btnpromo = findViewById(R.id.btnpromo);
-        promonotif = findViewById(R.id.promonotif);
-        checkedcash = findViewById(R.id.checkedcash);
-        checkedwallet = findViewById(R.id.checkedwallet);
-        cashpayment = findViewById(R.id.cashPayment);
-        walletpayment = findViewById(R.id.walletpayment);
-        llcheckedwallet = findViewById(R.id.llcheckedwallet);
-        llcheckedcash = findViewById(R.id.llcheckedcash);
-        rlnotif = findViewById(R.id.rlnotif);
-        textnotif = findViewById(R.id.textnotif);
-        sendername = findViewById(R.id.sendername);
-        recievername = findViewById(R.id.recievername);
-        senderphone = findViewById(R.id.phonenumber);
-        recieverphone = findViewById(R.id.phonenumberreceiever);
-        saldotext = findViewById(R.id.saldo);
-        stepLayout2 = findViewById(R.id.step2);
-        stepLayout3 = findViewById(R.id.Step3);
-        mDriverRec = findViewById(R.id.mDriverRec);
-        closeDriver = findViewById(R.id.close_driver);
-
-
-
-        BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomsheet);
+        BottomSheetBehavior behavior = BottomSheetBehavior.from(binding.bottomSheet);
         behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         Places.initialize(getApplicationContext(), MainActivity.apikey);
 
@@ -431,8 +262,6 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
             Places.initialize(getApplicationContext(), MainActivity.apikey);
         }
 
-
-//----------batas dialog floating--------------------------
         submit = findViewById(R.id.submitt);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -440,14 +269,12 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                 openDialogConfirm();
             }
         });
-//----------batas dialog floating--------------------------
-
-
 
         Warna = "#4c84ff";
-        setPickUpContainer.setVisibility(View.VISIBLE);
-        setDestinationContainer.setVisibility(View.GONE);
+        binding.pickUpContainer.setVisibility(View.VISIBLE);
+        binding.destinationContainer.setVisibility(View.GONE);
 
+        realm = Realm.getDefaultInstance();
 
         driverAvailable = new ArrayList<>();
         pilihdriver = new ArrayList<>();
@@ -462,15 +289,14 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                     .addApi(LocationServices.API)
                     .build();
         }
-//        get intent
+
         Intent intent = getIntent();
         FITURID = intent.getIntExtra(FITUR_KEY, -1);
         ICONFITUR = intent.getStringExtra("icon");
 
-//        set fitur
         if (FITURID != -1)
-            designedFitur = LocalStore.get().getFitur(FITURID);
-        List<FiturModel> fiturs = LocalStore.get().getAllFitur();
+            designedFitur = realm.where(FiturModel.class).equalTo("idFitur", FITURID).findFirst();
+        RealmResults<FiturModel> fiturs = realm.where(FiturModel.class).findAll();
         for (FiturModel fitur : fiturs) {
             Log.e("ID_FITUR", fitur.getIdFitur() + " " + fitur.getFitur() + " " + fitur.getBiayaAkhir() + " " + ICONFITUR);
         }
@@ -481,178 +307,137 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
         icondriver = designedFitur.getIcon_driver();
         maksimum = Long.parseLong(designedFitur.getMaksimumdist());
         Radius = Double.parseDouble(designedFitur.getMaksimumdist());
-        fiturtext.setText(designedFitur.getFitur());
+        binding.fiturtext.setText(designedFitur.getFitur());
         fiturdesc = designedFitur.getKeterangan();
         updateFitur();
 
-
-
-
-
-        setPickUpButton.setOnClickListener(new View.OnClickListener() {
+        binding.pickUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onPickUp();
             }
         });
 
-        setDestinationButton.setOnClickListener(new View.OnClickListener() {
+        binding.destinationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onDestination();
             }
         });
 
-        pickUpText.setOnClickListener(new View.OnClickListener() {
+        binding.pickUpText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent i = new Intent(OjekNewActivity.this, ActivityAmbil.class);
-//                i.putExtra("Lat",Latitude);
-//                i.putExtra("Lng",Longitude);
-//                i.putExtra("radius",Radius);
-//                i.putExtra(ActivityAmbil.FORM_VIEW_INDICATOR, 1);
-//                startActivityForResult(i, 1);
-                setPickUpContainer.setVisibility(View.VISIBLE);
-                setDestinationContainer.setVisibility(View.GONE);
+                binding.pickUpContainer.setVisibility(View.VISIBLE);
+                binding.destinationContainer.setVisibility(View.GONE);
                 openAutocompleteActivity(1);
             }
         });
-        destinationText.setOnClickListener(new View.OnClickListener() {
+
+        binding.destinationText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent i = new Intent(OjekNewActivity.this, ActivityTujuan.class);
-//                i.putExtra("Lat",Latitude);
-//                i.putExtra("Lng",Longitude);
-//                i.putExtra("radius",Radius);
-//                i.putExtra(ActivityTujuan.FORM_VIEW_INDICATOR, 2);
-//                startActivityForResult(i, 2);
-                setDestinationContainer.setVisibility(View.VISIBLE);
-                setPickUpContainer.setVisibility(View.GONE);
+                binding.destinationContainer.setVisibility(View.VISIBLE);
+                binding.pickUpContainer.setVisibility(View.GONE);
                 openAutocompleteActivity(2);
             }
         });
 
-
-//        set current location
         sp = new SettingPreference(this);
         Latitude = Double.parseDouble(sp.getSetting()[6]);
-        Latitude = Double.parseDouble(sp.getSetting()[7]);
+        Longitude = Double.parseDouble(sp.getSetting()[7]);
         double picklat = Double.parseDouble(sp.getSetting()[6]);
         double picklng = Double.parseDouble(sp.getSetting()[7]);
 
         pickUpLatLang = new LatLng(picklat, picklng);
-        pickUpText.setText(sp.getSetting()[8]);
+        binding.pickUpText.setText(sp.getSetting()[8]);
 
         fetchNearDriver(pickUpLatLang);
-//        destinationLatLang = new LatLng(dLatitude,dLongitude);
-//        destinationText.setText(dAlamat);
-//        if(dLatitude == 0 || dLatitude == 0){
-//            notif("Alamat Tujuan Tidak Tersedia.");
-//            finish();
-//        }else{
-//
-//            try {
-//                MapDirectionAPI.getDirection(pickUpLatLang, destinationLatLang).enqueue(updateRouteCallback);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
 
-        dokument.setSelected(true);
-        fashion.setSelected(false);
-        box.setSelected(false);
-        other.setSelected(false);
+        binding.dokumen.setSelected(true);
+        binding.fashion.setSelected(false);
+        binding.box.setSelected(false);
+        binding.other.setSelected(false);
         itemdetail = "document";
-        othertext.setVisibility(View.GONE);
+        binding.otherdetail.setVisibility(View.GONE);
 
-        dokument.setOnClickListener(new View.OnClickListener() {
+        binding.dokumen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dokument.setSelected(true);
-                fashion.setSelected(false);
-                box.setSelected(false);
-                other.setSelected(false);
+                binding.dokumen.setSelected(true);
+                binding.fashion.setSelected(false);
+                binding.box.setSelected(false);
+                binding.other.setSelected(false);
                 itemdetail = "document";
-                othertext.setVisibility(View.GONE);
-                othertext.setText("");
+                binding.otherdetail.setVisibility(View.GONE);
+                binding.otherdetail.setText("");
             }
         });
 
-        fashion.setOnClickListener(new View.OnClickListener() {
+        binding.fashion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dokument.setSelected(false);
-                fashion.setSelected(true);
-                box.setSelected(false);
-                other.setSelected(false);
+                binding.dokumen.setSelected(false);
+                binding.fashion.setSelected(true);
+                binding.box.setSelected(false);
+                binding.other.setSelected(false);
                 itemdetail = "fashion";
-                othertext.setVisibility(View.GONE);
-                othertext.setText("");
+                binding.otherdetail.setVisibility(View.GONE);
+                binding.otherdetail.setText("");
             }
         });
 
-        box.setOnClickListener(new View.OnClickListener() {
+        binding.box.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dokument.setSelected(false);
-                fashion.setSelected(false);
-                box.setSelected(true);
-                other.setSelected(false);
+                binding.dokumen.setSelected(false);
+                binding.fashion.setSelected(false);
+                binding.box.setSelected(true);
+                binding.other.setSelected(false);
                 itemdetail = "box";
-                othertext.setVisibility(View.GONE);
-                othertext.setText("");
+                binding.otherdetail.setVisibility(View.GONE);
+                binding.otherdetail.setText("");
             }
         });
 
-        other.setOnClickListener(new View.OnClickListener() {
+        binding.other.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dokument.setSelected(false);
-                fashion.setSelected(false);
-                box.setSelected(false);
-                other.setSelected(true);
-                othertext.setVisibility(View.VISIBLE);
+                binding.dokumen.setSelected(false);
+                binding.fashion.setSelected(false);
+                binding.box.setSelected(false);
+                binding.other.setSelected(true);
+                binding.otherdetail.setVisibility(View.VISIBLE);
             }
         });
 
-        btnpromo.setOnClickListener(new View.OnClickListener() {
+        binding.btnpromo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     Objects.requireNonNull(imm).hideSoftInputFromWindow(Objects.requireNonNull(getCurrentFocus()).getWindowToken(), 0);
-                    if (promokode.getText().toString().isEmpty()) {
+                    if (binding.promocode.getText().toString().isEmpty()) {
                         notif("Promo code cant be empty!");
                     } else {
                         promokodedata();
                     }
-                    promokode.getText().clear();
+                    binding.promocode.getText().clear();
                     sukses("Promo Berhasil Digunakan.");
                 } catch (Exception ignored) {
 
                 }
-
             }
         });
 
-        closeDriver.setOnClickListener(new View.OnClickListener() {
+        binding.closeDriver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stepLayout3.setVisibility(View.GONE);
-                stepLayout2.setVisibility(View.VISIBLE);
+                binding.Step3.setVisibility(View.GONE);
+                binding.step2.setVisibility(View.VISIBLE);
             }
         });
-
-//        btnOrder.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-
     }
-
-//----------batas awal dialog floating---------------
 
     private void openDialogConfirm() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -662,11 +447,9 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
         builder.setCancelable(true);
 
         ImageView close = dialogView.findViewById(R.id.imageView8);
-
         Button saveButton = dialogView.findViewById(R.id.button1);
         AlertDialog alertDialog = builder.create();
 
-        // Set nilai awal input dialog dengan nilai dari variabel global
         EditText senderNameEditText = dialogView.findViewById(R.id.sendername);
         senderNameEditText.setText(senderName);
 
@@ -684,10 +467,6 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                     }
                 }
         });
-
-
-
-
 
         EditText receiverNameEditText = dialogView.findViewById(R.id.recievername);
         receiverNameEditText.setText(receiverName);
@@ -707,30 +486,21 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                 }
         });
 
-
-
-
-
-
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Mengambil data dari input dialog
                 String newSenderName = senderNameEditText.getText().toString();
                 String newPhoneNumber = phoneNumberEditText.getText().toString();
                 String newReceiverName = receiverNameEditText.getText().toString();
                 String newPhoneNumberReceiver = phoneNumberReceiverEditText.getText().toString();
 
-                // Tutup dialog setelah menyimpan nilai teks
                 alertDialog.dismiss();
 
-                // Menyimpan data ke variabel global setelah dialog ditutup
                 senderName = newSenderName;
                 phoneNumber = newPhoneNumber;
                 receiverName = newReceiverName;
                 phoneNumberReceiver = newPhoneNumberReceiver;
 
-                // Update tampilan atau melakukan tindakan lainnya dengan data yang diperbarui
                 updateUIWithData();
             }
         });
@@ -753,35 +523,28 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
     private void updateUIWithData() {
-
-        sendername.setText(senderName);
-        senderphone.setText(phoneNumber);
-        recievername.setText(receiverName);
-        recieverphone.setText(phoneNumberReceiver);
+        binding.sendername.setText(senderName);
+        binding.phonenumber.setText(phoneNumber);
+        binding.recievername.setText(receiverName);
+        binding.phonenumberreceiever.setText(phoneNumberReceiver);
     }
-
-//-----------batas dialog floating-------------
-
-
-
-
 
     public void sukses(String text) {
         String BGColor = Warna;
-        rlnotif.setVisibility(View.VISIBLE);
-        rlnotif.setBackgroundColor(Color.parseColor(BGColor));
-        textnotif.setText(text);
+        binding.rlnotif.setVisibility(View.VISIBLE);
+        binding.rlnotif.setBackgroundColor(Color.parseColor(BGColor));
+        binding.textnotif.setText(text);
 
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                rlnotif.setVisibility(View.GONE);
+                binding.rlnotif.setVisibility(View.GONE);
             }
         }, 3000);
     }
 
     private void onPickUp() {
-        setDestinationContainer.setVisibility(View.VISIBLE);
-        setPickUpContainer.setVisibility(View.GONE);
+        binding.destinationContainer.setVisibility(View.VISIBLE);
+        binding.pickUpContainer.setVisibility(View.GONE);
         if (pickUpMarker != null) pickUpMarker.remove();
         LatLng centerPos = gMap.getCameraPosition().target;
         pickUpMarker = gMap.addMarker(new MarkerOptions()
@@ -789,14 +552,12 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                 .title("Pick Up")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.pickup)));
         pickUpLatLang = centerPos;
-        requestAddress(centerPos, pickUpText);
+        requestAddress(centerPos, binding.pickUpText);
         fetchNearDriver(pickUpLatLang);
         requestRoute();
-
     }
 
     private void onDestination() {
-
         if (destinationMarker != null) destinationMarker.remove();
         LatLng centerPos = gMap.getCameraPosition().target;
         destinationMarker = gMap.addMarker(new MarkerOptions()
@@ -804,16 +565,15 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                 .title("Destination")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.destination)));
         destinationLatLang = centerPos;
-        requestAddress(centerPos, destinationText);
+        requestAddress(centerPos, binding.destinationText);
         requestRoute();
 
-        setDestinationContainer.setVisibility(View.GONE);
-        if (pickUpText.getText().toString().isEmpty()) {
-            setPickUpContainer.setVisibility(View.VISIBLE);
+        binding.destinationContainer.setVisibility(View.GONE);
+        if (binding.pickUpText.getText().toString().isEmpty()) {
+            binding.pickUpContainer.setVisibility(View.VISIBLE);
         } else {
-            setPickUpContainer.setVisibility(View.GONE);
+            binding.pickUpContainer.setVisibility(View.GONE);
         }
-
     }
 
     private void updateDistance(long distance) {
@@ -822,7 +582,7 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
         float km = ((float) (distance)) / 1000f;
         mjarak = km;
         String format = String.format(Locale.US, "%.1f", km);
-        jarak.setText(format + "Km");
+        binding.distance.setText(format + "Km");
         String biaya = String.valueOf(biayaminimum);
         Log.e("Waduh", biaya);
         long biayaTotal = Utility.fixPembulatan((long) (Double.parseDouble(getbiaya) * km));
@@ -834,76 +594,75 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
         final long finalBiayaTotal = biayaTotal;
         Log.e("Kabeh", String.valueOf(biayaTotal));
         String totalbiaya = String.valueOf(finalBiayaTotal);
-        Utility.currencyTXT(cost, totalbiaya, this);
-        Utility.currencyTXT(priceText, totalbiaya, this);
-        //  TampilPoint(finalBiayaTotal);
+        Utility.currencyTXT(binding.cost, totalbiaya, this);
+        Utility.currencyTXT(binding.price, totalbiaya, this);
         long saldokini = Long.parseLong(saldoWallet);
-        //opsi
+
         if (saldokini < (biayaTotal - (harga * Double.parseDouble(biayaakhir)))) {
-            llcheckedcash.setOnClickListener(new View.OnClickListener() {
+            binding.llcheckedcash.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String totalbiaya = String.valueOf(finalBiayaTotal);
-                    Utility.currencyTXT(priceText, totalbiaya, context);
-                    Utility.currencyTXT(diskon, String.valueOf(promocode), SendNewActivity.this);
-                    numdiskon.setText(String.valueOf(promocode));
-                    checkedcash.setSelected(true);
-                    checkedwallet.setSelected(false);
+                    Utility.currencyTXT(binding.price, totalbiaya, context);
+                    Utility.currencyTXT(binding.diskon, String.valueOf(promocode), SendNewActivity.this);
+                    binding.numdiskon.setText(String.valueOf(promocode));
+                    binding.checkedcash.setSelected(true);
+                    binding.checkedwallet.setSelected(false);
                     checkedpaywallet = "0";
                     Log.e("CHECKEDWALLET", checkedpaywallet);
-                    cashpayment.setTextColor(getResources().getColor(R.color.colorgradient));
-                    walletpayment.setTextColor(getResources().getColor(R.color.gray));
+                    binding.cashPayment.setTextColor(getResources().getColor(R.color.colorgradient));
+                    binding.walletpayment.setTextColor(getResources().getColor(R.color.gray));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        checkedcash.setBackgroundTintList(getResources().getColorStateList(R.color.colorgradient));
-                        checkedwallet.setBackgroundTintList(getResources().getColorStateList(R.color.gray));
+                        binding.checkedcash.setBackgroundTintList(getResources().getColorStateList(R.color.colorgradient));
+                        binding.checkedwallet.setBackgroundTintList(getResources().getColorStateList(R.color.gray));
                     }
                 }
             });
         } else {
-            llcheckedcash.setOnClickListener(new View.OnClickListener() {
+            binding.llcheckedcash.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String totalbiaya = String.valueOf(finalBiayaTotal);
-                    Utility.currencyTXT(priceText, totalbiaya, context);
-                    Utility.currencyTXT(diskon, String.valueOf(promocode), SendNewActivity.this);
-                    numdiskon.setText(String.valueOf(promocode));
-                    checkedcash.setSelected(true);
-                    checkedwallet.setSelected(false);
+                    Utility.currencyTXT(binding.price, totalbiaya, context);
+                    Utility.currencyTXT(binding.diskon, String.valueOf(promocode), SendNewActivity.this);
+                    binding.numdiskon.setText(String.valueOf(promocode));
+                    binding.checkedcash.setSelected(true);
+                    binding.checkedwallet.setSelected(false);
                     checkedpaywallet = "0";
                     Log.e("CHECKEDWALLET", checkedpaywallet);
-                    cashpayment.setTextColor(getResources().getColor(R.color.colorgradient));
-                    walletpayment.setTextColor(getResources().getColor(R.color.gray));
+                    binding.cashPayment.setTextColor(getResources().getColor(R.color.colorgradient));
+                    binding.walletpayment.setTextColor(getResources().getColor(R.color.gray));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        checkedcash.setBackgroundTintList(getResources().getColorStateList(R.color.colorgradient));
-                        checkedwallet.setBackgroundTintList(getResources().getColorStateList(R.color.gray));
+                        binding.checkedcash.setBackgroundTintList(getResources().getColorStateList(R.color.colorgradient));
+                        binding.checkedwallet.setBackgroundTintList(getResources().getColorStateList(R.color.gray));
                     }
                 }
             });
             final long finalBiayaTotal1 = biayaTotal;
-            llcheckedwallet.setOnClickListener(new View.OnClickListener() {
+            binding.llcheckedwallet.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     long diskonwallet = (long) (Double.parseDouble(biayaakhir) * harga);
                     long totalwallet = diskonwallet + promocode;
                     long kalkulasi = fixPembulatan(totalwallet);
-                    Utility.currencyTXT(diskon, String.valueOf(kalkulasi), context);
-                    numdiskon.setText(String.valueOf(kalkulasi));
+                    Utility.currencyTXT(binding.diskon, String.valueOf(kalkulasi), context);
+                    binding.numdiskon.setText(String.valueOf(kalkulasi));
                     String totalbiaya = String.valueOf(finalBiayaTotal1 - kalkulasi);
-                    Utility.currencyTXT(priceText, totalbiaya, context);
-                    checkedcash.setSelected(false);
-                    checkedwallet.setSelected(true);
+                    Utility.currencyTXT(binding.price, totalbiaya, context);
+                    binding.checkedcash.setSelected(false);
+                    binding.checkedwallet.setSelected(true);
                     checkedpaywallet = "1";
                     Log.e("CHECKEDWALLET", checkedpaywallet);
-                    walletpayment.setTextColor(getResources().getColor(R.color.colorgradient));
-                    cashpayment.setTextColor(getResources().getColor(R.color.gray));
+                    binding.walletpayment.setTextColor(getResources().getColor(R.color.colorgradient));
+                    binding.cashPayment.setTextColor(getResources().getColor(R.color.gray));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        checkedwallet.setBackgroundTintList(getResources().getColorStateList(R.color.colorgradient));
-                        checkedcash.setBackgroundTintList(getResources().getColorStateList(R.color.gray));
+                        binding.checkedwallet.setBackgroundTintList(getResources().getColorStateList(R.color.colorgradient));
+                        binding.checkedcash.setBackgroundTintList(getResources().getColorStateList(R.color.gray));
                     }
                 }
             });
         }
-        btnOrder.setVisibility(View.VISIBLE);
+        binding.order.setVisibility(View.VISIBLE);
     }
 
     private void fetchNearDriver(LatLng latLng) {
@@ -923,13 +682,11 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                 if (response.isSuccessful()) {
                     driverAvailable = Objects.requireNonNull(response.body()).getData();
                     createMarker();
-
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<GetNearRideCarResponseJson> call, @NonNull Throwable t) {
-
             }
         });
     }
@@ -946,8 +703,8 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
         }
     }
 
-    private void notif(String pesan){
-        Snackbar snackbar = Snackbar.make(rootLayout, pesan, Snackbar.LENGTH_LONG);
+    private void notif(String pesan) {
+        Snackbar snackbar = Snackbar.make(binding.rootLayout, pesan, Snackbar.LENGTH_LONG);
         snackbar.getView().setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
         snackbar.show();
     }
@@ -966,8 +723,6 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                 gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()), 15f)
                 );
-
-//                gMap.animateCamera(CameraUpdateFactory.zoomTo(15f));
             }
             LatLng mlatLng = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
             fetchNearDriver(mlatLng);
@@ -978,14 +733,12 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
         Directions directions = new Directions(SendNewActivity.this);
         try {
             List<Route> routes = directions.parse(json);
-
             if (directionLine != null) directionLine.remove();
             if (routes.size() > 0) {
                 directionLine = gMap.addPolyline((new PolylineOptions())
                         .addAll(routes.get(0).getOverviewPolyLine())
                         .color(ContextCompat.getColor(SendNewActivity.this, R.color.default_badge_background_color))
                         .width(8));
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1012,10 +765,7 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
         gMap = googleMap;
         gMap.getUiSettings().setMyLocationButtonEnabled(true);
         gMap.getUiSettings().setMapToolbarEnabled(true);
-
         isMapReady = true;
-//        gMap.setOnMarkerClickListener(this);
-
         updateLastLocation(true);
     }
 
@@ -1027,7 +777,7 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                 @Override
                 public void run() {
                     try {
-                        if(pickUpLatLang != null){
+                        if (pickUpLatLang != null) {
                             fetchNearDriver(pickUpLatLang);
                         }
                     } catch (Exception e) {
@@ -1038,7 +788,7 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                         public void run() {
                             if (NetworkManager.isConnectToInternet(SendNewActivity.this)) {
                                 try {
-                                    if(pickUpLatLang != null){
+                                    if (pickUpLatLang != null) {
                                         fetchNearDriver(pickUpLatLang);
                                     }
                                 } catch (Exception e) {
@@ -1072,12 +822,12 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
     protected void onResume() {
         super.onResume();
         User userLogin = BaseApp.getInstance(this).getLoginUser();
-        if(userLogin.getWalletSaldo() == 0){
+        if (userLogin.getWalletSaldo() == 0) {
             saldoWallet = sp.getSetting()[5];
-            Utility.currencyTXT(saldotext, saldoWallet, this);
-        }else{
+            Utility.currencyTXT(binding.saldo, saldoWallet, this);
+        } else {
             saldoWallet = String.valueOf(userLogin.getWalletSaldo());
-            Utility.currencyTXT(saldotext, saldoWallet, this);
+            Utility.currencyTXT(binding.saldo, saldoWallet, this);
         }
         startIsDriver();
     }
@@ -1095,29 +845,9 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
-//                String addressasal = data.getStringExtra(ActivityAmbil.LOCATION_TITLE);
-//                String addressset = data.getStringExtra(ActivityAmbil.LOCATION_NAME);
-//                LatLng latLng = data.getParcelableExtra(ActivityAmbil.LOCATION_LATLNG);
-//
-//                pickUpLatLang = latLng;
-//                pickUpText.setText(addressset);
-//                NameAsal.setText(addressasal);
-//                onPickUp(latLng);
-//                try {
-//                    new Timer().schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {
-//                            MapDirectionAPI.getDirection(pickUpLatLang, destinationLatLang).enqueue(updateRouteCallback);
-//                        }
-//                    }, 5000);
-//                    //CekKM(latLng,destinationLatLang);
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
                 if (resultCode == RESULT_OK) {
                     Place place = Autocomplete.getPlaceFromIntent(data);
-                    pickUpText.setText(place.getAddress());
+                    binding.pickUpText.setText(place.getAddress());
                     LatLng latLng = place.getLatLng();
                     if (latLng != null) {
                         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
@@ -1134,25 +864,9 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
 
         if (requestCode == 2) {
             if (resultCode == Activity.RESULT_OK) {
-//                String addressset = data.getStringExtra(ActivityTujuan.LOCATION_NAME);
-//                LatLng latLng = data.getParcelableExtra(ActivityTujuan.LOCATION_LATLNG);
-//                String NameStreet = data.getParcelableExtra(ActivityTujuan.LOCATION_TITLE);
-//                destinationLatLang = latLng;
-//                destinationText.setText(addressset);
-//                NameTujuan.setText(NameStreet);
-//                onDestination(destinationLatLang);
-//                try {
-//                    // CekKM(pickUpLatLang, latLng);
-//                    StepLayout2.setVisibility(View.VISIBLE);
-//                    MapDirectionAPI.getDirection(pickUpLatLang, destinationLatLang).enqueue(updateRouteCallback);
-//
-//                    Log.d("KlikTujuan",latLng.latitude + "," + latLng.longitude);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
                 if (resultCode == RESULT_OK) {
                     Place place = Autocomplete.getPlaceFromIntent(data);
-                    destinationText.setText(place.getAddress());
+                    binding.destinationText.setText(place.getAddress());
                     LatLng latLng = place.getLatLng();
                     if (latLng != null) {
                         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
@@ -1167,28 +881,6 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
             }
         }
     }
-
-//    @Override
-//    public boolean onMarkerClick(Marker marker) {
-//        Log.e("MARKER", marker.getTitle().toString());
-//        if(marker.getTitle().equalsIgnoreCase("Pick Up")){
-//            Intent i = new Intent(OjekNewActivity.this, ActivitySetHome.class);
-//            i.putExtra("Lat",Latitude);
-//            i.putExtra("Lng",Longitude);
-//            i.putExtra("radius",Radius);
-//            i.putExtra(ActivityAmbil.FORM_VIEW_INDICATOR, 1);
-//            startActivityForResult(i, 1);
-//        }else if(marker.getTitle().equalsIgnoreCase("Destination")){
-//            Intent i = new Intent(OjekNewActivity.this, ActivitySetHome.class);
-//            i.putExtra("Lat",Latitude);
-//            i.putExtra("Lng",Longitude);
-//            i.putExtra("radius",Radius);
-//            i.putExtra(ActivityTujuan.FORM_VIEW_INDICATOR, 2);
-//            startActivityForResult(i, 2);
-//        }
-//
-//        return true;
-//    }
 
     private void createMarker() {
         if (!driverAvailable.isEmpty()) {
@@ -1275,8 +967,7 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
 
     private void requestRoute() {
         if (pickUpLatLang != null && destinationLatLang != null) {
-            rlprogress.setVisibility(View.VISIBLE);
-//            textprogress.setText(getString(R.string.waiting_pleaseWait));
+            binding.rlprogress.setVisibility(View.VISIBLE);
             MapDirectionAPI.getDirection(pickUpLatLang, destinationLatLang).enqueue(updateRouteCallback);
         }
     }
@@ -1316,12 +1007,12 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
 
     @SuppressLint("SetTextI18n")
     private void promokodedata() {
-        btnpromo.setEnabled(false);
-        btnpromo.setText("Wait...");
+        binding.btnpromo.setEnabled(false);
+        binding.btnpromo.setText("Wait...");
         final User user = BaseApp.getInstance(this).getLoginUser();
         PromoRequestJson request = new PromoRequestJson();
         request.setFitur(fitur);
-        request.setCode(promokode.getText().toString());
+        request.setCode(binding.promocode.getText().toString());
 
         UserService service = ServiceGenerator.createService(UserService.class, user.getNoTelepon(), user.getPassword());
         service.promocode(request).enqueue(new Callback<PromoResponseJson>() {
@@ -1329,8 +1020,8 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
             public void onResponse(Call<PromoResponseJson> call, Response<PromoResponseJson> response) {
                 if (response.isSuccessful()) {
                     if (Objects.requireNonNull(response.body()).getMessage().equalsIgnoreCase("success")) {
-                        btnpromo.setEnabled(true);
-                        btnpromo.setText("Use");
+                        binding.btnpromo.setEnabled(true);
+                        binding.btnpromo.setText("Use");
                         if (response.body().getType().equals("persen")) {
                             promocode = Utility.fixPembulatan((Long.parseLong(response.body().getNominal()) * harga) / 100);
                         } else {
@@ -1341,34 +1032,34 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                             long diskonwallet = (long) (Double.parseDouble(biayaakhir) * harga);
                             String diskontotal = String.valueOf(diskonwallet + promocode);
                             String totalbiaya = String.valueOf(harga - (diskonwallet + promocode));
-                            Utility.currencyTXT(priceText, totalbiaya, context);
-                            Utility.currencyTXT(diskon, diskontotal, SendNewActivity.this);
-                            numdiskon.setText(diskontotal);
+                            Utility.currencyTXT(binding.price, totalbiaya, context);
+                            Utility.currencyTXT(binding.diskon, diskontotal, SendNewActivity.this);
+                            binding.numdiskon.setText(diskontotal);
                         } else {
                             String diskontotal = String.valueOf(promocode);
                             String totalbiaya = String.valueOf(harga - promocode);
-                            Utility.currencyTXT(priceText, totalbiaya, context);
-                            Utility.currencyTXT(diskon, diskontotal, SendNewActivity.this);
-                            numdiskon.setText(diskontotal);
+                            Utility.currencyTXT(binding.price, totalbiaya, context);
+                            Utility.currencyTXT(binding.diskon, diskontotal, SendNewActivity.this);
+                            binding.numdiskon.setText(diskontotal);
                         }
                     } else {
-                        btnpromo.setEnabled(true);
-                        btnpromo.setText("Use");
+                        binding.btnpromo.setEnabled(true);
+                        binding.btnpromo.setText("Use");
                         notif("promo code not available!");
                         promocode = 0;
                         if (checkedpaywallet.equals("1")) {
                             long diskonwallet = (long) (Double.parseDouble(biayaakhir) * harga);
                             String diskontotal = String.valueOf(diskonwallet + promocode);
                             String totalbiaya = String.valueOf(harga - (diskonwallet + promocode));
-                            Utility.currencyTXT(priceText, totalbiaya, context);
-                            Utility.currencyTXT(diskon, diskontotal, SendNewActivity.this);
-                            numdiskon.setText(diskontotal);
+                            Utility.currencyTXT(binding.price, totalbiaya, context);
+                            Utility.currencyTXT(binding.diskon, diskontotal, SendNewActivity.this);
+                            binding.numdiskon.setText(diskontotal);
                         } else {
                             String diskontotal = String.valueOf(promocode);
                             String totalbiaya = String.valueOf(harga - promocode);
-                            Utility.currencyTXT(priceText, totalbiaya, context);
-                            Utility.currencyTXT(diskon, diskontotal, SendNewActivity.this);
-                            numdiskon.setText(diskontotal);
+                            Utility.currencyTXT(binding.price, totalbiaya, context);
+                            Utility.currencyTXT(binding.diskon, diskontotal, SendNewActivity.this);
+                            binding.numdiskon.setText(diskontotal);
                         }
                     }
                 } else {
@@ -1389,7 +1080,7 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
             if (driverAvailable.isEmpty()) {
                 notif("Sorry, there are no drivers around you.");
             } else {
-                rlprogress.setVisibility(View.VISIBLE);
+                binding.rlprogress.setVisibility(View.VISIBLE);
                 SendRequestJson param = new SendRequestJson();
                 User userLogin = BaseApp.getInstance(this).getLoginUser();
                 param.setIdPelanggan(userLogin.getId());
@@ -1400,30 +1091,28 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                 param.setEndLongitude(destinationLatLang.longitude);
                 param.setJarak(mjarak);
                 param.setHarga(this.harga);
-                param.setEstimasi(fiturtext.getText().toString());
-                param.setKreditpromo(numdiskon.getText().toString());
-                param.setAlamatAsal(pickUpText.getText().toString());
-                param.setAlamatTujuan(destinationText.getText().toString());
+                param.setEstimasi(binding.fiturtext.getText().toString());
+                param.setKreditpromo(binding.numdiskon.getText().toString());
+                param.setAlamatAsal(binding.pickUpText.getText().toString());
+                param.setAlamatTujuan(binding.destinationText.getText().toString());
                 param.setPakaiWallet(1);
-                param.setNamaPengirim(sendername.getText().toString());
-                param.setTeleponPengirim("+62" + senderphone.getText().toString());
-                param.setNamaPenerima(recievername.getText().toString());
-                param.setTeleponPenerima("+62" + recieverphone.getText().toString());
-                if (!othertext.getText().toString().isEmpty()) {
-                    param.setNamaBarang(othertext.getText().toString());
+                param.setNamaPengirim(binding.sendername.getText().toString());
+                param.setTeleponPengirim("+62" + binding.phonenumber.getText().toString());
+                param.setNamaPenerima(binding.recievername.getText().toString());
+                param.setTeleponPenerima("+62" + binding.phonenumberreceiever.getText().toString());
+                if (!binding.otherdetail.getText().toString().isEmpty()) {
+                    param.setNamaBarang(binding.otherdetail.getText().toString());
                 } else {
                     param.setNamaBarang(itemdetail);
                 }
 
                 sendRequestTransaksi(param, driverAvailable, isAuto, token);
             }
-        }
-
-        else {
+        } else {
             if (driverAvailable.isEmpty()) {
                 notif("Sorry, there are no drivers around you.");
             } else {
-                rlprogress.setVisibility(View.VISIBLE);
+                binding.rlprogress.setVisibility(View.VISIBLE);
                 SendRequestJson param = new SendRequestJson();
                 User userLogin = BaseApp.getInstance(this).getLoginUser();
                 param.setIdPelanggan(userLogin.getId());
@@ -1434,17 +1123,17 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                 param.setEndLongitude(destinationLatLang.longitude);
                 param.setJarak(mjarak);
                 param.setHarga(this.harga);
-                param.setEstimasi(fiturtext.getText().toString());
-                param.setKreditpromo(numdiskon.getText().toString());
-                param.setAlamatAsal(pickUpText.getText().toString());
-                param.setAlamatTujuan(destinationText.getText().toString());
+                param.setEstimasi(binding.fiturtext.getText().toString());
+                param.setKreditpromo(binding.numdiskon.getText().toString());
+                param.setAlamatAsal(binding.pickUpText.getText().toString());
+                param.setAlamatTujuan(binding.destinationText.getText().toString());
                 param.setPakaiWallet(0);
-                param.setNamaPengirim(sendername.getText().toString());
-                param.setTeleponPengirim("+62" + senderphone.getText().toString());
-                param.setNamaPenerima(recievername.getText().toString());
-                param.setTeleponPenerima("+62" + recieverphone.getText().toString());
-                if (!othertext.getText().toString().isEmpty()) {
-                    param.setNamaBarang(othertext.getText().toString());
+                param.setNamaPengirim(binding.sendername.getText().toString());
+                param.setTeleponPengirim("+62" + binding.phonenumber.getText().toString());
+                param.setNamaPenerima(binding.recievername.getText().toString());
+                param.setTeleponPenerima("+62" + binding.phonenumberreceiever.getText().toString());
+                if (!binding.otherdetail.getText().toString().isEmpty()) {
+                    param.setNamaBarang(binding.otherdetail.getText().toString());
                 } else {
                     param.setNamaBarang(itemdetail);
                 }
@@ -1455,7 +1144,7 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
     private void sendRequestTransaksi(SendRequestJson param, final List<DriverModel> driverList, boolean isAuto, String token) {
-        rlprogress.setVisibility(View.VISIBLE);
+        binding.rlprogress.setVisibility(View.VISIBLE);
         User loginUser = BaseApp.getInstance(this).getLoginUser();
         final BookService service = ServiceGenerator.createService(BookService.class, loginUser.getEmail(), loginUser.getPassword());
 
@@ -1468,16 +1157,14 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                     thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            if(isAuto){
-
+                            if (isAuto) {
                                 for (int i = 0; i < driverList.size(); i++) {
                                     Log.e("OrderDriver", "Jenis: " + driverList.get(i).getRegId());
                                     fcmBroadcast(i, driverList);
                                 }
-                            }else{
+                            } else {
                                 manualOrder(token);
                             }
-
 
                             try {
                                 Thread.sleep(30000);
@@ -1501,8 +1188,7 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                                                         notif("Driver not found!");
                                                     }
                                                 });
-
-                                                rlprogress.setVisibility(View.GONE);
+                                                binding.rlprogress.setVisibility(View.GONE);
                                             }
                                         }
                                     }
@@ -1514,16 +1200,13 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                                             @Override
                                             public void run() {
                                                 notif("Driver not found!");
-                                                rlprogress.setVisibility(View.GONE);
+                                                binding.rlprogress.setVisibility(View.GONE);
                                             }
                                         });
-
-                                        rlprogress.setVisibility(View.GONE);
-
+                                        binding.rlprogress.setVisibility(View.GONE);
                                     }
                                 });
                             }
-
                         }
                     });
                     thread.start();
@@ -1534,7 +1217,7 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
             public void onFailure(@NonNull Call<SendResponseJson> call, @NonNull Throwable t) {
                 t.printStackTrace();
                 notif("Your account has a problem, please contact customer service!");
-                rlprogress.setVisibility(View.GONE);
+                binding.rlprogress.setVisibility(View.GONE);
             }
         });
     }
@@ -1561,12 +1244,11 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
             request.setKreditPromo(transaksi.getKreditPromo());
             request.setPakaiWallet(String.valueOf(transaksi.isPakaiWallet()));
             request.setEstimasi(transaksi.getEstimasi());
-            request.setLayanan(fiturtext.getText().toString());
+            request.setLayanan(binding.fiturtext.getText().toString());
             request.setLayanandesc(designedFitur.getKeterangan());
             request.setIcon(ICONFITUR);
-            request.setBiaya(cost.getText().toString());
+            request.setBiaya(binding.cost.getText().toString());
             request.setDistance(String.valueOf(mjarak));
-
 
             String namaLengkap = String.format("%s", loginUser.getFullnama());
             request.setNamaPelanggan(namaLengkap);
@@ -1579,7 +1261,7 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
         DriverModel driverToSend = driverList.get(index);
         request.setTime_accept(new Date().getTime() + "");
         final User login = BaseApp.getInstance(context).getLoginUser();
-        if(login != null){
+        if (login != null) {
             UserService service = ServiceGenerator.createService(UserService.class, login.getEmail(), login.getPassword());
             SendFcmRequest param = new SendFcmRequest();
             param.setId("1");
@@ -1605,9 +1287,9 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
         }
     }
 
-    private void manualOrder(String tokenDriver){
+    private void manualOrder(String tokenDriver) {
         final User login = BaseApp.getInstance(context).getLoginUser();
-        if(login != null){
+        if (login != null) {
             UserService service = ServiceGenerator.createService(UserService.class, login.getEmail(), login.getPassword());
             SendFcmRequest param = new SendFcmRequest();
             param.setId("1");
@@ -1638,7 +1320,6 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                 AutocompleteActivityMode.OVERLAY, fields)
                 .build(this);
         startActivityForResult(intent, request_code);
-
     }
 
     private void driverterdekat(LatLng latLng) {
@@ -1658,18 +1339,18 @@ public class SendNewActivity extends AppCompatActivity implements OnMapReadyCall
                 if (response.isSuccessful()) {
                     driverAvailable = Objects.requireNonNull(response.body()).getData();
                     for (int i = 0; i < driverAvailable.size(); i++) {
-                        if(driverAvailable.get(i).getStatus().equals("1")){
+                        if (driverAvailable.get(i).getStatus().equals("1")) {
                             LinearLayoutManager layoutManager = new LinearLayoutManager(SendNewActivity.this, LinearLayoutManager.VERTICAL, false);
-                            mDriverRec.setLayoutManager(layoutManager);
-                            mDriverRec.setNestedScrollingEnabled(false);
-                            dAdapter = new ListDriverAdapter(driverAvailable,SendNewActivity.this);
+                            binding.mDriverRec.setLayoutManager(layoutManager);
+                            binding.mDriverRec.setNestedScrollingEnabled(false);
+                            dAdapter = new ListDriverAdapter(driverAvailable, SendNewActivity.this);
                             dAdapter.setOnItemClickListener(new ListDriverClick() {
                                 @Override
                                 public void onItemClick(DriverModel item) {
                                     onOrderButton(false, item.getRegId());
                                 }
                             });
-                            mDriverRec.setAdapter(dAdapter);
+                            binding.mDriverRec.setAdapter(dAdapter);
                         }
                     }
                 }

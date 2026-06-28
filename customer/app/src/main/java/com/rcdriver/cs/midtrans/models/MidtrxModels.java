@@ -4,7 +4,12 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-public class MidtrxModels implements Serializable {
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
+public class MidtrxModels extends RealmObject implements Serializable {
+    @PrimaryKey
     @Expose
     @SerializedName("token")
     private String token;

@@ -4,7 +4,10 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-public class AlamatModel implements Serializable {
+
+import io.realm.RealmObject;
+
+public class AlamatModel extends RealmObject implements Serializable {
     @Expose
     @SerializedName("id_pelanggan")
     private String idpelanggan;

@@ -26,7 +26,7 @@
 
 
 
-<!--batas home dulu-->
+                <!--batas home dulu-->
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -175,6 +175,7 @@
                                                     android:layout_width="55dp"
                                                     android:layout_height="56dp"
                                                     android:background="@drawable/btn_gradient_style"
+                                                    android:backgroundTint="@color/colorPrimary"
                                                     android:gravity="center"
                                                     android:padding="3dp">
 
@@ -219,6 +220,7 @@
                                                     android:layout_width="55dp"
                                                     android:layout_height="56dp"
                                                     android:background="@drawable/btn_gradient_style"
+                                                    android:backgroundTint="@color/colorPrimary"
                                                     android:gravity="center"
                                                     android:padding="3dp">
 
@@ -264,6 +266,7 @@
                                                     android:layout_width="55dp"
                                                     android:layout_height="56dp"
                                                     android:background="@drawable/btn_gradient_style"
+                                                    android:backgroundTint="@color/colorPrimary"
                                                     android:gravity="center"
                                                     android:padding="3dp">
 
@@ -308,6 +311,7 @@
                                                     android:layout_width="55dp"
                                                     android:layout_height="56dp"
                                                     android:background="@drawable/btn_gradient_style"
+                                                    android:backgroundTint="@color/colorPrimary"
                                                     android:gravity="center"
                                                     android:padding="3dp">
 
@@ -384,7 +388,7 @@
 
                 </ImageView>
 
-<!--batas-->
+                <!--batas-->
 
 
                 <LinearLayout
@@ -430,7 +434,7 @@
 
 
 
-<!-- berita -->
+                <!-- berita -->
                 <LinearLayout
                     android:id="@+id/llnews"
                     android:layout_width="match_parent"
@@ -493,7 +497,7 @@
 
 
 
-<!--batas berita -->
+                <!--batas berita -->
                 <RelativeLayout
                     android:id="@+id/llslider"
                     android:layout_width="match_parent"

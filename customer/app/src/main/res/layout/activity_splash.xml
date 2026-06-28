@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center"
-            android:src="@drawable/logo" />
+            android:src="@drawable/namalogo" />
 
         <TextView
             android:layout_width="match_parent"
@@ -35,8 +35,8 @@
             android:layout_marginTop="@dimen/dimen_10dp"
             android:fontFamily="@font/dmsans_regular"
             android:gravity="center"
-            android:text="Caraka"
-            android:textColor="@color/navy"
+            android:text="Asia Transportasi"
+            android:textColor="@color/transparent"
             android:textSize="@dimen/dimen_15dp" />
     </LinearLayout>
 </RelativeLayout>

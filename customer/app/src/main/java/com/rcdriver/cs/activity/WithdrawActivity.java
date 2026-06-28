@@ -73,7 +73,7 @@ public class WithdrawActivity extends AppCompatActivity {
         Intent intent = getIntent();
         type = intent.getStringExtra("type");
         if (Objects.equals(type, "topup")) {
-            images.setImageResource(R.drawable.atm);
+            images.setImageResource(R.drawable.bill);
             images.setScaleType(ImageView.ScaleType.FIT_XY);
             nominal = intent.getStringExtra("nominal");
 

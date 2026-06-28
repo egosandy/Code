@@ -4,7 +4,10 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-public class InbokModel implements Serializable {
+
+import io.realm.RealmObject;
+
+public class InbokModel  extends RealmObject implements Serializable {
     @Expose
     @SerializedName("id")
     private String id;

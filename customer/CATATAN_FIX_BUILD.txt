@@ -1,0 +1,26 @@
+CATATAN FIX BUILD - Costumer
+
+Perbaikan yang diterapkan:
+1. Membersihkan project dari output lama: app/.cxx, app/build, build, app/release, app/sandbox, dan zip lama di dalam project.
+2. Menghapus konfigurasi externalNativeBuild/CMake karena tidak ada file native C/C++ yang benar-benar dibuild. Ini menghindari stale .cxx dan warning NDK yang tidak perlu.
+3. Menghapus dexOptions lama yang deprecated pada Gradle/AGP baru.
+4. Packaging native library dibuat non-legacy / uncompressed agar AGP 8.5.1+ dapat melakukan 16 KB zip alignment.
+5. Dependency android-gif-drawable dihapus karena tidak dipakai di source dan membawa native library libpl_droidsonroids_gif.so; GIF masih ditangani oleh Glide yang sudah ada.
+6. Duplicate FileProvider authority com.asia.pelanggan.fileprovider di AndroidManifest.xml dihapus.
+7. android:extractNativeLibs=false ditambahkan untuk packaging native modern.
+8. gradle.properties dinaikkan memorinya dan build cache Gradle dinonaktifkan agar error cache metadata.bin tidak mudah muncul kembali.
+9. Ditambahkan FIX_GRADLE_CACHE_WINDOWS.bat untuk membersihkan cache lokal Windows sesuai error C:\Users\Administrator\.gradle\caches\8.13\transforms\...\metadata.bin.
+
+Cara pakai di Windows:
+1. Extract zip ini ke folder baru, jangan ditimpa ke folder lama.
+2. Klik kanan FIX_GRADLE_CACHE_WINDOWS.bat > Run as Administrator, atau jalankan dari terminal.
+3. Setelah selesai, buka folder ini di Android Studio.
+4. Sync Gradle, lalu Build > Make Project / Run debug.
+
+Catatan test sandbox:
+Lingkungan ChatGPT tidak memiliki Android SDK/Gradle distribution dan tidak punya akses internet untuk download Gradle 8.13/dependency Maven, sehingga compile Android penuh tidak dapat dijalankan di sandbox. Validasi yang dilakukan: struktur project, syntax XML manifest, pembersihan cache/output, pengecekan duplikasi provider, dan audit native library lama dari APK/AAB yang ada.
+
+Audit 16KB pada APK lama yang ada di zip awal:
+- lib/x86_64/libpl_droidsonroids_gif.so terdeteksi UNALIGNED 64-bit.
+- Karena dependency android-gif-drawable tidak dipakai langsung oleh source, dependency tersebut dihapus untuk menghilangkan sumber warning 16KB.
+- Realm tetap dipakai oleh aplikasi dan librealm-jni.so pada APK lama terdeteksi aligned untuk arm64-v8a dan x86_64.

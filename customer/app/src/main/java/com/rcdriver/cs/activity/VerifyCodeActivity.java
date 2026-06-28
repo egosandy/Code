@@ -1,7 +1,5 @@
 package com.rcdriver.cs.activity;
 
-import com.rcdriver.cs.utils.LocalStore;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -28,6 +26,8 @@ import com.rcdriver.cs.utils.api.service.UserService;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
+
+import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -180,7 +180,11 @@ public class VerifyCodeActivity extends AppCompatActivity {
     }
 
     private void saveUser(User user) {
-        LocalStore.get().saveUser(user);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.delete(User.class);
+        realm.copyToRealm(user);
+        realm.commitTransaction();
         BaseApp.getInstance(VerifyCodeActivity.this).setLoginUser(user);
         // SetLogin(1);
     }

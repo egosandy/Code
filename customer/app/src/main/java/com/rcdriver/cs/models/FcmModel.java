@@ -4,7 +4,10 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-public class FcmModel implements Serializable {
+
+import io.realm.RealmObject;
+
+public class FcmModel extends RealmObject implements Serializable {
     @Expose
     @SerializedName("results")
     public String message;

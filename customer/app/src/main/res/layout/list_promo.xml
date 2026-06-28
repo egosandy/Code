@@ -27,7 +27,7 @@
                 android:layout_height="200dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="fitXY"
-                android:src="@drawable/brochure" />
+                android:src="@drawable/background_edittext" />
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -39,7 +39,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ActivityAmbil extends AppCompatActivity
-        implements PlacesAutoCompleteAdapter.ClickListener, AlamatAdapter.ClickListener {
+        implements PlacesAutoCompleteAdapter.ClickListener,AlamatAdapter.ClickListener {
     public static final String FORM_VIEW_INDICATOR = "FormToFill";
     public static final String LOCATION_TITLE = "LocationTitle";
     public static final String LOCATION_NAME = "LocationName";

@@ -4,12 +4,17 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by Balqis Studio on 1/5/2017.
  */
 
-public class PesananMerchant implements Serializable {
+public class PesananMerchant extends RealmObject implements Serializable {
 
+    @PrimaryKey
     @Expose
     @SerializedName("id_item")
     private int idItem;

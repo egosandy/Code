@@ -77,7 +77,7 @@ public class TransferSaldoActivity extends AppCompatActivity {
         metode = getIntent().getStringExtra(Constants.METHOD_NAME);
 
         Glide.with(this)
-                .load(R.drawable.transfer)
+                .load(R.drawable.background_chat)
                 .into(ivtransfer);
         back_btn.setOnClickListener(new View.OnClickListener() {
             @Override

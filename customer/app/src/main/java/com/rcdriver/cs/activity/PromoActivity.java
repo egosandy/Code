@@ -31,7 +31,6 @@ import com.rcdriver.cs.adapter.PromosiAdapter;
 import com.rcdriver.cs.json.PromoResponse;
 import com.rcdriver.cs.models.VoucherModel;
 import com.rcdriver.cs.utils.CommonUtils;
-import com.rcdriver.cs.utils.Log;
 import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.UserService;
 import es.dmoral.toasty.Toasty;
@@ -72,7 +71,7 @@ public class PromoActivity extends AppCompatActivity{
                 @Override
                 public void onResponse(@NonNull Call<PromoResponse> call, @NonNull Response<PromoResponse> response) {
                     if (response.isSuccessful()) {
-                        Log.d("PromoData", response.body().getMessage());
+                        com.rcdriver.cs.utils.Log.d("PromoData", response.body().getMessage());
                         if (Objects.requireNonNull(response.body()).getMessage().equalsIgnoreCase("found")) {
                             mItems = response.body().getData();
                             for(int i = 0; i < mItems.size(); i++){
@@ -95,7 +94,7 @@ public class PromoActivity extends AppCompatActivity{
                                                 .setDuration(8000);
                                         snackbar.show();
                                         Toasty.info(getApplicationContext(),"Kode Promo Disalin");
-                                        Log.d("PromoData",promomodel.getKode());
+                                        com.rcdriver.cs.utils.Log.d("PromoData",promomodel.getKode());
                                         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                                         ClipData clip = ClipData.newPlainText("kodepromo", promomodel.getKode());
                                         if (clipboard == null || clip == null) return;
@@ -109,7 +108,7 @@ public class PromoActivity extends AppCompatActivity{
 
                 @Override
                 public void onFailure(@NonNull Call<PromoResponse> call, @NonNull Throwable t) {
-                    Log.d("PromoData", t.getMessage());
+                    com.rcdriver.cs.utils.Log.d("PromoData", t.getMessage());
                     t.printStackTrace();
                 }
             });

@@ -1,27 +1,17 @@
 package com.rcdriver.cs.item;
 
-import com.rcdriver.cs.utils.LocalStore;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Paint;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import androidx.recyclerview.widget.RecyclerView;
-
+import com.rcdriver.cs.databinding.ItemTransaksiBinding; // 1. Import class binding
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
-import com.facebook.shimmer.ShimmerFrameLayout;
-import com.makeramen.roundedimageview.RoundedImageView;
 import com.mikepenz.fastadapter.items.AbstractItem;
-
+import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import java.util.Objects;
 import com.rcdriver.cs.R;
@@ -29,6 +19,10 @@ import com.rcdriver.cs.constants.BaseApp;
 import com.rcdriver.cs.constants.Constants;
 import com.rcdriver.cs.models.PesananMerchant;
 import com.rcdriver.cs.utils.Utility;
+import io.realm.Realm;
+
+// Hapus semua import butterknife
+
 /**
  * Created by Maswend Team on 01/03/2020.
  */
@@ -48,6 +42,7 @@ public class ItemItem extends AbstractItem<ItemItem, ItemItem.ViewHolder> {
     public String promo;
     public int quantity;
     public String catatan;
+    private Realm realm;
 
     public ItemItem(Context context, OnCalculatePrice calculatePrice) {
         this.context = context;
@@ -80,8 +75,11 @@ public class ItemItem extends AbstractItem<ItemItem, ItemItem.ViewHolder> {
     @Override
     public void bindView(final ItemItem.ViewHolder holder, List payloads) {
         super.bindView(holder, payloads);
-        holder.namaText.setText(namaMenu);
-        holder.deskripsiText.setText(deskripsiMenu);
+        realm = BaseApp.getInstance(context).getRealmInstance();
+
+        // 2. Akses semua view melalui holder.binding
+        holder.binding.namalayanan.setText(namaMenu);
+        holder.binding.deskripsi.setText(deskripsiMenu);
 
         if (!foto.isEmpty()) {
             Glide.with(this.context)
@@ -90,45 +88,39 @@ public class ItemItem extends AbstractItem<ItemItem, ItemItem.ViewHolder> {
                     .placeholder(R.drawable.nocamera)
                     .error(R.drawable.nocamera)
                     .apply(RequestOptions.bitmapTransform(new RoundedCorners(14)))
-                    .into(holder.image);
-
-
-           /* PicassoTrustAll.getInstance(context)
-                    .load(Constants.IMAGESITEM + foto)
-                    .resize(250, 250)
-                    .into(holder.image);*/
+                    .into(holder.binding.icon);
         }
 
-        holder.quantityText.setText(String.valueOf(quantity));
-        holder.notesText.setEnabled(quantity > 0);
-        holder.notesText.setText(catatan);
+        holder.binding.quantityText.setText(String.valueOf(quantity));
+        holder.binding.catatan.setEnabled(quantity > 0);
+        holder.binding.catatan.setText(catatan);
 
-        holder.notesText.addTextChangedListener(catatanUpdater);
+        holder.binding.catatan.addTextChangedListener(catatanUpdater);
 
         if (promo.equals("1")) {
-            holder.shimmerbadgeicon.setVisibility(View.VISIBLE);
-            holder.shimmerbadge.setVisibility(View.VISIBLE);
-            holder.shimmerbadge.startShimmerAnimation();
-            holder.hargadasar.setVisibility(View.VISIBLE);
-            Utility.currencyTXT(holder.hargadasar, String.valueOf(harga), context);
-            Utility.currencyTXT(holder.hargaText, String.valueOf(hargapromo), context);
-            holder.hargadasar.setPaintFlags(holder.hargadasar.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.deskripsiText.setMinLines(2);
+            holder.binding.promobadge.setVisibility(View.VISIBLE);
+            holder.binding.shimreview.setVisibility(View.VISIBLE);
+            holder.binding.shimreview.startShimmerAnimation();
+            holder.binding.hargapromo.setVisibility(View.VISIBLE);
+            Utility.currencyTXT(holder.binding.hargapromo, String.valueOf(harga), context);
+            Utility.currencyTXT(holder.binding.harga, String.valueOf(hargapromo), context);
+            holder.binding.hargapromo.setPaintFlags(holder.binding.hargapromo.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.binding.deskripsi.setMinLines(2);
         } else {
-            holder.shimmerbadgeicon.setVisibility(View.GONE);
-            holder.shimmerbadge.setVisibility(View.GONE);
-            holder.shimmerbadge.stopShimmerAnimation();
-            holder.hargadasar.setVisibility(View.GONE);
-            Utility.currencyTXT(holder.hargaText, String.valueOf(harga), context);
+            holder.binding.promobadge.setVisibility(View.GONE);
+            holder.binding.shimreview.setVisibility(View.GONE);
+            holder.binding.shimreview.stopShimmerAnimation();
+            holder.binding.hargapromo.setVisibility(View.GONE);
+            Utility.currencyTXT(holder.binding.harga, String.valueOf(harga), context);
         }
 
-        holder.addQuantity.setOnClickListener(new View.OnClickListener() {
+        holder.binding.addQuantity.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
                 quantity++;
-                holder.quantityText.setText("" + quantity);
-                holder.notesText.setEnabled(true);
+                holder.binding.quantityText.setText("" + quantity);
+                holder.binding.catatan.setEnabled(true);
                 CalculateCost();
                 if (quantity == 1) {
                     AddPesanan(id, cost, quantity, catatan);
@@ -141,19 +133,19 @@ public class ItemItem extends AbstractItem<ItemItem, ItemItem.ViewHolder> {
         });
 
 
-        holder.removeQuantity.setOnClickListener(new View.OnClickListener() {
+        holder.binding.removeQuantity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (quantity - 1 >= 0) {
                     quantity--;
-                    holder.quantityText.setText(String.valueOf(quantity));
+                    holder.binding.quantityText.setText(String.valueOf(quantity));
                     CalculateCost();
                     UpdatePesanan(id, cost, quantity, catatan);
 
                     if (quantity == 0) {
                         DeletePesanan(id);
-                        holder.notesText.setText("");
-                        holder.notesText.setEnabled(false);
+                        holder.binding.catatan.setText("");
+                        holder.binding.catatan.setEnabled(false);
                     }
                 }
 
@@ -176,21 +168,27 @@ public class ItemItem extends AbstractItem<ItemItem, ItemItem.ViewHolder> {
         pesananfood.setTotalHarga(totalHarga);
         pesananfood.setQty(qty);
         pesananfood.setCatatan(notes);
-LocalStore.get().upsertCart(pesananfood);
+        realm.beginTransaction();
+        realm.copyToRealm(pesananfood);
+        realm.commitTransaction();
 
     }
 
     private void UpdatePesanan(int idMakanan, long totalHarga, int qty, String notes) {
-PesananMerchant updateFood = LocalStore.get().getCartByItem(idMakanan);
+        realm.beginTransaction();
+        PesananMerchant updateFood = realm.where(PesananMerchant.class).equalTo("idItem", idMakanan).findFirst();
         Objects.requireNonNull(updateFood).setTotalHarga(totalHarga);
         updateFood.setQty(qty);
         updateFood.setCatatan(notes);
-LocalStore.get().upsertCart(updateFood);
-
+        realm.copyToRealm(updateFood);
+        realm.commitTransaction();
     }
 
     private void DeletePesanan(int idMakanan) {
-LocalStore.get().deleteCartByItem(idMakanan);
+        realm.beginTransaction();
+        PesananMerchant deleteFood = realm.where(PesananMerchant.class).equalTo("idItem", idMakanan).findFirst();
+        Objects.requireNonNull(deleteFood).deleteFromRealm();
+        realm.commitTransaction();
     }
 
 
@@ -204,45 +202,13 @@ LocalStore.get().deleteCartByItem(idMakanan);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView namaText;
-
-        TextView deskripsiText;
-
-        TextView hargaText;
-
-        EditText notesText;
-
-        TextView addQuantity;
-
-        TextView quantityText;
-
-        RoundedImageView image;
-
-        TextView removeQuantity;
-
-        TextView hargadasar;
-
-        LinearLayout itemButton;
-
-        ShimmerFrameLayout shimmerbadge;
-
-        FrameLayout shimmerbadgeicon;
+        // 3. Deklarasikan satu variabel binding
+        ItemTransaksiBinding binding;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            namaText = itemView.findViewById(R.id.namalayanan);
-            deskripsiText = itemView.findViewById(R.id.deskripsi);
-            hargaText = itemView.findViewById(R.id.harga);
-            notesText = itemView.findViewById(R.id.catatan);
-            addQuantity = itemView.findViewById(R.id.add_quantity);
-            quantityText = itemView.findViewById(R.id.quantity_text);
-            image = itemView.findViewById(R.id.icon);
-            removeQuantity = itemView.findViewById(R.id.remove_quantity);
-            hargadasar = itemView.findViewById(R.id.hargapromo);
-            itemButton = itemView.findViewById(R.id.list_item);
-            shimmerbadge = itemView.findViewById(R.id.shimreview);
-            shimmerbadgeicon = itemView.findViewById(R.id.promobadge);
+            // 4. Inisialisasi binding dari itemView
+            binding = ItemTransaksiBinding.bind(itemView);
         }
     }
-
 }

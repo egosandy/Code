@@ -1,7 +1,5 @@
 package com.rcdriver.cs.activity;
 
-import com.rcdriver.cs.utils.LocalStore;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -11,16 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rcdriver.cs.utils.PicassoTrustAll;
-import com.rcdriver.cs.item.CatItemItem;
-import com.rcdriver.cs.item.ItemItem;
-import com.rcdriver.cs.json.GetAllMerchantbyCatRequestJson;
-import com.rcdriver.cs.json.MerchantByIdResponseJson;
-import com.rcdriver.cs.json.MerchantbyIdRequestJson;
-import com.rcdriver.cs.models.CatItemModel;
-import com.rcdriver.cs.models.ItemModel;
-import com.rcdriver.cs.models.PesananMerchant;
-import com.rcdriver.cs.models.User;
-import com.rcdriver.cs.utils.Utility;
+import io.realm.Realm;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,6 +47,16 @@ import com.mikepenz.fastadapter.listeners.ClickEventHook;
 import com.rcdriver.cs.R;
 import com.rcdriver.cs.constants.BaseApp;
 import com.rcdriver.cs.constants.Constants;
+import com.rcdriver.cs.item.CatItemItem;
+import com.rcdriver.cs.item.ItemItem;
+import com.rcdriver.cs.json.GetAllMerchantbyCatRequestJson;
+import com.rcdriver.cs.json.MerchantByIdResponseJson;
+import com.rcdriver.cs.json.MerchantbyIdRequestJson;
+import com.rcdriver.cs.models.CatItemModel;
+import com.rcdriver.cs.models.ItemModel;
+import com.rcdriver.cs.models.PesananMerchant;
+import com.rcdriver.cs.models.User;
+import com.rcdriver.cs.utils.Utility;
 import com.rcdriver.cs.utils.api.MapDirectionAPI;
 import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.UserService;
@@ -95,12 +95,14 @@ public class ActivityInfoMitra extends AppCompatActivity implements ItemItem.OnC
 
     private FastItemAdapter<ItemItem> itemAdapter;
     private List<ItemModel> itemRealmResults;
+    private Realm realm;
     private Button orderManual;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_mitra);
+        realm = Realm.getDefaultInstance();
 
         bottom_sheet = findViewById(R.id.bottom_sheet);
         BottomSheetBehavior.from(bottom_sheet);
@@ -216,10 +218,16 @@ public class ActivityInfoMitra extends AppCompatActivity implements ItemItem.OnC
                                 try {
                                     JSONObject Jobject = new JSONObject(json);
                                     JSONArray Jarray = Jobject.getJSONArray("results");
-                                    JSONObject userdata = Jarray.getJSONObject(0);
-                                    alamat = userdata.getString("formatted_address");
+                                    // PERBAIKAN: Tambahkan pengecekan panjang array sebelum mengambil elemen
+                                    if (Jarray.length() > 0) {
+                                        JSONObject userdata = Jarray.getJSONObject(0);
+                                        alamat = userdata.getString("formatted_address");
+                                    } else {
+                                        alamat = "Alamat tidak ditemukan"; // Beri nilai default jika kosong
+                                    }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
+                                    alamat = "Gagal mendapatkan alamat"; // Beri nilai default jika error
                                 }
                             }
                         });
@@ -243,7 +251,7 @@ public class ActivityInfoMitra extends AppCompatActivity implements ItemItem.OnC
     @SuppressLint("SetTextI18n")
     @Override
     public void calculatePrice() {
-        List<PesananMerchant> existingFood = LocalStore.get().getAllCart();
+        List<PesananMerchant> existingFood = realm.where(PesananMerchant.class).findAll();
 
         int quantity = 0;
         long cost = 0;
@@ -300,7 +308,8 @@ public class ActivityInfoMitra extends AppCompatActivity implements ItemItem.OnC
             @Override
             public void onResponse(@NonNull Call<MerchantByIdResponseJson> call, @NonNull final Response<MerchantByIdResponseJson> response) {
                 if (response.isSuccessful()) {
-                    if (Objects.requireNonNull(response.body()).getMessage().equalsIgnoreCase("success")) {
+                    // PERBAIKAN: Balik perbandingan untuk menghindari NPE jika getMessage() null
+                    if (response.body() != null && "success".equalsIgnoreCase(Objects.requireNonNull(response.body()).getMessage())) {
                         shimmertutup();
 
                         if (!response.body().getFotomerchant().isEmpty()) {
@@ -379,7 +388,11 @@ public class ActivityInfoMitra extends AppCompatActivity implements ItemItem.OnC
                         itemRealmResults = response.body().getData();
                         resume = "1";
                         LoadItem();
-LocalStore.get().saveItems(response.body().getData());
+                        Realm realm = BaseApp.getInstance(ActivityInfoMitra.this).getRealmInstance();
+                        realm.beginTransaction();
+                        realm.delete(ItemModel.class);
+                        realm.copyToRealm(response.body().getData());
+                        realm.commitTransaction();
                         itemAdapter.notifyDataSetChanged();
                         itemAdapter.withSelectable(true);
                         itemAdapter.withItemEvent(new ClickEventHook<ItemItem>() {
@@ -448,7 +461,8 @@ LocalStore.get().saveItems(response.body().getData());
             @Override
             public void onResponse(@NonNull Call<MerchantByIdResponseJson> call, @NonNull Response<MerchantByIdResponseJson> response) {
                 if (response.isSuccessful()) {
-                    if (Objects.requireNonNull(response.body()).getMessage().equalsIgnoreCase("success")) {
+                    // PERBAIKAN: Balik perbandingan untuk menghindari NPE jika getMessage() null
+                    if (response.body() != null && "success".equalsIgnoreCase(Objects.requireNonNull(response.body()).getMessage())) {
                         itemAdapter.clear();
                         shimmerchantnear.setVisibility(View.GONE);
                         rvmerchantnear.setVisibility(View.VISIBLE);
@@ -472,13 +486,16 @@ LocalStore.get().saveItems(response.body().getData());
     }
 
     private void DeletePesanan() {
-LocalStore.get().clearCart();
+        RealmResults<PesananMerchant> deleteFood = realm.where(PesananMerchant.class).findAll();
+        realm.beginTransaction();
+        deleteFood.deleteAllFromRealm();
+        realm.commitTransaction();
     }
 
     int[] exiF;
     private void LoadItem() {
         itemAdapter.clear();
-        List<PesananMerchant> existingItemMenu = LocalStore.get().getAllCart();
+        RealmResults<PesananMerchant> existingItemMenu = realm.where(PesananMerchant.class).findAll();
 
 
         exiF = new int[itemRealmResults.size()];
@@ -533,6 +550,7 @@ LocalStore.get().clearCart();
     protected void onDestroy() {
         super.onDestroy();
         DeletePesanan();
+        realm.close();
     }
 
     @Override
@@ -546,7 +564,7 @@ LocalStore.get().clearCart();
 
     @Override
     public void onBackPressed() {
-        List<PesananMerchant> existingItem = LocalStore.get().getAllCart();
+        List<PesananMerchant> existingItem = realm.where(PesananMerchant.class).findAll();
 
         int quantity = 0;
         for (int p = 0; p < existingItem.size(); p++) {
@@ -575,7 +593,7 @@ LocalStore.get().clearCart();
         BottomSheetBehavior behavior = BottomSheetBehavior.from(bottom_sheet);
         behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
-        ItemModel selectedItem = LocalStore.get().getItem(itemAdapter.getAdapterItem(position).id);
+        ItemModel selectedItem = realm.where(ItemModel.class).equalTo("id_item", itemAdapter.getAdapterItem(position).id).findFirst();
         @SuppressLint("InflateParams") final View mDialog = getLayoutInflater().inflate(R.layout.sheet_detail_item, null);
         TextView text = mDialog.findViewById(R.id.title);
         ImageView imageView = mDialog.findViewById(R.id.imageview);
@@ -633,4 +651,3 @@ LocalStore.get().clearCart();
         });
     }
 }
-

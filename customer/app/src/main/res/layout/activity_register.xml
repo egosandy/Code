@@ -115,7 +115,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_centerHorizontal="true"
                                 android:layout_marginTop="10dp"
-                                android:src="@drawable/namalogo" />
+                                android:src="@drawable/nama" />
 
                         </RelativeLayout>
 
@@ -238,7 +238,7 @@
                                 android:layout_marginRight="10dp"
                                 android:layout_toRightOf="@+id/countrycode"
                                 android:background="@color/transparent"
-                                android:hint="Email ( email@gmail.com ) "
+                                android:hint="Email ( ogot@gmail.com ) "
                                 android:inputType="textEmailAddress"
                                 android:textColor="@color/black"
                                 android:textColorHint="@color/gray"

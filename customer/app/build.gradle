@@ -1,15 +1,18 @@
-// App module — migrated to AGP 8.11 / compileSdk 36.
-// Stage 1 = build system only. Realm (-> Room, Stage 3) and Butterknife
-// (-> ViewBinding, Stage 2) runtime usages are addressed in later stages,
-// so the project is not expected to fully compile until those land.
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
-// Removed: 'realm-android' and 'com.jakewharton.butterknife' (incompatible with AGP 8).
+plugins {
+    id 'com.android.application'
+    id 'realm-android'
+    id 'com.google.gms.google-services'
+    id 'kotlin-android'
+}
 
 android {
     namespace 'com.rcdriver.cs'
-    compileSdk 36
+    compileSdkVersion 36
 
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
     signingConfigs {
         debug {
             storeFile rootProject.file('rc.jks')
@@ -25,30 +28,27 @@ android {
         }
     }
 
-    // android-async-http (loopj) still relies on the legacy Apache HTTP client.
-    useLibrary 'org.apache.http.legacy'
-
     defaultConfig {
         applicationId 'com.rcdriver.cs'
-        minSdk 23
-        targetSdk 36
+        minSdkVersion 23
+        targetSdkVersion 36
         versionCode 1
         versionName '1.0.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
+
         signingConfig signingConfigs.release
+        proguardFiles 'butterknife-proguard-rules.pro', 'guava-proguard-rules.pro', 'okhttp3-proguard-rules.pro', 'proguard-rules.pro', 'retrofit-proguard-rules.pro', 'saripaar-proguard-rules.pro'
     }
+
+    useLibrary 'org.apache.http.legacy'
 
     sourceSets {
         main.java.srcDirs += 'src/main/com.rcdriver.cs'
     }
 
-    buildFeatures {
-        viewBinding true   // replaces Butterknife (Stage 2)
-        buildConfig true
-        // dataBinding removed: no <layout> files / DataBindingUtil usages exist.
-    }
+    flavorDimensions "mode"
 
     buildTypes {
         debug {
@@ -56,49 +56,53 @@ android {
             signingConfig signingConfigs.release
         }
         release {
-            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
     }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    // 'packaging' replaces the removed 'dexOptions' + old 'packagingOptions'.
-    // Realm .so pickFirst rules dropped (Realm removed in Stage 3).
     packaging {
-        jniLibs {
+        resources {
             excludes += [
-                'META-INF/*',
-                'lib/arm64-v8a/libcardioDecider.so', 'lib/arm64-v8a/libcardioRecognizer.so',
-                'lib/arm64-v8a/libcardioRecognizer_tegra2.so', 'lib/arm64-v8a/libopencv_core.so',
-                'lib/arm64-v8a/libopencv_imgproc.so', 'lib/armeabi/libcardioDecider.so',
-                'lib/armeabi-v7a/libcardioDecider.so', 'lib/armeabi-v7a/libcardioRecognizer.so',
-                'lib/armeabi-v7a/libcardioRecognizer_tegra2.so', 'lib/armeabi-v7a/libopencv_core.so',
-                'lib/armeabi-v7a/libopencv_imgproc.so', 'lib/mips/libcardioDecider.so',
-                'lib/x86/libcardioDecider.so', 'lib/x86/libcardioRecognizer.so',
-                'lib/x86/libcardioRecognizer_tegra2.so', 'lib/x86/libopencv_core.so',
-                'lib/x86/libopencv_imgproc.so', 'lib/x86_64/libcardioDecider.so',
-                'lib/x86_64/libcardioRecognizer.so', 'lib/x86_64/libcardioRecognizer_tegra2.so',
-                'lib/x86_64/libopencv_core.so', 'lib/x86_64/libopencv_imgproc.so'
+                    'AndroidManifest.xml',
+                    'META-INF/DEPENDENCIES',
+                    'META-INF/LICENSE',
+                    'META-INF/LICENSE.txt',
+                    'META-INF/license.txt',
+                    'META-INF/NOTICE',
+                    'META-INF/NOTICE.txt',
+                    'META-INF/notice.txt',
+                    'META-INF/ASL2.0',
+                    'META-INF/*.kotlin_module'
             ]
         }
-        resources {
-            excludes += ['AndroidManifest.xml', 'META-INF/*']
+        jniLibs {
+            // Penting untuk Android 15+/16 KB page size: biarkan AGP 8.5.1+
+            // mengemas .so sebagai uncompressed dan 16 KB aligned.
+            useLegacyPackaging = false
+            pickFirsts += [
+                    'lib/x86/librealm-jni.so',
+                    'lib/x86_64/librealm-jni.so',
+                    'lib/armeabi-v7a/librealm-jni.so',
+                    'lib/arm64-v8a/librealm-jni.so'
+            ]
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     lint {
-        // Relaxed during the migration so lint findings don't block the build.
         abortOnError false
         checkReleaseBuilds false
     }
 }
 
 dependencies {
+    // Tambahkan library standar Kotlin (versinya diambil dari file root build.gradle)
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.google.firebase:firebase-ads:21.1.0'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
@@ -110,17 +114,16 @@ dependencies {
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.12-b140109.1041'
     implementation group: 'xerces', name: 'xercesImpl', version: '2.12.0'
     //noinspection GradleCompatible
-    implementation 'com.google.android.gms:play-services-location:21.3.0'
+    implementation 'com.google.android.gms:play-services-location:20.0.0'
     implementation 'com.google.android.libraries.places:places:2.6.0'
     implementation 'com.google.android.gms:play-services-places:17.0.0'
     implementation 'com.google.maps.android:android-maps-utils:0.6.2'
-    implementation 'com.google.android.gms:play-services-maps:19.0.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.maps:google-maps-services:0.15.0'
     implementation 'org.slf4j:slf4j-nop:1.7.25'
-    implementation 'com.google.android.gms:play-services-auth:21.2.0'
+    implementation 'com.google.android.gms:play-services-auth:20.2.0'
+    implementation 'com.google.android.material:material:1.12.0'
 
-    // Firebase: versions kept as-is in Stage 1 (working set). Firebase/FCM
-    // modernization (incl. removing deprecated firebase-iid) is handled in Stage 4.
     implementation platform('com.google.firebase:firebase-bom:25.12.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-database:20.0.5'
@@ -131,21 +134,19 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-directboot:23.0.7'
 
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.recyclerview:recyclerview:1.3.2'
-    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
     implementation 'com.google.guava:guava:24.1-jre'
-
-    // Butterknife removed (Stage 2): all @BindView/ButterKnife.bind usages were
-    // converted to findViewById. ViewBinding is enabled in buildFeatures.
+    // Hapus total dependensi Butter Knife
 
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.7.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation 'com.mobsandgeeks:android-saripaar:2.0.3'
     implementation 'io.github.everythingme:overscroll-decor-android:1.1.1'
     implementation 'com.github.amitshekhariitbhu:PRDownloader:1.0.2'
     implementation 'net.the4thdimension:audio-wife:1.0.3'
@@ -156,52 +157,53 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     implementation 'com.github.yesterselga:country-picker-android:1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.wdullaer:materialdatetimepicker:3.2.0'
     implementation 'org.jsoup:jsoup:1.11.3'
-    implementation "androidx.exifinterface:exifinterface:1.3.7"
+    implementation "androidx.exifinterface:exifinterface:1.3.2"
     testImplementation 'junit:junit:4.12'
+
+    implementation "androidx.activity:activity-ktx:1.9.0"
 
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
-    // Removed pl.droidsonroids.gif:android-gif-drawable: it was unused (GIFs are
-    // rendered via Glide's GifDrawable) and its libpl_droidsonroids_gif.so was not
-    // 16 KB page-aligned, which blocks Android 15+ / Play submission.
 
     implementation 'com.google.android.gms:play-services-vision:20.1.3'
+
+    implementation 'org.parceler:parceler-api:1.1.12'
+    annotationProcessor 'org.parceler:parceler:1.1.12'
 
     implementation 'com.loopj.android:android-async-http:1.4.9'
     implementation 'com.github.GrenderG:Toasty:1.5.0'
 
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
-    implementation 'nl.joery.animatedbottombar:library:1.0.4'
+    implementation 'nl.joery.animatedbottombar:library:1.1.0'
     implementation 'com.github.10uroi:ToastOX:1.0.1'
     implementation 'com.github.ismaeldivita:chip-navigation-bar:1.4.0'
 
-    implementation 'com.facebook.android:facebook-android-sdk:4.40.0'
+    implementation 'com.facebook.android:facebook-android-sdk:4.4.0'
     implementation 'com.github.ghedeon:dottedLineView:1.0.0'
     implementation 'com.github.jakob-grabner:Circle-Progress-View:1.4'
 
     implementation 'com.sun.mail:android-mail:1.6.4'
     implementation 'com.sun.mail:android-activation:1.6.4'
-    implementation 'androidx.work:work-runtime:2.9.1'
-    implementation 'androidx.work:work-runtime-ktx:2.9.1'
+    implementation 'androidx.work:work-runtime:2.7.1'
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
 
     implementation 'com.google.firebase:firebase-iid:21.1.0'
 
     implementation 'me.relex:circleindicator:1.2.1@aar'
 
-    // Removed in Stage 1 (unused / incompatible annotation processors):
-    //  - org.parceler:parceler(-api):1.1.12   (0 usages; AP breaks on AGP 8/JDK 17)
-    //  - com.mobsandgeeks:android-saripaar:2.0.3 (0 usages)
 }
 
 configurations.all {
-    resolutionStrategy.dependencySubstitution {
-        // animatedbottombar 1.0.4 requests the old jcenter-only flexbox coordinates
-        // (com.google.android:flexbox), which are gone. Redirect to the current artifact.
-        substitute module('com.google.android:flexbox') using module('com.google.android.flexbox:flexbox:3.0.0')
+    resolutionStrategy {
+        force "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
+        force "androidx.lifecycle:lifecycle-viewmodel:2.5.1"
+        force "androidx.lifecycle:lifecycle-livedata:2.5.1"
+        // Tambahkan library lifecycle lain jika diperlukan
     }
 }

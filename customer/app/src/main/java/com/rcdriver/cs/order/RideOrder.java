@@ -1,16 +1,11 @@
 package com.rcdriver.cs.order;
 
-import com.rcdriver.cs.utils.LocalStore;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,24 +14,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.target.ImageViewTarget;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.snackbar.Snackbar;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 import com.rcdriver.cs.R;
 import com.rcdriver.cs.constants.BaseApp;
+import com.rcdriver.cs.databinding.OrderRideBinding; // <-- IMPORT BARU UNTUK VIEWBINDING
 import com.rcdriver.cs.json.CheckStatusTransaksiRequest;
 import com.rcdriver.cs.json.CheckStatusTransaksiResponse;
 import com.rcdriver.cs.json.FcmResponse;
@@ -60,15 +40,36 @@ import com.rcdriver.cs.utils.NetworkManager;
 import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.BookService;
 import com.rcdriver.cs.utils.api.service.UserService;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.target.ImageViewTarget;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import es.dmoral.toasty.Toasty;
+import io.realm.Realm;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.rcdriver.cs.json.fcm.FCMType.ORDER;
 
+// Import ButterKnife telah dihapus
+
 public class RideOrder extends AppCompatActivity {
-    private String idpelanggan,biaya,fiturdesc,ICONFITUR,fitur,estimasi,diskon,alamatasal,alamattujuan,token;
+    private Realm realm;
+    private String idpelanggan, biaya, fiturdesc, ICONFITUR, fitur, estimasi, diskon, alamatasal, alamattujuan, token;
     private int pakaisaldo = 0;
     private double jarak = 0;
     private double picklat = 0;
@@ -79,7 +80,7 @@ public class RideOrder extends AppCompatActivity {
     int counter = 0;
     int auto = 1;
     int FITURID = -1;
-    private LatLng pickuplatlng,destinationlng;
+    private LatLng pickuplatlng, destinationlng;
     TransaksiModel transaksi;
     private FiturModel designedFitur;
     private DriverRequest request;
@@ -87,16 +88,18 @@ public class RideOrder extends AppCompatActivity {
     private List<StatusTransaksiModel> availablestatus;
     private String NamaAlamat;
     Handler handler;
-    ImageView imganimasi;
-    TextView waktu;
-    RelativeLayout rootLayout;
+
+    // Deklarasi @BindView dihapus dan digantikan oleh satu objek binding
+    private OrderRideBinding binding;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.order_ride);
-        imganimasi = findViewById(R.id.imganimasi);
-        waktu = findViewById(R.id.waktu);
-        rootLayout = findViewById(R.id.rootLayout);
+        // Inisialisasi ViewBinding
+        binding = OrderRideBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        realm = Realm.getDefaultInstance();
         driverAvailable = new ArrayList<>();
         Intent intent = getIntent();
         idpelanggan = intent.getStringExtra("idpelanggan");
@@ -105,51 +108,52 @@ public class RideOrder extends AppCompatActivity {
         ICONFITUR = intent.getStringExtra("ikon");
         fiturdesc = intent.getStringExtra("fiturdesk");
         FITURID = intent.getIntExtra("idfitur", -1);
-        jarak = intent.getDoubleExtra("jarak",-1);
-        auto = intent.getIntExtra("auto",1);
+        jarak = intent.getDoubleExtra("jarak", -1);
+        auto = intent.getIntExtra("auto", 1);
         estimasi = intent.getStringExtra("estimasi");
-        harga = intent.getLongExtra("harga",0);
+        harga = intent.getLongExtra("harga", 0);
         diskon = intent.getStringExtra("diskon");
         alamatasal = intent.getStringExtra("pickaddress");
         alamattujuan = intent.getStringExtra("destkaddress");
-        pakaisaldo = intent.getIntExtra("pakaisaldo",0);
+        pakaisaldo = intent.getIntExtra("pakaisaldo", 0);
         token = intent.getStringExtra("token");
         picklat = intent.getDoubleExtra("picklat", 0);
         picklng = intent.getDoubleExtra("picklng", 0);
         destlat = intent.getDoubleExtra("destlat", 0);
         destlng = intent.getDoubleExtra("destlng", 0);
-        pickuplatlng = new LatLng(picklat,picklng);
-        destinationlng = new LatLng(destlat,destlng);
+        pickuplatlng = new LatLng(picklat, picklng);
+        destinationlng = new LatLng(destlat, destlng);
         NamaAlamat = intent.getStringExtra("namaalamat");
-        Log.d("NamaAlamat",NamaAlamat);
-        fetchNearDriver(picklat,picklng,fitur);
+        Log.d("NamaAlamat", NamaAlamat);
+        fetchNearDriver(picklat, picklng, fitur);
         if (FITURID != -1)
-            designedFitur = LocalStore.get().getFitur(FITURID);
-            if(designedFitur.getHome() != null){
-                if(designedFitur.getHome().equals("4")){
-                    SaveLok(picklat,picklng,alamatasal,NamaAlamat);
-                }else{
-                    SaveLok(destlat,destlng,alamattujuan,NamaAlamat);
-                }
+            designedFitur = realm.where(FiturModel.class).equalTo("idFitur", FITURID).findFirst();
+        if (designedFitur.getHome() != null) {
+            if (designedFitur.getHome().equals("4")) {
+                SaveLok(picklat, picklng, alamatasal, NamaAlamat);
+            } else {
+                SaveLok(destlat, destlng, alamattujuan, NamaAlamat);
             }
-        List<FiturModel> fiturs = LocalStore.get().getAllFitur();
+        }
+        RealmResults<FiturModel> fiturs = realm.where(FiturModel.class).findAll();
         for (FiturModel fitur : fiturs) {
             Log.e("ID_FITUR", fitur.getIdFitur() + " " + fitur.getFitur() + " " + fitur.getBiayaAkhir() + " " + ICONFITUR);
         }
-        Log.e("RideOrder",token);
+        Log.e("RideOrder", token);
         Glide.with(this)
                 .asGif()
-                .load(R.drawable.waiting_order)
-                .placeholder(ResourcesCompat.getDrawable(getResources(), R.drawable.waiting_order, null))
+                .load(R.drawable.motormap)
+                .placeholder(ResourcesCompat.getDrawable(getResources(), R.drawable.icmotor, null))
                 .centerCrop()
-                .into(new ImageViewTarget<GifDrawable>(imganimasi) {
+                .into(new ImageViewTarget<GifDrawable>(binding.imganimasi) {
                     @Override
                     protected void setResource(@Nullable GifDrawable resource) {
-                        imganimasi.setImageDrawable(resource);
+                        binding.imganimasi.setImageDrawable(resource);
                     }
-        });
+                });
         updateFitur();
     }
+
     //------------------------------- Near Driver ---------------------------
     Timer timer = new Timer();
     private final Runnable updateDriverRunnable = new Runnable() {
@@ -159,7 +163,7 @@ public class RideOrder extends AppCompatActivity {
                 @Override
                 public void run() {
                     try {
-                        if(pickuplatlng != null){
+                        if (pickuplatlng != null) {
                             fetchNearDriver(pickuplatlng.latitude, pickuplatlng.longitude, fitur);
                         }
                     } catch (Exception e) {
@@ -170,7 +174,7 @@ public class RideOrder extends AppCompatActivity {
                         public void run() {
                             if (NetworkManager.isConnectToInternet(RideOrder.this)) {
                                 try {
-                                    if(pickuplatlng != null){
+                                    if (pickuplatlng != null) {
                                         fetchNearDriver(pickuplatlng.latitude, pickuplatlng.longitude, fitur);
                                     }
                                 } catch (Exception e) {
@@ -183,11 +187,13 @@ public class RideOrder extends AppCompatActivity {
             }).start();
         }
     };
+
     private void updateFitur() {
         if (driverAvailable != null) {
             driverAvailable.clear();
         }
     }
+
     private void fetchNearDriver(double latitude, double longitude, String fitur) {
         if (driverAvailable != null) {
             driverAvailable.clear();
@@ -204,7 +210,7 @@ public class RideOrder extends AppCompatActivity {
             public void onResponse(@NonNull Call<GetNearRideCarResponseJson> call, @NonNull Response<GetNearRideCarResponseJson> response) {
                 if (response.isSuccessful()) {
                     driverAvailable = Objects.requireNonNull(response.body()).getData();
-                    for(int i = 0; i < driverAvailable.size(); i++){
+                    for (int i = 0; i < driverAvailable.size(); i++) {
                         Log.e("Terdekat", driverAvailable.get(i).getNamaDriver());
                     }
                     Log.e("ListDriver", String.valueOf(driverAvailable.size()));
@@ -217,6 +223,7 @@ public class RideOrder extends AppCompatActivity {
             }
         });
     }
+
     private void startIsDriver() {
         handler = new Handler();
         handler.postDelayed(updateDriverRunnable, 4000);
@@ -225,6 +232,7 @@ public class RideOrder extends AppCompatActivity {
     private void stopIsDriver() {
         handler.removeCallbacks(updateDriverRunnable);
     }
+
     //------------------------------- Respon order ----------------------------
     private void buildDriverRequest(RideCarResponseJson response) {
         for (int i = 0; i < response.getData().size(); i++) {
@@ -267,7 +275,7 @@ public class RideOrder extends AppCompatActivity {
     private void fcmBroadcast(int index, List<DriverModel> driverList) {
 
         User login = BaseApp.getInstance(this).getLoginUser();
-        if(login != null){
+        if (login != null) {
             DriverModel driverToSend = driverList.get(index);
             request.setTime_accept(new Date().getTime() + "");
             UserService service = ServiceGenerator.createService(UserService.class, login.getEmail(), login.getPassword());
@@ -293,8 +301,9 @@ public class RideOrder extends AppCompatActivity {
             });
         }
     }
+
     //------------------------------- call order -----------------------------
-    private void kirimpesanan(){
+    private void kirimpesanan() {
         User loginUser = BaseApp.getInstance(this).getLoginUser();
         final BookService service = ServiceGenerator.createService(BookService.class, loginUser.getEmail(), loginUser.getPassword());
         //------------------------- Parameters -------------------------------------------
@@ -319,28 +328,29 @@ public class RideOrder extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     buildDriverRequest(Objects.requireNonNull(response.body()));
                     Log.d("TipeOrder", String.valueOf(auto));
-                    if(auto == 1){
-                        try{
-                        for (int i = 0; i < driverAvailable.size(); i++) {
-                            Log.d("OrderDriver", "Jenis: " + driverAvailable.get(i).getJenis());
-                            fcmBroadcast(i, driverAvailable);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (auto == 1) {
+                        try {
+                            for (int i = 0; i < driverAvailable.size(); i++) {
+                                Log.d("OrderDriver", "Jenis: " + driverAvailable.get(i).getJenis());
+                                fcmBroadcast(i, driverAvailable);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                             Log.e("OrderDriver", e.getMessage());
-                    }
-                    }else{
+                        }
+                    } else {
                         broadcastdriver(token);
                     }
 
                     new CountDownTimer(30000, 1000) {
                         public void onTick(long millisUntilFinished) {
-                            waktu.setText(String.valueOf(counter));
+                            binding.waktu.setText(String.valueOf(counter));
                             counter++;
                         }
+
                         public void onFinish() {
-                            try{
-                                if(transaksi != null){
+                            try {
+                                if (transaksi != null) {
                                     Log.d("Idtrx", transaksi.getId());
                                     CheckStatusTransaksiRequest param = new CheckStatusTransaksiRequest();
                                     param.setIdTransaksi(transaksi.getId());
@@ -351,15 +361,12 @@ public class RideOrder extends AppCompatActivity {
                                                 CheckStatusTransaksiResponse checkStatus = response.body();
                                                 Log.d("Tag.check", response.body().getMessage());
                                                 Log.d("Tag.check", checkStatus.getMessage());
-//                                                if(checkStatus.getMessage().equals("check status")){
-//                                                    finish();
-//                                                }
 
                                                 if (!Objects.requireNonNull(checkStatus).isStatus()) {
-                                                    if(designedFitur.getIsPending() == 1 && auto == 1){
+                                                    if (designedFitur.getIsPending() == 1 && auto == 1) {
                                                         Log.e("Tag.Pending", "masuk orderan pending");
                                                         pendingOrder();
-                                                    }else{
+                                                    } else {
                                                         notif("Pengemudi tidak ditemukan!");
                                                         runOnUiThread(new Runnable() {
                                                             @Override
@@ -419,10 +426,11 @@ public class RideOrder extends AppCompatActivity {
             }
         });
     }
+
     //--------------------------------------- Broadcast Order ---------------
-    private void broadcastdriver(String token){
+    private void broadcastdriver(String token) {
         User login = BaseApp.getInstance(this).getLoginUser();
-        if(login != null){
+        if (login != null) {
             UserService service = ServiceGenerator.createService(UserService.class, login.getEmail(), login.getPassword());
             SendFcmRequest param = new SendFcmRequest();
             param.setId("1");
@@ -447,9 +455,9 @@ public class RideOrder extends AppCompatActivity {
         }
     }
 
-    private void broadcastpending(String token, OrderFCM orderFCM){
+    private void broadcastpending(String token, OrderFCM orderFCM) {
         User login = BaseApp.getInstance(this).getLoginUser();
-        if(login != null){
+        if (login != null) {
             UserService service = ServiceGenerator.createService(UserService.class, login.getEmail(), login.getPassword());
             SendFcmRequest param = new SendFcmRequest();
             param.setId(transaksi.getId());
@@ -475,16 +483,18 @@ public class RideOrder extends AppCompatActivity {
     }
 
     //--------------------------------------- notif -------------------------
-    private void notif(String pesan){
-        Snackbar snackbar = Snackbar.make(rootLayout, pesan, Snackbar.LENGTH_LONG);
+    private void notif(String pesan) {
+        Snackbar snackbar = Snackbar.make(binding.rootLayout, pesan, Snackbar.LENGTH_LONG);
         snackbar.getView().setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
         snackbar.show();
     }
+
     @Override
     protected void onStart() {
         super.onStart();
         startIsDriver();
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -494,13 +504,14 @@ public class RideOrder extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(pickuplatlng != null){
+        if (pickuplatlng != null) {
             startIsDriver();
             kirimpesanan();
         }
     }
+
     //------------------------------- save lokasi --------------------------------
-    private void SaveLok(double lat,double lng,String alamat,String nama){
+    private void SaveLok(double lat, double lng, String alamat, String nama) {
         User loginUser = BaseApp.getInstance(this).getLoginUser();
         UserService service = ServiceGenerator.createService(UserService.class, loginUser.getEmail(), loginUser.getPassword());
         SaveLokasiRequest request = new SaveLokasiRequest();
@@ -539,7 +550,7 @@ public class RideOrder extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<CancelBookResponseJson> call, @NonNull Response<CancelBookResponseJson> response) {
                 if (response.isSuccessful()) {
-                    Log.d("CancelOrder",Objects.requireNonNull(response.body()).mesage);
+                    Log.d("CancelOrder", Objects.requireNonNull(response.body()).mesage);
                     if (Objects.requireNonNull(response.body()).mesage.equals("true")) {
                         OrderFCM orderfcm = new OrderFCM();
                         orderfcm.id_driver = "00";
@@ -551,11 +562,8 @@ public class RideOrder extends AppCompatActivity {
                             public void onSuccess(InstanceIdResult instanceIdResult) {
                                 String tokenf = instanceIdResult.getToken();
                                 broadcastpending(tokenf, orderfcm);
-
                             }
                         });
-
-
                     } else {
                         Toasty.info(RideOrder.this, "Gagal.", Toast.LENGTH_SHORT).show();
                     }
@@ -568,8 +576,5 @@ public class RideOrder extends AppCompatActivity {
                 Log.e("FAILURE", t.getMessage());
             }
         });
-
-
     }
-
 }

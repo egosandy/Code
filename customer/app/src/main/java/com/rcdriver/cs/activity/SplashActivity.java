@@ -60,19 +60,7 @@ public class SplashActivity extends AppCompatActivity {
         removeNotif();
         sharedPreferences = getSharedPreferences(Constants.PREF_NAME, MODE_PRIVATE);
 //        GetSetting();
-        requestNotificationPermission();
 
-    }
-
-    private void requestNotificationPermission() {
-        // Android 13+ (API 33) requires a runtime permission to post notifications (FCM).
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 9001);
-            }
-        }
     }
     private void setUpFadeAnimation(final TextView textView) {
         // Start from 0.1f if you desire 90% fade animation

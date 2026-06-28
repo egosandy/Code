@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/dmsans_medium"
-                    android:text="Transfer ke User"
+                    android:text="Transef ke User"
                     android:textSize="16sp" />
 
                 <ImageView
@@ -109,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/dmsans_medium"
-                    android:text="Transfer ke Driver"
+                    android:text="Transef ke Driver"
                     android:textSize="16sp" />
 
                 <ImageView
@@ -142,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/dmsans_medium"
-                    android:text="Transfer ke Merchant"
+                    android:text="Transef ke Merchant"
                     android:textSize="16sp" />
 
                 <ImageView

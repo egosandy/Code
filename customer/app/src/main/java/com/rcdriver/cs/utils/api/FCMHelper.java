@@ -15,6 +15,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 
+import static com.rcdriver.cs.utils.Log.LOG;
+
 /**
  * Created by Ourdevelops Team on 10/18/2019.
  */
@@ -38,7 +40,7 @@ public class FCMHelper {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
-        if(Log.LOG){
+        if(LOG){
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
             builder.addInterceptor(logging);

@@ -5,11 +5,15 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by Maswend Team on 10/19/2019.
  */
 
-public class ProgressModel implements Serializable {
+public class ProgressModel extends RealmObject implements Serializable {
 
     @Expose
     @SerializedName("status")
@@ -35,6 +39,7 @@ public class ProgressModel implements Serializable {
     @Expose
     @SerializedName("nama_merchant")
     public String nama_merchant;
+    @PrimaryKey
     @Expose
     @SerializedName("com")
     private String id;

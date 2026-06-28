@@ -82,7 +82,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="65dp"></androidx.recyclerview.widget.RecyclerView>
+            android:layout_marginBottom="65dp">
+
+        </androidx.recyclerview.widget.RecyclerView>
 
         <LinearLayout
             android:id="@+id/llcamera"
@@ -150,7 +152,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="70dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="60dp"
             android:orientation="vertical"
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="10dp">
@@ -158,9 +160,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:orientation="horizontal">
-
+                android:orientation="horizontal"
+                android:visibility="gone" >
                 <View
                     android:layout_width="5dp"
                     android:layout_height="match_parent" />
@@ -203,7 +204,7 @@
             android:layout_alignParentBottom="true"
             android:layout_gravity="right"
             android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="60dp"
             android:src="@drawable/btn_rect" />
 
         <ImageButton
@@ -214,9 +215,8 @@
             android:layout_alignParentBottom="true"
             android:layout_gravity="right"
             android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/ic_send"
-            android:visibility="gone" />
+            android:layout_marginBottom="70dp"
+            android:background="@drawable/ic_send"/>
 
         <ImageButton
             android:id="@+id/mic_btn"
@@ -226,8 +226,9 @@
             android:layout_alignParentBottom="true"
             android:layout_gravity="right"
             android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/ic_send" />
+            android:layout_marginBottom="60dp"
+            android:background="@drawable/ic_mic"
+            android:visibility="gone" />
 
     </RelativeLayout>
 

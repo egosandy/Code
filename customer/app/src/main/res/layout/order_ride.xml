@@ -23,7 +23,7 @@
         android:layout_height="70dp"
         android:layout_centerInParent="true"
         android:scaleType="fitCenter"
-        android:src="@drawable/waiting_order" />
+        android:src="@drawable/antar_nonaktif" />
 
     <TextView
         android:id="@+id/waktu"

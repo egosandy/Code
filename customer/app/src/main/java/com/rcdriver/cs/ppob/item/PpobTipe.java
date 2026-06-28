@@ -22,7 +22,6 @@ import java.util.Locale;
 import com.rcdriver.cs.R;
 import com.rcdriver.cs.constants.Constants;
 import com.rcdriver.cs.ppob.model.TipeModels;
-
 public class PpobTipe extends RecyclerView.Adapter<PpobTipe.ItemRowHolder>{
     private final List<TipeModels> dataList;
     private final Context mContext;

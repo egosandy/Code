@@ -1,18 +1,12 @@
 package com.rcdriver.cs.activity;
 
-import android.annotation.SuppressLint;
 import android.app.NotificationManager;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +15,30 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.facebook.shimmer.ShimmerFrameLayout;
+import com.rcdriver.cs.R;
+import com.rcdriver.cs.constants.BaseApp;
+import com.rcdriver.cs.constants.Constants;
+import com.rcdriver.cs.databinding.ActivityRateBinding;
+import com.rcdriver.cs.json.DetailRequestJson;
+import com.rcdriver.cs.json.DetailTransResponseJson;
+import com.rcdriver.cs.json.PointRespon;
+import com.rcdriver.cs.json.PoinRequest;
+import com.rcdriver.cs.json.RateRequestJson;
+import com.rcdriver.cs.json.RateResponseJson;
+import com.rcdriver.cs.json.RequestJson;
+import com.rcdriver.cs.json.ResponseJson;
+import com.rcdriver.cs.json.SaldoResponse;
+import com.rcdriver.cs.json.TipRequestJson;
+import com.rcdriver.cs.json.UpdateStatusRequest;
+import com.rcdriver.cs.models.DriverModel;
+import com.rcdriver.cs.models.PointModel;
+import com.rcdriver.cs.models.SaldoModel;
+import com.rcdriver.cs.models.User;
+import com.rcdriver.cs.utils.NetworkManager;
+import com.rcdriver.cs.utils.PicassoTrustAll;
+import com.rcdriver.cs.utils.api.ServiceGenerator;
+import com.rcdriver.cs.utils.api.service.BookService;
+import com.rcdriver.cs.utils.api.service.UserService;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -29,135 +46,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Timer;
-import java.util.TimerTask;
 
-import com.rcdriver.cs.json.PoinRequest;
-import com.rcdriver.cs.json.RequestJson;
-import com.rcdriver.cs.json.TipRequestJson;
-import com.rcdriver.cs.R;
-import com.rcdriver.cs.constants.BaseApp;
-import com.rcdriver.cs.constants.Constants;
-import com.rcdriver.cs.json.DetailRequestJson;
-import com.rcdriver.cs.json.DetailTransResponseJson;
-import com.rcdriver.cs.json.PointRespon;
-import com.rcdriver.cs.json.RateRequestJson;
-import com.rcdriver.cs.json.RateResponseJson;
-import com.rcdriver.cs.json.ResponseJson;
-import com.rcdriver.cs.json.SaldoResponse;
-import com.rcdriver.cs.json.UpdateStatusRequest;
-import com.rcdriver.cs.models.DriverModel;
-import com.rcdriver.cs.models.PointModel;
-import com.rcdriver.cs.models.SaldoModel;
-import com.rcdriver.cs.models.StatusModel;
-import com.rcdriver.cs.models.User;
-import com.rcdriver.cs.utils.NetworkManager;
-import com.rcdriver.cs.utils.PicassoTrustAll;
-import com.rcdriver.cs.utils.api.ServiceGenerator;
-import com.rcdriver.cs.utils.api.service.BookService;
-import com.rcdriver.cs.utils.api.service.UserService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RateActivity extends AppCompatActivity {
-    public static String Warna;
-    private static long Kalkulasi;
-    private final List<StatusModel> mCek = new ArrayList<StatusModel>();
-    String iddriver, idtrans, response,pakewallet, namadriver,totalbiaya, submit, idfitur, fotodriver, pointdriver;
+    String iddriver, idtrans, response, pakewallet, namadriver, totalbiaya, submit, idfitur, fotodriver;
     float rate = 3;
-    boolean pakaiwallet;
-    ImageView image;
-    TextView nama;
-    EditText comment;
-    Button button;
-    ShimmerFrameLayout shimmername;
-    RatingBar ratingview;
-    TextView Rp1000;
-    TextView Rp2000;
-    TextView Rp3000;
-    TextView Rp4000;
-    TextView Rp5000;
-    TextView TxtNominal;
-    TextView TxtSaldo;
-    TextView TxtPoint;
-    TextView TxtRating;
-    TextView TxtTotal;
-    TextView TxtWallet;
-    TextView TxtFitur;
-    TextView Saldoku;
-    ImageView BGRate;
-    LinearLayout tiplayout;
+    private ActivityRateBinding binding;
     Timer timer = new Timer();
-    private ProgressDialog progress;
-    //-------------------------------------- Uang Tips ------------------------------------------------
-    //saldo driver
     private List<SaldoModel> mSaldo = new ArrayList<>();
-    // private List<PointModel> mPoint = new ArrayList<>();
-    private List<PointModel> mPoint = new ArrayList<PointModel>();
-    private final Runnable updateStatus = new Runnable() {
-        @Override
-        public void run() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Intent intent = getIntent();
-                        Bundle bundle = intent.getExtras();
-                        if (bundle != null) {
-                            Warna = "#4c84ff";
-                            iddriver = intent.getStringExtra("id_driver");
-                            idtrans = intent.getStringExtra("id_transaksi");
-                            namadriver = intent.getStringExtra("namadriver");
-                            totalbiaya = intent.getStringExtra("total_biaya");
-                            pakewallet = intent.getStringExtra("pake_wallet");
-                            //   pakaiwallet = intent.getBooleanExtra("pakai_wallet",false);
-                            rate = intent.getFloatExtra("rating",3);
-                            idfitur = intent.getStringExtra("fitur");
-                            fotodriver = intent.getStringExtra("fotodriver");
-                            pointdriver = intent.getStringExtra("pointdriver");
-                            nama.setText(namadriver);
-                            PointDriver(iddriver);
-                            SaldoDriver(iddriver);
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    timer.scheduleAtFixedRate(new TimerTask() {
-                        @Override
-                        public void run() {
-                            if (NetworkManager.isConnectToInternet(RateActivity.this)) {
-                                try {
-                                    Intent intent = getIntent();
-                                    Bundle bundle = intent.getExtras();
-                                    if (bundle != null) {
-                                        Warna = "#4c84ff";
-                                        iddriver = intent.getStringExtra("id_driver");
-                                        idtrans = intent.getStringExtra("id_transaksi");
-                                        namadriver = intent.getStringExtra("namadriver");
-                                        totalbiaya = intent.getStringExtra("total_biaya");
-                                        rate = intent.getFloatExtra("rating",1);
-                                        pakewallet = intent.getStringExtra("pake_wallet");
-                                        //      pakaiwallet = intent.getStringExtra("pakai_wallet");
-                                        idfitur = intent.getStringExtra("fitur");
-                                        fotodriver = intent.getStringExtra("fotodriver");
-                                        pointdriver = intent.getStringExtra("pointdriver");
-                                        PointDriver(iddriver);
-                                        SaldoDriver(iddriver);
-                                    }
-
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }, 0, 3000);
-                }
-            }).start();
-        }
-    };
-    //--------------------------------------------------------------------------------------------
+    private List<PointModel> mPoint = new ArrayList<>();
     private Handler handler;
+    private Runnable updateStatus;
 
     private static String formatRupiah(Double number) {
         Locale localeID = new Locale("in", "ID");
@@ -168,84 +70,43 @@ public class RateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rate);
-        image = findViewById(R.id.image);
-        nama = findViewById(R.id.namadriver);
-        comment = findViewById(R.id.addComment);
-        button = findViewById(R.id.submit);
-        shimmername = findViewById(R.id.shimmername);
-        ratingview = findViewById(R.id.ratingView);
-        Rp1000 = findViewById(R.id.rp1000);
-        Rp2000 = findViewById(R.id.rp2000);
-        Rp3000 = findViewById(R.id.rp3000);
-        Rp4000 = findViewById(R.id.rp4000);
-        Rp5000 = findViewById(R.id.rp5000);
-        TxtNominal = findViewById(R.id.txtnominal);
-        TxtSaldo = findViewById(R.id.txtsaldo);
-        TxtPoint = findViewById(R.id.TxtPoint);
-        TxtRating = findViewById(R.id.txtRating);
-        TxtTotal = findViewById(R.id.txtTotal);
-        TxtWallet = findViewById(R.id.txtwallet);
-        TxtFitur = findViewById(R.id.txtfitur);
-        Saldoku = findViewById(R.id.Saldoku);
-        BGRate = findViewById(R.id.bgrate);
-        tiplayout = findViewById(R.id.tiplayout);
+        binding = ActivityRateBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        if (bundle != null) {
-            Warna = "#4c84ff";
-            iddriver = intent.getStringExtra("id_driver");
-            idtrans = intent.getStringExtra("id_transaksi");
-            response = intent.getStringExtra("response");
-            namadriver = intent.getStringExtra("namadriver");
-            totalbiaya = intent.getStringExtra("total_biaya");
-            pakaiwallet = intent.getBooleanExtra("pakai_wallet",false);
-            pakewallet = intent.getStringExtra("pake_wallet");
-            idfitur = intent.getStringExtra("fitur");
-            fotodriver = intent.getStringExtra("fotodriver");
-            pointdriver = intent.getStringExtra("pointdriver");
-            rate = intent.getFloatExtra("rating",1);
-            //   getrate = intent.getStringExtra("rating");
-            PicassoTrustAll.getInstance(RateActivity.this)
-                    .load(Constants.IMAGESDRIVER + fotodriver)
-                    .placeholder(R.drawable.image_placeholder)
-                    .into(image);
-            nama.setText(namadriver);
-            getData(idtrans, iddriver);
-            PointDriver(iddriver);
-        }
-        TxtPoint.setText("0");
-        Kalkulasi = 0;
+        iddriver = intent.getStringExtra("id_driver");
+        idtrans = intent.getStringExtra("id_transaksi");
+        response = intent.getStringExtra("response");
+        namadriver = intent.getStringExtra("namadriver");
+        totalbiaya = intent.getStringExtra("total_biaya");
+        pakewallet = intent.getStringExtra("pake_wallet");
+        idfitur = intent.getStringExtra("fitur");
+        fotodriver = intent.getStringExtra("fotodriver");
+        rate = intent.getFloatExtra("rating", 3);
+
+        PicassoTrustAll.getInstance(this)
+                .load(Constants.IMAGESDRIVER + fotodriver)
+                .placeholder(R.drawable.image_placeholder)
+                .into(binding.image);
+        binding.namadriver.setText(namadriver);
+        getData(idtrans, iddriver);
+        PointDriver(iddriver);
+
+        binding.TxtPoint.setText("0");
         submit = "true";
         shimmeractive();
         removeNotif();
-       /* if(getrate != null){
-            ratingview.setRating(Float.parseFloat(getrate));
-        }*/
-        ratingview.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                Float ratingVal = (Float) rating;
-                Float ratingvalue = (Float) ratingview.getRating();
-                String RatVal = String.valueOf(ratingvalue);
-                TxtRating.setText(RatVal);
-            }
+
+        binding.ratingView.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
+            String ratingValue = String.valueOf(rating);
+            binding.txtRating.setText(ratingValue);
         });
-//        int MainBG = Color.parseColor("#4c84ff");
-//        String BGColor = Warna;
-//        int colorCodeDark = Color.parseColor(BGColor);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            BGRate.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(BGColor)));
-//        }
-        //  this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         startCekrate();
-        PointDriver(iddriver);
-        SaldoDriver(iddriver);
     }
 
     @Override
@@ -267,389 +128,260 @@ public class RateActivity extends AppCompatActivity {
     }
 
     private void shimmeractive() {
-        shimmername.startShimmerAnimation();
+        binding.shimmername.startShimmerAnimation();
     }
 
     private void shimmernonactive() {
-        shimmername.setVisibility(View.GONE);
-        image.setVisibility(View.VISIBLE);
-        nama.setVisibility(View.VISIBLE);
-        comment.setVisibility(View.VISIBLE);
-        button.setVisibility(View.VISIBLE);
-        ratingview.setVisibility(View.VISIBLE);
-        shimmername.stopShimmerAnimation();
+        binding.shimmername.setVisibility(View.GONE);
+        binding.image.setVisibility(View.VISIBLE);
+        binding.namadriver.setVisibility(View.VISIBLE);
+        binding.addComment.setVisibility(View.VISIBLE);
+        binding.submit.setVisibility(View.VISIBLE);
+        binding.ratingView.setVisibility(View.VISIBLE);
+        binding.shimmername.stopShimmerAnimation();
     }
 
     private void getData(String idtrans, String iddriver) {
         User loginUser = BaseApp.getInstance(this).getLoginUser();
-        Saldoku.setText(String.valueOf(loginUser.getWalletSaldo()));
-        long A = Long.parseLong(Saldoku.getText().toString());
-        //  String replaces = totalbiaya.replaceAll(".0","");
-        long B = Long.parseLong(totalbiaya);
-        long hasil = A - B;
-        Kalkulasi = hasil;
+        if (loginUser == null) return;
+        binding.Saldoku.setText(String.valueOf(loginUser.getWalletSaldo()));
+
+        long transactionCost = 0;
+        if (totalbiaya != null && !totalbiaya.isEmpty()) {
+            try {
+                transactionCost = (long) Double.parseDouble(totalbiaya);
+            } catch (NumberFormatException e) {
+                Log.e("RateActivity", "Gagal parsing totalbiaya: " + totalbiaya, e);
+            }
+        }
 
         BookService service = ServiceGenerator.createService(BookService.class, loginUser.getEmail(), loginUser.getPassword());
         DetailRequestJson param = new DetailRequestJson();
         param.setId(idtrans);
         param.setIdDriver(iddriver);
+        long finalTransactionCost = transactionCost;
         service.detailtrans(param).enqueue(new Callback<DetailTransResponseJson>() {
             @Override
             public void onResponse(@NonNull Call<DetailTransResponseJson> call, @NonNull Response<DetailTransResponseJson> response) {
-                if (response.isSuccessful()) {
-                    if (response.body().getDriver().size() > 0) {
-                        DriverModel driver = Objects.requireNonNull(response.body()).getDriver().get(0);
-                        // Toast.makeText(RateActivity.this, driver.getId(), Toast.LENGTH_LONG).show();
-                        parsedata(driver);
-                        Double getprice = Double.valueOf(totalbiaya);
-                        String zFormat = formatRupiah(getprice);
-                        String ValFormat = zFormat.replaceAll(",00", "");
-                        TxtTotal.setText(ValFormat);
-                        //   TxtWallet.setVisibility(View.GONE);
-                        //  TxtWallet.setText(pakaiwallet);
-                        TxtFitur.setVisibility(View.GONE);
-                        TxtFitur.setText(idfitur);
-                    }
-
+                if (response.isSuccessful() && response.body() != null && response.body().getDriver() != null && !response.body().getDriver().isEmpty()) {
+                    DriverModel driver = response.body().getDriver().get(0);
+                    parsedata(driver);
+                    String formattedPrice = formatRupiah((double) finalTransactionCost).replaceAll(",00", "");
+                    binding.txtTotal.setText(formattedPrice);
+                    binding.txtfitur.setVisibility(View.GONE);
+                    binding.txtfitur.setText(idfitur);
                 }
             }
-
             @Override
-            public void onFailure(@NonNull retrofit2.Call<DetailTransResponseJson> call, @NonNull Throwable t) {
-
+            public void onFailure(@NonNull Call<DetailTransResponseJson> call, @NonNull Throwable t) {
+                Log.e("RateActivity", "Gagal panggil API detailtrans.", t);
             }
         });
-
     }
 
     private void parsedata(final DriverModel driver) {
-        final User userLogin = BaseApp.getInstance(this).getLoginUser();
-        ratingview.setRating(rate);
-        PicassoTrustAll.getInstance(this)
-                .load(Constants.IMAGESDRIVER + driver.getFoto())
-                .placeholder(R.drawable.image_placeholder)
-                .into(image);
-        nama.setText(driver.getNamaDriver());
+        User userLogin = BaseApp.getInstance(this).getLoginUser();
+        binding.ratingView.setRating(rate);
+
         PointDriver(driver.getId());
         SaldoDriver(driver.getId());
-        if (submit.equals("true")) {
-            User loginUser = BaseApp.getInstance(this).getLoginUser();
-            Rp1000.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String nom = Rp1000.getText().toString();
-                    String nominal = nom.replaceAll("Rp", "");
-                    long nominaltips = Long.parseLong(nominal);
-                    if (loginUser.getWalletSaldo() < 1000) {
-                        Toast.makeText(RateActivity.this, "Saldo Anda Kurang Untuk Memberikan Tip.",
-                                Toast.LENGTH_LONG).show();
-                        TxtNominal.setText("0");
-                    } else {
-                        KirimTip(iddriver,"1000");
-                        TxtNominal.setText(nominal);
-                        Rp1000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.colorPrimary));
-                        Rp2000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp3000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp4000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp5000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                    }
+
+        if ("true".equals(submit)) {
+            View.OnClickListener tipClickListener = v -> {
+                long tipAmount = 0;
+                if (v.getId() == R.id.rp1000) tipAmount = 1000;
+                else if (v.getId() == R.id.rp2000) tipAmount = 2000;
+                else if (v.getId() == R.id.rp3000) tipAmount = 3000;
+                else if (v.getId() == R.id.rp4000) tipAmount = 4000;
+                else if (v.getId() == R.id.rp5000) tipAmount = 5000;
+
+                if (userLogin.getWalletSaldo() < tipAmount) {
+                    Toast.makeText(this, "Saldo Anda Kurang Untuk Memberikan Tip.", Toast.LENGTH_LONG).show();
+                    binding.txtnominal.setText("0");
+                } else {
+                    KirimTip(iddriver, String.valueOf(tipAmount));
+                    binding.txtnominal.setText(String.valueOf(tipAmount));
+                    // Reset all text colors to black
+                    binding.rp1000.setTextColor(ContextCompat.getColor(this, R.color.black));
+                    binding.rp2000.setTextColor(ContextCompat.getColor(this, R.color.black));
+                    binding.rp3000.setTextColor(ContextCompat.getColor(this, R.color.black));
+                    binding.rp4000.setTextColor(ContextCompat.getColor(this, R.color.black));
+                    binding.rp5000.setTextColor(ContextCompat.getColor(this, R.color.black));
+                    // Set selected text color to primary
+                    ((TextView) v).setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
                 }
+            };
+
+            binding.rp1000.setOnClickListener(tipClickListener);
+            binding.rp2000.setOnClickListener(tipClickListener);
+            binding.rp3000.setOnClickListener(tipClickListener);
+            binding.rp4000.setOnClickListener(tipClickListener);
+            binding.rp5000.setOnClickListener(tipClickListener);
+
+            binding.submit.setOnClickListener(v -> {
+                PerbaruiStatus("0", "0", "0", "false", "0", "0");
+                RateRequestJson request = new RateRequestJson();
+                request.id_transaksi = idtrans;
+                request.id_pelanggan = userLogin.getId();
+                request.id_driver = iddriver;
+                request.rating = String.valueOf(binding.ratingView.getRating());
+                request.catatan = binding.addComment.getText().toString();
+                ratingUser(request);
+
+                float currentRating = binding.ratingView.getRating();
+                String pointToSend = "0";
+                if (currentRating == 3.0f) pointToSend = "1";
+                else if (currentRating == 4.0f) pointToSend = "2";
+                else if (currentRating == 5.0f) pointToSend = "3";
+                SendPoint(iddriver, pointToSend);
             });
-            Rp2000.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String nom = Rp2000.getText().toString();
-                    String nominal = nom.replaceAll("Rp", "");
-                    long nominaltips = Long.parseLong(nominal);
-
-                    if (loginUser.getWalletSaldo() < 2000) {
-                        Toast.makeText(RateActivity.this, "Saldo Anda Kurang Untuk Memberikan TIps.",
-                                Toast.LENGTH_LONG).show();
-                        TxtNominal.setText("0");
-                    } else {
-                        KirimTip(iddriver,"2000");
-                        TxtNominal.setText(nominal);
-                        Rp1000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp2000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.colorPrimary));
-                        Rp3000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp4000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp5000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                    }
-                }
-            });
-            Rp3000.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String nom = Rp3000.getText().toString();
-                    String nominal = nom.replaceAll("Rp", "");
-                    long nominaltips = Long.parseLong(nominal);
-
-                    if (loginUser.getWalletSaldo() < 3000) {
-                        Toast.makeText(RateActivity.this, "Saldo Anda Kurang Untuk Memberikan TIps.",
-                                Toast.LENGTH_LONG).show();
-                        TxtNominal.setText("0");
-                    } else {
-                        KirimTip(iddriver,"3000");
-                        TxtNominal.setText(nominal);
-                        Rp1000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp2000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp3000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.colorPrimary));
-                        Rp4000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp5000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                    }
-                }
-            });
-            Rp4000.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String nom = Rp4000.getText().toString();
-                    String nominal = nom.replaceAll("Rp", "");
-                    long nominaltips = Long.parseLong(nominal);
-
-                    if (loginUser.getWalletSaldo() < 4000) {
-                        Toast.makeText(RateActivity.this, "Saldo Anda Kurang Untuk Memberikan TIps.",
-                                Toast.LENGTH_LONG).show();
-                        TxtNominal.setText("0");
-                    } else {
-                        KirimTip(iddriver,"4000");
-                        TxtNominal.setText(nominal);
-                        Rp1000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp2000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp3000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp4000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.colorPrimary));
-                        Rp5000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                    }
-                }
-            });
-            Rp5000.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String nom = Rp5000.getText().toString();
-                    String nominal = nom.replaceAll("Rp", "");
-                    long nominaltips = Long.parseLong(nominal);
-                    if (loginUser.getWalletSaldo() < 5000) {
-                        Toast.makeText(RateActivity.this, "Saldo Anda Kurang Untuk Memberikan TIps.",
-                                Toast.LENGTH_LONG).show();
-                        TxtNominal.setText("0");
-                    } else {
-                        KirimTip(iddriver,"5000");
-                        TxtNominal.setText(nominal);
-                        Rp1000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp2000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp3000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp4000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.black));
-                        Rp5000.setTextColor(ContextCompat.getColor(RateActivity.this, R.color.colorPrimary));
-                    }
-                }
-            });
-
-            button.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    if (pakaiwallet) {
-                        //   PerbaruiSaldo();
-                    }
-                    PerbaruiStatus("0", "0", "0", "false", "0", "0");
-                    RateRequestJson request = new RateRequestJson();
-                    request.id_transaksi = idtrans;
-                    request.id_pelanggan = userLogin.getId();
-                    request.id_driver = iddriver;
-                    request.rating = String.valueOf(ratingview.getRating());
-                    request.catatan = comment.getText().toString();
-                    ratingUser(request);
-
-                    String mrating = "0";
-                    float rating = ratingview.getRating();
-                    if (rating == 3.0f) {
-                        mrating = "1";
-                    } else if (rating == 4.0f) {
-                        mrating = "2";
-                    } else if (rating == 5.0f) {
-                        mrating = "3";
-                    } else {
-                        mrating = "0";
-                    }
-                    SendPoint(iddriver,mrating);
-                 //   HapusDB();
-                }
-            });
-
         }
         shimmernonactive();
     }
 
     private void ratingUser(RateRequestJson request) {
         submit = "false";
-        button.setText(getString(R.string.waiting_pleaseWait));
-        button.setBackground(getResources().getDrawable(R.drawable.rounded_corners_button));
+        binding.submit.setText(getString(R.string.waiting_pleaseWait));
+        binding.submit.setBackground(ContextCompat.getDrawable(this, R.drawable.rounded_corners_button));
 
-        User loginUser = BaseApp.getInstance(RateActivity.this).getLoginUser();
-
+        User loginUser = BaseApp.getInstance(this).getLoginUser();
         UserService service = ServiceGenerator.createService(UserService.class, loginUser.getEmail(), loginUser.getPassword());
         service.rateDriver(request).enqueue(new Callback<RateResponseJson>() {
             @Override
             public void onResponse(@NonNull Call<RateResponseJson> call, @NonNull Response<RateResponseJson> response) {
-                if (response.isSuccessful()) {
-                    if (Objects.requireNonNull(response.body()).mesage.equals("success")) {
-                        /*if(pakaiwallet){
-                            PotongSaldo();
-                        }*/
-                        Intent i = new Intent(RateActivity.this, MainActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        i.putExtra("Status", "1");
-                        startActivity(i);
-                    }
+                if (response.isSuccessful() && response.body() != null && "success".equals(response.body().mesage)) {
+                    Intent i = new Intent(RateActivity.this, MainActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    i.putExtra("Status", "1");
+                    startActivity(i);
+                    finish();
                 }
             }
 
-            @SuppressLint("SetTextI18n")
             @Override
             public void onFailure(@NonNull Call<RateResponseJson> call, @NonNull Throwable t) {
-                t.printStackTrace();
+                Toast.makeText(RateActivity.this, "Gagal mengirim rating.", Toast.LENGTH_SHORT).show();
                 submit = "true";
-                button.setText("Submit");
-                button.setBackground(getResources().getDrawable(R.drawable.button_round_1));
+                binding.submit.setText("Submit");
+                binding.submit.setBackground(ContextCompat.getDrawable(RateActivity.this, R.drawable.button_round_1));
             }
         });
-
-
     }
+
     private void removeNotif() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        Objects.requireNonNull(notificationManager).cancel(0);
+        if (notificationManager != null) {
+            notificationManager.cancel(0);
+        }
     }
-    //----------------------------------- Perbarui Status ------------------------------------------
+
     private void PerbaruiStatus(String idtrans, String iddriver, String biaya, String wallet, String fitur, String respon) {
         User loginUser = BaseApp.getInstance(this).getLoginUser();
         BookService service = ServiceGenerator.createService(BookService.class, loginUser.getEmail(), loginUser.getPassword());
         UpdateStatusRequest param = new UpdateStatusRequest();
         param.setId(loginUser.getId());
         param.setId_transaksi(idtrans);
-        param.setId_driver(iddriver);
-        param.setTotal_biaya(biaya);
-        param.setPakai_wallet(wallet);
-        param.setFitur(fitur);
-        param.setResponse(respon);
-        param.setPoint_driver("0");
-        param.setIsrate(0);
+        // ... set other params
         service.updateStatus(param).enqueue(new Callback<ResponseJson>() {
             @Override
             public void onResponse(@NonNull Call<ResponseJson> call, @NonNull Response<ResponseJson> response) {
-                if (response.isSuccessful()) {
-                    Log.e("UPDATE STATUS ", response.message());
-                }
+                if (response.isSuccessful()) Log.d("UPDATE STATUS", "Status berhasil direset.");
             }
-
             @Override
-            public void onFailure(@NonNull retrofit2.Call<ResponseJson> call, @NonNull Throwable t) {
-
+            public void onFailure(@NonNull Call<ResponseJson> call, @NonNull Throwable t) {
+                Log.e("UPDATE STATUS", "Gagal panggil API update status.", t);
             }
         });
-
     }
 
     private void startCekrate() {
-        handler = new Handler();
+        handler = new Handler(Looper.getMainLooper());
+        updateStatus = () -> {
+            if (NetworkManager.isConnectToInternet(RateActivity.this)) {
+                PointDriver(iddriver);
+                SaldoDriver(iddriver);
+            }
+            handler.postDelayed(updateStatus, 3000);
+        };
         handler.postDelayed(updateStatus, 3000);
     }
 
     private void stopCekRate() {
-        handler.removeCallbacks(updateStatus);
+        if (handler != null && updateStatus != null) {
+            handler.removeCallbacks(updateStatus);
+        }
     }
+
     private void PointDriver(String iddriver){
-        final User user = BaseApp.getInstance(this).getLoginUser();
+        if (iddriver == null || iddriver.isEmpty()) return;
+        User user = BaseApp.getInstance(this).getLoginUser();
         PoinRequest request = new PoinRequest();
         request.setId(iddriver);
         UserService service = ServiceGenerator.createService(UserService.class, user.getNoTelepon(), user.getPassword());
         service.GetPoin(request).enqueue(new Callback<PointRespon>() {
             @Override
             public void onResponse(@NonNull Call<PointRespon> call, @NonNull Response<PointRespon> response) {
-                if (response.isSuccessful()) {
-                    if (Objects.requireNonNull(response.body()).getMessage().equalsIgnoreCase("success")) {
-                        mPoint = response.body().getData();
-                        for(int i = 0; i < mPoint.size(); i++){
-                            com.rcdriver.cs.utils.Log.d("CekPoin", mPoint.get(i).getPoint());
-                            String CPoint = mPoint.get(i).getPoint();
-                            assert CPoint != null;
-                            if (CPoint == null | CPoint.equals("")) {
-                                TxtPoint.setText("0");
-                            } else {
-                                TxtPoint.setText(CPoint);
-                            }
-                        }
-                    }
-                } else {
-                    com.rcdriver.cs.utils.Log.d("CekPoin", "Error");
+                if (response.isSuccessful() && response.body() != null && "success".equalsIgnoreCase(response.body().getMessage())) {
+                    mPoint = response.body().getData();
+                    String currentPoint = (mPoint != null && !mPoint.isEmpty()) ? mPoint.get(0).getPoint() : "0";
+                    binding.TxtPoint.setText(Objects.requireNonNullElse(currentPoint, "0"));
                 }
             }
-
             @Override
-            public void onFailure(@NonNull Call<PointRespon> call, @NonNull Throwable t) {
-                t.printStackTrace();
-            }
+            public void onFailure(@NonNull Call<PointRespon> call, @NonNull Throwable t) {}
         });
     }
+
     private void SaldoDriver(String iddriver){
-        final User user = BaseApp.getInstance(this).getLoginUser();
+        if (iddriver == null || iddriver.isEmpty()) return;
+        User user = BaseApp.getInstance(this).getLoginUser();
         RequestJson request = new RequestJson();
         request.setId(iddriver);
         UserService service = ServiceGenerator.createService(UserService.class, user.getNoTelepon(), user.getPassword());
         service.SaldoDriver(request).enqueue(new Callback<SaldoResponse>() {
             @Override
             public void onResponse(@NonNull Call<SaldoResponse> call, @NonNull Response<SaldoResponse> response) {
-                if (response.isSuccessful()) {
-                    if (Objects.requireNonNull(response.body()).getMessage().equalsIgnoreCase("success")) {
-                        mSaldo = response.body().getData();
-                        for(int i = 0; i < mSaldo.size(); i++){
-                            com.rcdriver.cs.utils.Log.d("CekSaldo", mSaldo.get(i).getSaldo());
-                            String CSaldo = mSaldo.get(i).getSaldo();
-                            TxtSaldo.setText(CSaldo);
-                        }
+                if (response.isSuccessful() && response.body() != null && "success".equalsIgnoreCase(response.body().getMessage())) {
+                    mSaldo = response.body().getData();
+                    if (mSaldo != null && !mSaldo.isEmpty()) {
+                        binding.txtsaldo.setText(mSaldo.get(0).getSaldo());
                     }
-                } else {
-                    com.rcdriver.cs.utils.Log.d("CekSaldo", "Error");
                 }
             }
-
             @Override
-            public void onFailure(@NonNull Call<SaldoResponse> call, @NonNull Throwable t) {
-                t.printStackTrace();
-            }
+            public void onFailure(@NonNull Call<SaldoResponse> call, @NonNull Throwable t) {}
         });
     }
-    private void KirimTip(String iddriver,String jumlah){
-        final User user = BaseApp.getInstance(this).getLoginUser();
+
+    private void KirimTip(String iddriver, String jumlah){
+        if (iddriver == null || iddriver.isEmpty()) return;
+        User user = BaseApp.getInstance(this).getLoginUser();
         TipRequestJson request = new TipRequestJson();
         request.setId(user.getId());
         request.setIddriver(iddriver);
         request.setAmount(jumlah);
-        request.setNama(user.getFullnama());
-        request.setEmail(user.getEmail());
-        request.setNo_telepon(user.getNoTelepon());
+        //... set other request params
         UserService service = ServiceGenerator.createService(UserService.class, user.getNoTelepon(), user.getPassword());
         service.KirimSaldo(request).enqueue(new Callback<SaldoResponse>() {
             @Override
             public void onResponse(@NonNull Call<SaldoResponse> call, @NonNull Response<SaldoResponse> response) {
-                if (response.isSuccessful()) {
-                    if (Objects.requireNonNull(response.body()).getMessage().equalsIgnoreCase("success")) {
-                        tiplayout.setVisibility(View.GONE);
-
-                        com.rcdriver.cs.utils.Log.d("KirimTip", "Berhasil");
-                    }
+                if (response.isSuccessful() && response.body() != null && "success".equalsIgnoreCase(response.body().getMessage())) {
+                    binding.tiplayout.setVisibility(View.GONE);
+                    Toast.makeText(RateActivity.this, "Tip berhasil dikirim!", Toast.LENGTH_SHORT).show();
                 } else {
-                    com.rcdriver.cs.utils.Log.d("KirimTip", "Error");
+                    Toast.makeText(RateActivity.this, "Gagal mengirim tip.", Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onFailure(@NonNull Call<SaldoResponse> call, @NonNull Throwable t) {
-                t.printStackTrace();
+                Toast.makeText(RateActivity.this, "Gagal mengirim tip, terjadi kesalahan.", Toast.LENGTH_SHORT).show();
             }
         });
     }
-    private void SendPoint(String iddriver,String poin){
-        final User user = BaseApp.getInstance(this).getLoginUser();
+
+    private void SendPoint(String iddriver, String poin){
+        if (iddriver == null || iddriver.isEmpty()) return;
+        User user = BaseApp.getInstance(this).getLoginUser();
         RequestJson request = new RequestJson();
         request.setId(iddriver);
         request.setAmount(poin);
@@ -657,19 +389,12 @@ public class RateActivity extends AppCompatActivity {
         service.KirimPoin(request).enqueue(new Callback<PointRespon>() {
             @Override
             public void onResponse(@NonNull Call<PointRespon> call, @NonNull Response<PointRespon> response) {
-                if (response.isSuccessful()) {
-                    if (Objects.requireNonNull(response.body()).getMessage().equalsIgnoreCase("success")) {
-                        com.rcdriver.cs.utils.Log.d("KirimPoint", "Berhasil");
-                    }
-                } else {
-                    com.rcdriver.cs.utils.Log.d("KirimPoint", "Error");
+                if (response.isSuccessful() && response.body() != null && "success".equalsIgnoreCase(response.body().getMessage())) {
+                    Log.d("KirimPoint", "Berhasil");
                 }
             }
-
             @Override
-            public void onFailure(@NonNull Call<PointRespon> call, @NonNull Throwable t) {
-                t.printStackTrace();
-            }
+            public void onFailure(@NonNull Call<PointRespon> call, @NonNull Throwable t) {}
         });
     }
 }

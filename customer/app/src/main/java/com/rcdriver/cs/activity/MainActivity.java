@@ -1,7 +1,5 @@
 package com.rcdriver.cs.activity;
 
-import com.rcdriver.cs.utils.LocalStore;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -63,6 +61,8 @@ import com.rcdriver.cs.utils.Log;
 import com.rcdriver.cs.utils.SettingPreference;
 import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.UserService;
+
+import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -323,7 +323,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onResponse(@NonNull Call<GetFiturResponseJson> call, @NonNull Response<GetFiturResponseJson> response) {
                 if (response.isSuccessful()) {
-LocalStore.get().saveFitur(Objects.requireNonNull(response.body()).getData());
+                    Realm realm = BaseApp.getInstance(MainActivity.this).getRealmInstance();
+                    realm.beginTransaction();
+                    realm.delete(FiturModel.class);
+                    realm.copyToRealm(Objects.requireNonNull(response.body()).getData());
+                    realm.commitTransaction();
                 }
             }
 

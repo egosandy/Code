@@ -3,28 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto" >
 
+
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
+
     <uses-feature android:name="android.hardware.location.gps" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="29" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <!-- Android 13+ (API 33): required to post notifications (FCM). -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -59,9 +59,10 @@
     </queries>
 
     <application
-        android:name="com.rcdriver.cs.constants.BaseApp"
+        android:name=".constants.BaseApp"
         android:allowBackup="true"
         android:fullBackupContent="false"
+        android:extractNativeLibs="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -73,50 +74,53 @@
         android:theme="@style/AppThemess"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
-        tools:replace="android:allowBackup,android:supportsRtl,android:usesCleartextTraffic" >
+        tools:replace="android:allowBackup,android:supportsRtl,android:usesCleartextTraffic,android:extractNativeLibs" >
         <activity
-            android:name="com.rcdriver.cs.activity.MessageActivity"
+            android:name=".activity.ResetPasswordActivity"
             android:exported="false" />
         <activity
-            android:name="com.rcdriver.cs.activity.ProfileActivity"
+            android:name=".activity.MessageActivity"
             android:exported="false" />
         <activity
-            android:name="com.rcdriver.cs.fragment.FragmentNewHome"
+            android:name=".activity.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name="com.rcdriver.cs.activity.PengembanganActivity"
+            android:name=".fragment.FragmentNewHome"
             android:exported="false" />
-        <activity android:name="com.rcdriver.cs.activity.OrderManualActivity" />
-        <activity android:name="com.rcdriver.cs.activity.payment.TransferBankActivity" />
-        <activity android:name="com.rcdriver.cs.activity.payment.PaymentFixedActivity" />
-        <activity android:name="com.rcdriver.cs.activity.payment.OvoWaitingActivity" />
-        <activity android:name="com.rcdriver.cs.activity.payment.HistoryTopupActivity" />
-        <activity android:name="com.rcdriver.cs.activity.payment.KonfirmasiActivity" />
-        <activity android:name="com.rcdriver.cs.activity.payment.TopupSaldoActivity" />
-        <activity android:name="com.rcdriver.cs.activity.VerifyCodeActivity" />
-        <activity android:name="com.rcdriver.cs.activity.OjekNewActivity" />
-        <activity android:name="com.rcdriver.cs.activity.DonasiWdActivity" />
-        <activity android:name="com.rcdriver.cs.activity.DonasiActivity" />
-        <activity android:name="com.rcdriver.cs.activity.DonasiallActivity" />
-        <activity android:name="com.rcdriver.cs.activity.transfer.ResultTransferActivity" />
-        <activity android:name="com.rcdriver.cs.activity.transfer.PinActivity" />
-        <activity android:name="com.rcdriver.cs.activity.transfer.PilihTujuanActivity" />
-        <activity android:name="com.rcdriver.cs.activity.transfer.TransferSaldoActivity" />
-        <activity android:name="com.rcdriver.cs.activity.digi.PascaBayarActivity" />
-        <activity android:name="com.rcdriver.cs.activity.digi.RiwayatActivity" />
-        <activity android:name="com.rcdriver.cs.activity.digi.ResultTransaksiActivity" />
-        <activity android:name="com.rcdriver.cs.activity.digi.PrabayarActivity" />
-        <activity android:name="com.rcdriver.cs.activity.digi.HomeDigiActivity" />
-        <activity android:name="com.rcdriver.cs.activity.ppob.TransaksiPpobActivity" />
-        <activity android:name="com.rcdriver.cs.activity.MerchantCatActivity" />
         <activity
-            android:name="com.rcdriver.cs.activity.MapsMerchantActivity"
+            android:name=".activity.PengembanganActivity"
+            android:exported="false" />
+        <activity android:name=".activity.OrderManualActivity" />
+        <activity android:name=".activity.payment.TransferBankActivity" />
+        <activity android:name=".activity.payment.PaymentFixedActivity" />
+        <activity android:name=".activity.payment.OvoWaitingActivity" />
+        <activity android:name=".activity.payment.HistoryTopupActivity" />
+        <activity android:name=".activity.payment.KonfirmasiActivity" />
+        <activity android:name=".activity.payment.TopupSaldoActivity" />
+        <activity android:name=".activity.VerifyCodeActivity" />
+        <activity android:name=".activity.OjekNewActivity" />
+        <activity android:name=".activity.DonasiWdActivity" />
+        <activity android:name=".activity.DonasiActivity" />
+        <activity android:name=".activity.DonasiallActivity" />
+        <activity android:name=".activity.transfer.ResultTransferActivity" />
+        <activity android:name=".activity.transfer.PinActivity" />
+        <activity android:name=".activity.transfer.PilihTujuanActivity" />
+        <activity android:name=".activity.transfer.TransferSaldoActivity" />
+        <activity android:name=".activity.digi.PascaBayarActivity" />
+        <activity android:name=".activity.digi.RiwayatActivity" />
+        <activity android:name=".activity.digi.ResultTransaksiActivity" />
+        <activity android:name=".activity.digi.PrabayarActivity" />
+        <activity android:name=".activity.digi.HomeDigiActivity" />
+        <activity android:name=".activity.ppob.TransaksiPpobActivity" />
+        <activity android:name=".activity.MerchantCatActivity" />
+        <activity
+            android:name=".activity.MapsMerchantActivity"
             android:exported="true" />
         <activity
-            android:name="com.rcdriver.cs.activity.MainActivity"
+            android:name=".activity.MainActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.rcdriver.cs.activity.SplashActivity"
+            android:name=".activity.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
@@ -128,141 +132,141 @@
             </intent-filter>
         </activity> <!-- ===================== Ride ============== -->
         <activity
-            android:name="com.rcdriver.cs.order.RideOrder"
+            android:name=".order.RideOrder"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" /> <!-- ========================================= -->
-<!--        <activity-->
-<!--            android:name="com.ogot.pelanggan.fragment.CaptureActivityAnyOrientation"-->
-<!--            android:screenOrientation="fullSensor"-->
-<!--            android:stateNotNeeded="true"-->
-<!--            android:theme="@style/AppThemes"-->
-<!--            android:windowSoftInputMode="stateAlwaysHidden" />-->
+        <!-- <activity -->
+        <!-- android:name="com.ogot.pelanggan.fragment.CaptureActivityAnyOrientation" -->
+        <!-- android:screenOrientation="fullSensor" -->
+        <!-- android:stateNotNeeded="true" -->
+        <!-- android:theme="@style/AppThemes" -->
+        <!-- android:windowSoftInputMode="stateAlwaysHidden" /> -->
         <activity
-            android:name="com.rcdriver.cs.activity.ActivityAmbil"
+            android:name=".activity.ActivityAmbil"
             android:theme="@style/AppThemes"
             tools:replace="android:theme" />
         <activity
-            android:name="com.rcdriver.cs.activity.PromoActivity"
+            android:name=".activity.PromoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.ActivityInfoMitra"
+            android:name=".activity.ActivityInfoMitra"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.DetailOrderActivity"
+            android:name=".activity.DetailOrderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.ActivitySetHome"
+            android:name=".activity.ActivitySetHome"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes" />
         <activity
-            android:name="com.rcdriver.cs.activity.AllMerchantActivity"
+            android:name=".activity.AllMerchantActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.AllBeritaActivity"
+            android:name=".activity.AllBeritaActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.WalletActivity"
+            android:name=".activity.WalletActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.FavouriteActivity"
+            android:name=".activity.FavouriteActivity"
             android:label="Favourite Activity" />
         <activity
-            android:name="com.rcdriver.cs.activity.ChatActivity"
+            android:name=".activity.ChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.RateActivity"
+            android:name=".activity.RateActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.WithdrawActivity"
+            android:name=".activity.WithdrawActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.IntroActivity"
+            android:name=".activity.IntroActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.BeritaDetailActivity"
+            android:name=".activity.BeritaDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.RentCarActivity"
+            android:name=".activity.RentCarActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.SendNewActivity"
+            android:name=".activity.SendNewActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.ActivityProgress"
+            android:name=".activity.ActivityProgress"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.PrivacyActivity"
+            android:name=".activity.PrivacyActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.RegisterActivity"
+            android:name=".activity.RegisterActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.EditProfileActivity"
+            android:name=".activity.EditProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.LoginActivity"
+            android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes" />
         <activity
-            android:name="com.rcdriver.cs.activity.ActivityLogin"
+            android:name=".activity.ActivityLogin"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes" />
         <activity
-            android:name="com.rcdriver.cs.activity.VerifyPhoneActivity"
+            android:name=".activity.VerifyPhoneActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes" />
         <activity
-            android:name="com.rcdriver.cs.activity.LupapassActivity"
+            android:name=".activity.LupapassActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.activity.ChangepassActivity"
+            android:name=".activity.ChangepassActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.intro.WalkthroughActivity"
+            android:name=".intro.WalkthroughActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name="com.rcdriver.cs.ppob.ActivityHistoriP"
+            android:name=".ppob.ActivityHistoriP"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemes"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
@@ -275,18 +279,18 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
-        <activity
-            android:name="com.facebook.CustomTabActivity"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+<!--        <activity-->
+<!--            android:name="com.facebook.CustomTabActivity"-->
+<!--            android:exported="true" >-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <category android:name="android.intent.category.BROWSABLE" />-->
 
-                <data android:scheme="@string/fb_login_protocol_scheme" />
-            </intent-filter>
-        </activity>
+<!--                <data android:scheme="@string/fb_login_protocol_scheme" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -306,18 +310,8 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
-
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="com.rcdriver.cs.fileprovider"
-            android:grantUriPermissions="true" >
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
-
-        <service
-            android:name="com.rcdriver.cs.utils.api.service.MessagingService"
+<service
+            android:name=".utils.api.service.MessagingService"
             android:directBootAware="true"
             android:enabled="true"
             android:exported="true"
@@ -327,7 +321,7 @@
             </intent-filter>
         </service>
         <service
-            android:name="com.rcdriver.cs.utils.api.service.MyFireBaseInstanceIdService"
+            android:name=".utils.api.service.MyFireBaseInstanceIdService"
             android:exported="true" >
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />

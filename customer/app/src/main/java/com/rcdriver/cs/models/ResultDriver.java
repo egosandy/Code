@@ -3,12 +3,17 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by Maswend Team on 10/13/2019.
  */
 
-public class ResultDriver implements Serializable {
+public class ResultDriver extends RealmObject implements Serializable {
 
+    @PrimaryKey
     @SerializedName("id")
     @Expose
     private String id;

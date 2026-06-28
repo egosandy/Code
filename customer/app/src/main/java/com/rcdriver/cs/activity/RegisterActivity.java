@@ -1,7 +1,5 @@
 package com.rcdriver.cs.activity;
 
-import com.rcdriver.cs.utils.LocalStore;
-
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -78,6 +76,7 @@ import com.rcdriver.cs.models.FirebaseToken;
 import com.rcdriver.cs.models.User;
 import com.rcdriver.cs.utils.api.ServiceGenerator;
 import com.rcdriver.cs.utils.api.service.UserService;
+import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -573,13 +572,21 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private void saveUser(User user) {
-        LocalStore.get().saveUser(user);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.delete(User.class);
+        realm.copyToRealm(user);
+        realm.commitTransaction();
         BaseApp.getInstance(RegisterActivity.this).setLoginUser(user);
     }
 
     @SuppressWarnings("unused")
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(FirebaseToken response) {
-        LocalStore.get().saveToken(response);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.delete(FirebaseToken.class);
+        realm.copyToRealm(response);
+        realm.commitTransaction();
     }
 }

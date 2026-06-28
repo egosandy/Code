@@ -5,17 +5,19 @@ import android.net.Uri;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.rcdriver.cs.databinding.ItemEmptyViewBinding;
+import com.rcdriver.cs.databinding.ListPromoBinding;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
 
 import com.rcdriver.cs.R;
 import com.rcdriver.cs.models.VoucherModel;
+
+// Import ButterKnife telah dihapus
+
 public class PromoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private static final String TAG = "PromoAdapter";
     public static final int VIEW_TYPE_EMPTY = 0;
@@ -39,15 +41,17 @@ public class PromoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
+        // Menggunakan ViewBinding untuk membuat ViewHolder
         switch (viewType) {
             case VIEW_TYPE_NORMAL:
-                return new ViewHolder(
-                        LayoutInflater.from(parent.getContext()).inflate(R.layout.list_promo, parent, false));
+                ListPromoBinding listPromoBinding = ListPromoBinding.inflate(
+                        LayoutInflater.from(parent.getContext()), parent, false);
+                return new ViewHolder(listPromoBinding);
             case VIEW_TYPE_EMPTY:
             default:
-                return new EmptyViewHolder(
-                        LayoutInflater.from(parent.getContext()).inflate(R.layout.item_empty_view, parent, false));
+                ItemEmptyViewBinding itemEmptyViewBinding = ItemEmptyViewBinding.inflate(
+                        LayoutInflater.from(parent.getContext()), parent, false);
+                return new EmptyViewHolder(itemEmptyViewBinding);
         }
     }
 
@@ -80,25 +84,20 @@ public class PromoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     public class ViewHolder extends BaseViewHolder {
 
-        ImageView coverImageView;
+        // Deklarasi @BindView dihapus dan digantikan oleh objek binding
+        private final ListPromoBinding binding;
 
-        TextView titleTextView;
-
-        TextView newsTextView;
-
-
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            coverImageView = itemView.findViewById(R.id.thumbnail);
-            titleTextView = itemView.findViewById(R.id.title);
-            newsTextView = itemView.findViewById(R.id.Kode);
+        public ViewHolder(ListPromoBinding binding) {
+            // Menggunakan binding.getRoot() sebagai itemView
+            super(binding.getRoot());
+            this.binding = binding;
+            // ButterKnife.bind() dihapus
         }
 
         protected void clear() {
-            coverImageView.setImageDrawable(null);
-            titleTextView.setText("");
-            newsTextView.setText("");
+            binding.thumbnail.setImageDrawable(null);
+            binding.title.setText("");
+            binding.Kode.setText("");
         }
 
         public void onBind(int position) {
@@ -106,29 +105,29 @@ public class PromoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
             final VoucherModel mPromo = mPromoList.get(position);
 
+            // Mengakses view melalui objek binding
             if (mPromo.getImage() != null) {
-                Glide.with(itemView.getContext())
+                Glide.with(binding.getRoot().getContext())
                         .load(mPromo.getImage())
-                        .into(coverImageView);
+                        .into(binding.thumbnail);
             }
 
             if (mPromo.getNama() != null) {
-                titleTextView.setText(mPromo.getNama());
+                binding.title.setText(mPromo.getNama());
             }
 
             if (mPromo.getKode() != null) {
-                newsTextView.setText(mPromo.getKode());
+                binding.Kode.setText(mPromo.getKode());
             }
 
-
-            itemView.setOnClickListener(v -> {
+            binding.getRoot().setOnClickListener(v -> {
                 if (mPromo.getImage() != null) {
                     try {
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_VIEW);
                         intent.addCategory(Intent.CATEGORY_BROWSABLE);
                         intent.setData(Uri.parse(mPromo.getImage()));
-                        itemView.getContext().startActivity(intent);
+                        binding.getRoot().getContext().startActivity(intent);
                     } catch (Exception e) {
                         Log.e(TAG, "onClick: Image url is not correct");
                     }
@@ -139,20 +138,20 @@ public class PromoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     public class EmptyViewHolder extends BaseViewHolder {
 
-        TextView messageTextView;
-        TextView buttonRetry;
+        // Deklarasi @BindView dihapus dan digantikan oleh objek binding
+        private final ItemEmptyViewBinding binding;
 
-        EmptyViewHolder(View itemView) {
-            super(itemView);
-            messageTextView = itemView.findViewById(R.id.tv_message);
-            buttonRetry = itemView.findViewById(R.id.buttonRetry);
-            buttonRetry.setOnClickListener(v -> mCallback.onEmptyViewRetryClick());
+        EmptyViewHolder(ItemEmptyViewBinding binding) {
+            // Menggunakan binding.getRoot() sebagai itemView
+            super(binding.getRoot());
+            this.binding = binding;
+            // ButterKnife.bind() dihapus
+            binding.buttonRetry.setOnClickListener(v -> mCallback.onEmptyViewRetryClick());
         }
 
         @Override
         protected void clear() {
-
+            // Tidak ada yang perlu dibersihkan
         }
-
     }
 }
