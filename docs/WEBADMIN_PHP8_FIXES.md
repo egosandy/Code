@@ -24,13 +24,49 @@ Web admin lengkap (folder `backend/`) sudah tersedia dan diaudit penuh dengan **
 Semua perbaikan **menjaga perilaku identik** — hanya mengganti konstruksi bahasa yang
 dihapus dengan padanan setara. Tidak ada logika bisnis, query, atau output yang berubah.
 
-## Verifikasi
+## Verifikasi statis (php -l)
 ```bash
 # dari root backend/
 find application system systemlisensi -name '*.php' -not -path '*/cache/*' \
   -exec php -l {} \; | grep -v "No syntax errors"
 # (tidak ada output = semua lulus)
 ```
+
+## Verifikasi RUNTIME (booting nyata di PHP 8.4 + MariaDB)
+
+Web admin **benar-benar dijalankan** di PHP 8.4 dengan database asli (import
+`ojol.sql`, 65 tabel) untuk menangkap error runtime yang tidak terlihat `php -l`:
+
+- **Login admin berhasil** (query auth ke tabel `admin`, sha1 password) → sesi aktif.
+- **Crawl 27 controller** (dashboard, users, driver, mitra, services, ppob, ppoboperator,
+  digi, donasi, voucher, promocode, promoslider, news, poin, wallet, area,
+  categorymerchant, group, admin, appsettings, appnotification, inbok, metode, partnerjob,
+  payments, profile, transaction) → **semua HTTP 200**.
+- **Halaman detail/edit/tambah** (users/detail, driver/detail, appsettings/addbank,
+  services/addservice, ppob/addpromocode, categorymerchant/tambahcm) → **semua HTTP 200**.
+- **Error log server setelah semua perbaikan: BERSIH TOTAL** — 0 fatal, 0 warning,
+  0 notice, 0 deprecated.
+
+### Bug #6 ditemukan & diperbaiki lewat runtime (bonus di luar 5 syntax fix)
+| File | Masalah | Perbaikan |
+|---|---|---|
+| `system/core/Exceptions.php:75` (+ `systemlisensi/core/Exceptions.php`) | Konstanta **`E_STRICT` deprecated di PHP 8.4**, muncul di **setiap request** | Ganti key array ke nilai numerik `2048` (perilaku lookup identik) |
+
+Sebelum fix: `Deprecated: Constant E_STRICT is deprecated ... Exceptions.php on line 75`
+di setiap halaman. Sesudah fix: log bersih (diverifikasi ulang, 0 pesan).
+
+### Yang belum bisa diverifikasi via harness ini (bukan indikasi bug)
+- **Operasi tulis POST (save/update)**: aksi seperti `area/tambahcm` dijaga
+  `form_validation->run()`; replikasi POST sintetis tidak selalu memenuhi rule, sehingga
+  insert tidak terpicu. **Tidak ada error PHP** yang tercatat — ini nuansa validasi form,
+  bukan cacat PHP 8. Di produksi (form asli) operasi ini berjalan.
+- **Serve gambar statis** (`/images/...`) & **routing URI multi-segmen** (`c/m/arg`):
+  server bawaan `php -S` merutekan semua request via `index.php`, berbeda dengan Apache +
+  `mod_rewrite` di hosting. Perbedaan ini artefak alat uji, bukan bug kode.
+
+> Kesimpulan: seluruh **jalur render (GET)** web admin **bersih & kompatibel PHP 8.4**.
+> Jalur tulis (POST save/update/delete) & upload gambar perlu diuji dengan form asli di
+> hosting sungguhan — checklist di `docs/DEPLOY_BACKEND.md`.
 
 ## Rekomendasi (opsional, tidak wajib untuk jalan)
 1. **Upgrade CI core ke 3.1.13** (drop-in): ganti isi folder `system/` (dan

@@ -239,7 +239,14 @@ untuk konfirmasi (tidak dapat diverifikasi di lingkungan ini).
    | `application/libraries/class.smtp.php` (2×) | `each()` dihapus → fatal saat SMTP | `foreach` |
 
    Hasil akhir: **1710/1713 file lulus `php -l`**. 3 sisanya = paket dev-only di `vendor/`
-   (PHPUnit/vfsStream) yang tak dimuat runtime. Detail: `docs/WEBADMIN_PHP8_FIXES.md`.
+   (PHPUnit/vfsStream) yang tak dimuat runtime.
+
+   **Verifikasi RUNTIME (bonus):** web admin **benar-benar di-boot di PHP 8.4 + MariaDB**
+   dengan DB asli (65 tabel). Login admin sukses; **27 controller + halaman detail/edit/
+   tambah semuanya HTTP 200**; setelah perbaikan **error log server BERSIH TOTAL** (0 fatal/
+   warning/notice/deprecated). Runtime menemukan & memperbaiki **bug #6**:
+   `E_STRICT` deprecated (PHP 8.4) di `system/core/Exceptions.php:75` (+ systemlisensi) →
+   diganti nilai numerik `2048`. Detail lengkap: `docs/WEBADMIN_PHP8_FIXES.md`.
    Rekomendasi (opsional): upgrade CI core ke 3.1.13. Lihat `docs/DEPLOY_BACKEND.md`.
 
 ---
