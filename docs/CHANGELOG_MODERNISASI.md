@@ -27,9 +27,29 @@ response, sistem login/order/wallet/Xendit/Digiflazz, maupun tampilan UI.
 - `WRITE_EXTERNAL_STORAGE` diberi `android:maxSdkVersion="29"`.
 - `READ_EXTERNAL_STORAGE` diberi `android:maxSdkVersion="32"`.
 
-## Backend / Database
-- **Tidak ada perubahan kode.** Backend & SQL disertakan apa adanya sebagai acuan.
-- Audit PHP 8 & pemetaan endpoint/tabel didokumentasikan (tidak mengubah file).
+## Backend Web Admin (CodeIgniter 3.1.11) — perbaikan PHP 8
+
+Web admin lengkap ditambahkan di `backend/` (gabungan `admin1.zip`+`admin2.zip`).
+Diaudit dengan `php -l` (PHP 8.4): 1710/1713 file lulus. **5 kelompok bug fatal PHP 8
+diperbaiki** (perilaku identik, hanya mengganti konstruksi yang dihapus PHP 8):
+
+- `system/libraries/Profiler.php` (3 baris): `$this->_compile_{$x}` → `$this->{"_compile_".$x}`
+- `systemlisensi/libraries/Profiler.php`: sama.
+- `application/models/Ci_ext_model.php`: `return true;` di body class → kelas kosong valid.
+- `application/libraries/class.phpmailer.php`: `each()` → `foreach`; hapus/netralkan
+  `get_magic_quotes_runtime()`/`set_magic_quotes_runtime()`.
+- `application/libraries/class.smtp.php` (2 baris): `each()` → `foreach`.
+
+Detail: `docs/WEBADMIN_PHP8_FIXES.md`.
+
+## Database
+- **Tidak ada perubahan skema.** `database/ojol.sql` disertakan sebagai acuan (65 tabel).
+
+## Keamanan (redaksi khusus repo Git)
+- Kredensial nyata (Google API key, DB user/pass, Stripe/Xendit token, FCM server key,
+  Mapbox token, GitHub token) **diredaksi di salinan Git** agar lolos GitHub Push Protection.
+  **File ZIP yang dikirim mempertahankan nilai asli** agar bisa langsung dijalankan.
+  `github.properties` di-untrack (berisi GitHub PAT — sebaiknya dirotasi).
 
 ## Housekeeping repo
 - Artefak build dihapus dari salinan repo (folder `build/`, `.gradle/`, `.idea/`, `release/`,

@@ -27,13 +27,13 @@ Yang diaudit terdiri dari 5 komponen:
    tersisa adalah **naik ke SDK 36 + penyesuaian kepatuhan Android 13/14/15/16**, bukan
    rewrite dari nol.
 
-2. **Backend yang diberikan hanya `controllers/` + `models/`** (dari
-   `public_html/admin/application/`). Tidak ada folder `system/`, `config/`, `views/`,
-   `helpers/`, atau `libraries/` CodeIgniter. Karena itu backend ini berfungsi sebagai
-   **acuan kontrak endpoint** (sesuai yang Anda sampaikan) dan **tidak dapat dibangun/di-
-   jalankan sebagai web admin utuh** di lingkungan ini. Audit PHP 8 dilakukan pada file
-   yang tersedia; perbaikan level framework/view berada di luar cakupan material yang
-   diberikan.
+2. **Web admin CI3 LENGKAP kini tersedia** (folder `backend/`, dari 2 unggahan tambahan
+   `admin1.zip`+`admin2.zip` yang digabung). Berisi 43 controller, 32 model, **96 view**,
+   16 config, 8 library, helper, serta inti **CodeIgniter 3.1.11** (`system/`) + modul
+   lisensi (`systemlisensi/`). **Audit PHP 8.4 penuh sudah dijalankan** (`php -l` seluruh
+   file): **1710/1713 file lulus**, dan **5 kelompok bug fatal PHP 8 diperbaiki**
+   (lihat Bagian 6.9 & `docs/WEBADMIN_PHP8_FIXES.md`). CI 3.1.11 mendahului dukungan PHP 8
+   penuh (baru di 3.1.13), sehingga inti framework memuat bug yang diperbaiki terarah.
 
 3. **Tidak ada Android SDK maupun kredensial produksi** di lingkungan eksekusi ini,
    sehingga **build Gradle penuh dan pengujian runtime tidak dapat diverifikasi di sini**.
@@ -225,13 +225,22 @@ untuk konfirmasi (tidak dapat diverifikasi di lingkungan ini).
 > dikonfirmasi per-file dengan build + logcat. Karena tidak dapat dibuktikan tanpa runtime,
 > tidak dilakukan perubahan spekulatif yang bisa menggeser perilaku.
 
-### Backend PHP 8
-9. **Tidak ditemukan pemakai fatal PHP 8** pada file yang diberikan: tidak ada `each()`
-   nyata (semua `foreach`), tidak ada `create_function`, `money_format`, `__autoload`, akses
-   `$var{...}`, atau short-open-tag. Backend yang diberikan **relatif aman untuk PHP 8**
-   pada level controller/model. Risiko PHP 8 sisa umumnya di **framework CI3 lama**
-   (folder `system/` yang tidak disertakan) — perlu CI3 versi ≥ 3.1.13 untuk PHP 8. Lihat
-   `docs/DEPLOY_BACKEND.md`.
+### Backend PHP 8 (web admin lengkap — sudah dilint dengan PHP 8.4)
+9. **5 kelompok bug fatal PHP 8 DITEMUKAN & DIPERBAIKI.** Level controller/model bisnis
+   memang bersih (`each()` semua `foreach`, tidak ada `create_function`/`money_format`/
+   short-tag), TETAPI inti framework & library email memuat konstruksi yang dihapus PHP 8:
+
+   | File | Masalah | Perbaikan |
+   |---|---|---|
+   | `system/libraries/Profiler.php` (3×) | `$this->_compile_{$x}` (kurawal dinamis dihapus PHP 8) → **parse error** | `$this->{"_compile_".$x}` |
+   | `systemlisensi/libraries/Profiler.php` | sama | sama |
+   | `application/models/Ci_ext_model.php` | `return true;` di body class → **parse error** | jadi kelas kosong valid |
+   | `application/libraries/class.phpmailer.php` | `each()` + `get_magic_quotes_runtime()` dihapus → **fatal saat kirim email** | `foreach` + netralkan magic_quotes |
+   | `application/libraries/class.smtp.php` (2×) | `each()` dihapus → fatal saat SMTP | `foreach` |
+
+   Hasil akhir: **1710/1713 file lulus `php -l`**. 3 sisanya = paket dev-only di `vendor/`
+   (PHPUnit/vfsStream) yang tak dimuat runtime. Detail: `docs/WEBADMIN_PHP8_FIXES.md`.
+   Rekomendasi (opsional): upgrade CI core ke 3.1.13. Lihat `docs/DEPLOY_BACKEND.md`.
 
 ---
 
@@ -311,7 +320,9 @@ Login/Register/Gmail/OTP, Manajemen Driver & Merchant. Semua dipetakan di `docs/
 - Build APK/AAB ketiga aplikasi (butuh Android SDK 36 + semua dependency JitPack/Firebase).
 - Runtime: notifikasi FCM, pembayaran Xendit nyata, transaksi Digiflazz nyata (butuh key
   produksi & Google Services asli).
-- Web admin CI3 utuh (folder `system/`, `config/`, `views/` tidak disertakan).
+- Web admin CI3: **struktur & syntax PHP 8 SUDAH terverifikasi** (`php -l` lulus). Yang belum
+  bisa diverifikasi tanpa DB+kredensial hidup: perilaku runtime tiap halaman (save/update/
+  delete, upload gambar, tampil gambar) — jalankan checklist di `docs/DEPLOY_BACKEND.md`.
 - Kesesuaian visual layout di Android 15/16 (edge-to-edge) — butuh emulator/perangkat.
 
 Panduan lengkap ada di folder `docs/`.

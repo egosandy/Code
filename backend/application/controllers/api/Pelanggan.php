@@ -2866,7 +2866,7 @@ function update_saldo_post()
                 header("HTTP/1.0 401 Unauthorized");
                 return false;
             }
-            $server_key = 'SB-Mid-server-5jkQiwWhGHtKspjD18ZaZ4Hp';
+            $server_key = 'SB-Mid-server-REDACTED';
             $data = file_get_contents("php://input");
             $decoded_data = json_decode($data);
              $header = [
@@ -2899,7 +2899,7 @@ function update_saldo_post()
             $data = file_get_contents("php://input");
             $decoded_data = json_decode($data);
             
-            $server_key = 'SB-Mid-server-5jkQiwWhGHtKspjD18ZaZ4Hp';
+            $server_key = 'SB-Mid-server-REDACTED';
             $is_production = false;
            
             $api_url = $is_production ? 
@@ -2941,7 +2941,7 @@ function update_saldo_post()
             $data = file_get_contents("php://input");
             $decoded_data = json_decode($data);
             
-            $server_key = 'SB-Mid-server-5jkQiwWhGHtKspjD18ZaZ4Hp';
+            $server_key = 'SB-Mid-server-REDACTED';
             $url = base_url()."payment/charge/";
             
             $header = [

@@ -14,3 +14,14 @@ keystore.properties
 
 # credential files
 github.properties
+
+# Backend (CI3) — dev/build artifacts & caches
+backend/asset/node_modules/
+backend/application/cache/*
+!backend/application/cache/index.html
+backend/application/logs/*.php
+backend/system/**/tests/
+backend/**/*.log
+
+# Firebase service account (sensitive)
+*adminsdk*.json

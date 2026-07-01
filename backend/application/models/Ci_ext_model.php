@@ -1,6 +1,16 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 
-class ci_ext_model extends CI_model
+/**
+ * Placeholder model. File asli berisi "return true;" di dalam body class
+ * (syntax error, fatal di PHP 7 & 8). Tidak direferensikan controller/model
+ * manapun. Dinetralkan menjadi kelas kosong yang valid agar tidak memfatalkan
+ * autoload/lint. Perilaku aplikasi tidak berubah.
+ */
+class Ci_ext_model extends CI_Model
 {
-return true;
+    public function __construct()
+    {
+        parent::__construct();
+    }
 }
