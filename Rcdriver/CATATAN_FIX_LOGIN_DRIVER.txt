@@ -1,0 +1,42 @@
+CATATAN FIX APLIKASI DRIVER
+
+Masalah utama dari log:
+- Aplikasi force close saat login karena LoginActivity mengambil data index 0 dari response login:
+  response.body().getData().get(0)
+- Backend mengirim data kosong: Index: 0, Size: 0.
+- Akibatnya aplikasi crash sebelum masuk ke halaman berikutnya.
+
+Perbaikan yang dilakukan:
+1. LoginActivity.java
+   - Data login dicek null/kosong sebelum get(0).
+   - Response message found/pending tidak lagi langsung memaksa get(0).
+   - Jika data user kosong, aplikasi menampilkan notifikasi dan tidak crash.
+   - Intent OTP login diperbaiki agar mengirim Constants.PREF_NAME, Constants.METHOD_NAME, Constants.METHOD.
+   - saveUser() dibuat aman, memakai copyToRealmOrUpdate(), transaction safety, dan close Realm.
+   - getSetting() dicek agar data setting kosong tidak crash.
+   - SetLogin() aman saat user null.
+
+2. OTPActivity.java
+   - Menerima extra dari LoginActivity dan fallback dari object user/phoneNumber.
+   - Jika data OTP tidak lengkap, aplikasi kembali aman tanpa crash.
+   - Response OTP dicek null/kosong sebelum get(0).
+   - Kode OTP harus 6 digit.
+   - Keyboard hide dibuat aman jika currentFocus null.
+   - saveUser() dan SetLogin() dibuat aman.
+
+3. Activity lain yang rawan crash karena response list kosong:
+   - ChangepassActivity.java
+   - EditProfileActivity.java
+   - PrivacyActivity.java
+   - OrderDetailActivity.java
+   - PendingActivity.java
+   - OrderFragment.java
+
+4. Build/16 KB:
+   - Output lama app/build, build, app/.cxx, app/release dibersihkan.
+   - Empty CMake/native build dihapus karena project tidak punya source C/C++ yang dipakai.
+   - jniLibs.useLegacyPackaging dibuat false untuk packaging native library modern dan lebih aman dari warning 16 KB.
+
+Catatan backend:
+- Bila login tetap menampilkan pesan "data akun driver kosong dari server", berarti API driver/loginew mengirim message=found/pending tetapi field data=[].
+- Itu harus dicek di backend agar saat login sukses, API mengembalikan minimal 1 data driver lengkap.

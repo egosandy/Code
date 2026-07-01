@@ -1,0 +1,109 @@
+package com.rcdriver.dr.fragment;
+
+import android.content.Context;
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+
+import com.facebook.shimmer.ShimmerFrameLayout;
+import com.rcdriver.dr.R;
+import com.rcdriver.dr.constants.BaseApp;
+import com.rcdriver.dr.item.HistoryItem;
+import com.rcdriver.dr.json.AllTransResponseJson;
+import com.rcdriver.dr.json.DetailRequestJson;
+import com.rcdriver.dr.models.User;
+import com.rcdriver.dr.utils.api.ServiceGenerator;
+import com.rcdriver.dr.utils.api.service.DriverService;
+
+import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class PendingFragment extends Fragment {
+    public static String Warna = "#1AC463";
+    private Context context;
+    private ShimmerFrameLayout shimmer;
+    private RecyclerView recycle;
+    private HistoryItem historyItem;
+    private RelativeLayout rlnodata;
+    private Toolbar toolbar;
+    public PendingFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View getView = inflater.inflate(R.layout.fragment_pending, container, false);
+        context = getContext();
+        toolbar = getView.findViewById(R.id.toolbar);
+        shimmer = getView.findViewById(R.id.shimmerwallet);
+        recycle = getView.findViewById(R.id.inboxlist);
+        rlnodata = getView.findViewById(R.id.rlnodata);
+
+        recycle.setHasFixedSize(true);
+        recycle.setLayoutManager(new GridLayoutManager(context, 1));
+        return getView;
+    }
+
+    private void shimmershow() {
+        recycle.setVisibility(View.GONE);
+        shimmer.setVisibility(View.VISIBLE);
+        shimmer.startShimmer();
+    }
+
+    private void shimmertutup() {
+
+        recycle.setVisibility(View.VISIBLE);
+        shimmer.setVisibility(View.GONE);
+        shimmer.stopShimmer();
+    }
+
+    private void getdatatrans() {
+        shimmershow();
+        User loginUser = BaseApp.getInstance(context).getLoginUser();
+        DriverService driverService = ServiceGenerator.createService(
+                DriverService.class, loginUser.getNoTelepon(), loginUser.getPassword());
+        DetailRequestJson param = new DetailRequestJson();
+        param.setId(loginUser.getId());
+        driverService.pending(param).enqueue(new Callback<AllTransResponseJson>() {
+            @Override
+            public void onResponse(@NonNull Call<AllTransResponseJson> call, @NonNull Response<AllTransResponseJson> response) {
+                if (response.isSuccessful()) {
+                    shimmertutup();
+                    historyItem = new HistoryItem(context, Objects.requireNonNull(response.body()).getData(), R.layout.item_orderan);
+                    recycle.setAdapter(historyItem);
+                    if (response.body().getData().isEmpty()) {
+                        recycle.setVisibility(View.GONE);
+                        rlnodata.setVisibility(View.VISIBLE);
+                    } else {
+                        recycle.setVisibility(View.VISIBLE);
+                        rlnodata.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<AllTransResponseJson> call, @NonNull Throwable t) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getdatatrans();
+    }
+}

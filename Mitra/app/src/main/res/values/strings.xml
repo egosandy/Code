@@ -1,0 +1,72 @@
+<resources>
+    <string name="app_name">Asia Merchant</string>
+    <string name="appname">Asia Merchant</string>
+    <string name="appdes">Kelola dan Maksimalkan Usaha Kamu Yuk</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+             AIzaSyDkU2qgDrlYCWrmluyW4Z8gKieK-W0aUhs
+    </string>
+
+    <string name="introtext1">Daftar sekarang!</string>
+    <string name="introdesc1">Satu satunya pemasaran yang paling efektif adalah online market</string>
+    <string name="introtext2">Dapat dilacak</string>
+    <string name="introdesc2">Lacak lokasi dan driver paket Anda, waktu nyata.</string>
+    <string name="introtext3">Pengiriman cepat</string>
+    <string name="introdesc3">Anda dapat tetap produktif saat kami mengambil dan mengantar paket Anda, semuanya dalam hitungan jam!</string>
+
+    <string name="exit">Are you sure you want to exit the application??</string>
+    <string name="yes">YAh!</string>
+    <string name="no">Tidak</string>
+
+    <string name="email">Email</string>
+    <string name="norecieve">Saya tidak menerima kode!</string>
+    <string name="resend">Resend Code</string>
+    <string name="confirm">Mengonfirmasi</string>
+    <string name="privacy">Dengan masuk, Anda setuju dengan  <![CDATA[<b><font color=#6DC0FF>syarat dan Ketentuan</font></b>]]></string>
+
+    <string name="lupa">Lupa Password?</string>
+    <string name="button_signIn">Masuk</string>
+    <string name="button_signUp">Daftarkan</string>
+    <string name="button_dontHaveAccount">Tidak Punya Akun? </string>
+    <string name="wrongnumber">Format nomor telepon salah </string>
+    <string name="phoneemailwrong">telepon atau kata sandi salah</string>
+    <string name="phonepass">Telepon dan Kata Sandi tidak boleh kosong!</string>
+    <string name="phoneempty">Telepon tidak boleh kosong!</string>
+    <string name="passempty">Kata sandi tidak boleh kosong!</string>
+    <string name="emailempty">Email cannot be empty!</string>
+
+    <string name="hint_name">Nama</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_phone">Kontak</string>
+
+    <string name="menu_store">Toko</string>
+    <string name="menu_menu">Menu</string>
+    <string name="menu_history">Histori</string>
+    <string name="menu_chat">Chat</string>
+    <string name="menu_settings">Pengaturan</string>
+
+    <string name="waiting_pleaseWait">Harap tunggu....</string>
+    <string name="text_noInternet">Tidak ada akses internet</string>
+
+    <string name="notification_cancel">Pesanan Telah Dibatalkan</string>
+
+    <string name="text_with_bullet">\u2022</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="connect_fail">Kesalahan Koneksi Printer</string>
+    <string name="connect_lost">Terputus</string>
+    <string name="not_connected">Koneksi Tidak Stabil</string>
+    <string name="title_paired_devices">Perangkat Terpasang</string>
+    <string name="title_other_devices">Perangkat Lainnya</string>
+    <string name="button_scan">Cari Perangkat</string>
+    <string name="none_paired">Perangkat Tidak Ditemukan</string>
+    <string name="scanning">Pencarian&#8230;</string>
+    <string name="select_device">Pilih Perangkat</string>
+    <string name="none_found">Perangkat Tidak Ditemukan</string>
+    <string name="connected">Sambung Ke</string>
+    <string name="bluetooth_not_available">Bluetooth Tidak Tersedia</string>
+    <string name="turnon_bluetooth">Aktifkan Bluetooth</string>
+    <string name="pic_load_error">Kesalahan dalam memuat gambar</string>
+    <string name="print_succ">Berhasil Di Cetak</string>
+    <string name="print_error">Kesalahan dalam pencetakan</string>
+    <string name="waiting_otp">Permintaan kode baru dalam  </string>
+</resources>

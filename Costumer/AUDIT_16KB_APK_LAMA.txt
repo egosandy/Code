@@ -1,0 +1,8 @@
+ALIGNED 16KB : lib/arm64-v8a/libpl_droidsonroids_gif.so
+ALIGNED 16KB : lib/arm64-v8a/librealm-jni.so
+INFO 32bit   : lib/armeabi-v7a/libpl_droidsonroids_gif.so (align=4096; 16KB requirement fokus 64-bit)
+ALIGNED 32bit: lib/armeabi-v7a/librealm-jni.so
+INFO 32bit   : lib/x86/libpl_droidsonroids_gif.so (align=4096; 16KB requirement fokus 64-bit)
+ALIGNED 32bit: lib/x86/librealm-jni.so
+UNALIGNED 64 : lib/x86_64/libpl_droidsonroids_gif.so (align=4096)
+ALIGNED 16KB : lib/x86_64/librealm-jni.so

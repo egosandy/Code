@@ -1,0 +1,16 @@
+# Android build artifacts
+**/build/
+**/.gradle/
+**/.idea/
+**/release/
+*.apk
+*.aab
+*.iml
+local.properties
+# keystores (jangan commit kredensial)
+*.jks
+*.keystore
+keystore.properties
+
+# credential files
+github.properties

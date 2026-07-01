@@ -1,0 +1,340 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:shimmer="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentTop="true"
+        android:layout_weight="1"
+        android:background="@color/light_white"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@color/white"
+            android:elevation="5dp">
+
+            <ImageView
+                android:id="@+id/back_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/ic_back"
+                app:tint="@color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Histori Saldo"
+                android:textColor="@color/black"
+                android:textSize="20dp" />
+        </FrameLayout>
+    </androidx.appcompat.widget.Toolbar>
+    <View
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/graybackground"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical">
+       <LinearLayout
+           android:layout_marginBottom="@dimen/dimen_5dp"
+           android:padding="@dimen/dimen_5dp"
+           android:background="@drawable/gradient_1"
+           android:backgroundTint="@color/kuning"
+           android:layout_width="match_parent"
+           android:layout_height="170dp"
+           android:orientation="vertical">
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="10dp"
+               android:layout_marginBottom="10dp"
+               android:gravity="center_vertical"
+               android:orientation="horizontal">
+
+               <RelativeLayout
+                   android:layout_width="40dp"
+                   android:layout_height="40dp"
+                   android:layout_marginLeft="10dp">
+
+                   <ImageView
+                       android:id="@+id/background"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_centerInParent="true"
+                       android:src="@drawable/btn_rect"
+                       app:tint="@color/white" />
+
+                   <TextView
+                       android:id="@+id/image"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:gravity="center"
+                       android:text="Rp"
+                       android:textColor="@color/black"
+                       android:textSize="20dp" />
+               </RelativeLayout>
+
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_margin="10dp"
+                   android:orientation="vertical">
+
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="horizontal">
+
+                       <TextView
+                           android:layout_width="0dp"
+                           android:layout_height="20dp"
+                           android:layout_weight="1"
+                           android:singleLine="true"
+                           android:fontFamily="@font/dmsans_bold"
+                           android:text="Jumlah Total"
+                           android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                           android:textColor="@color/black"/>
+
+                       <TextView
+                           android:id="@+id/Total"
+                           android:layout_width="wrap_content"
+                           android:layout_height="20dp"
+                           android:fontFamily="@font/dmsans_regular"
+                           android:gravity="right"
+                           android:singleLine="true"
+                           android:text="+Rp0"
+                           android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                           android:textColor="@color/black" />
+
+                   </LinearLayout>
+
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="horizontal">
+
+                       <TextView
+                           android:id="@+id/texttanggal"
+                           android:layout_width="0dp"
+                           android:layout_height="20dp"
+                           android:layout_weight="1"
+                           android:singleLine="true"
+                           android:text="Jumlah Total Saldo Masuk"
+                           android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                           android:textColor="@color/black"
+                           android:fontFamily="@font/dmsans_regular"
+                           android:textSize="14dp"/>
+
+                       <TextView
+                           android:id="@+id/textket"
+                           android:layout_width="wrap_content"
+                           android:layout_height="20dp"
+                           android:gravity="right"
+                           android:singleLine="true"
+                           android:text=""
+                           android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                           android:textColor="@color/black"
+                           android:textSize="14dp" />
+
+                   </LinearLayout>
+
+
+               </LinearLayout>
+
+           </LinearLayout>
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="10dp"
+               android:layout_marginBottom="10dp"
+               android:gravity="center_vertical"
+               android:orientation="horizontal">
+
+               <RelativeLayout
+                   android:layout_width="40dp"
+                   android:layout_height="40dp"
+                   android:layout_marginLeft="10dp">
+
+                   <ImageView
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_centerInParent="true"
+                       android:src="@drawable/btn_rect"
+                       app:tint="@color/red" />
+
+                   <TextView
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:gravity="center"
+                       android:text="Rp"
+                       android:textColor="@color/white"
+                       android:textSize="20dp" />
+               </RelativeLayout>
+
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_margin="10dp"
+                   android:orientation="vertical">
+
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="horizontal">
+
+                       <TextView
+                           android:layout_width="0dp"
+                           android:layout_height="20dp"
+                           android:layout_weight="1"
+                           android:singleLine="true"
+                           android:fontFamily="@font/dmsans_bold"
+                           android:text="Jumlah Total"
+                           android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                           android:textColor="@color/black"/>
+
+                       <TextView
+                           android:id="@+id/TotalKeluar"
+                           android:layout_width="wrap_content"
+                           android:layout_height="20dp"
+                           android:fontFamily="@font/dmsans_regular"
+                           android:gravity="right"
+                           android:singleLine="true"
+                           android:text="+Rp0"
+                           android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                           android:textColor="@color/black" />
+
+                   </LinearLayout>
+
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="horizontal">
+
+                       <TextView
+                           android:fontFamily="@font/dmsans_regular"
+                           android:layout_width="0dp"
+                           android:layout_height="20dp"
+                           android:layout_weight="1"
+                           android:singleLine="true"
+                           android:text="Jumlah Total Saldo Keluar"
+                           android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                           android:textColor="@color/black"
+                           android:textSize="14dp"/>
+                   </LinearLayout>
+
+
+               </LinearLayout>
+
+           </LinearLayout>
+       </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"></androidx.recyclerview.widget.RecyclerView>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerwallet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            shimmer:duration="800">
+
+            <!-- Adding 7 rows of placeholders -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
+
+                <include layout="@layout/shimerwallet" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="15dp" />
+
+                <include layout="@layout/shimerwallet" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="15dp" />
+
+                <include layout="@layout/shimerwallet" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="15dp" />
+
+                <include layout="@layout/shimerwallet" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="15dp" />
+
+                <include layout="@layout/shimerwallet" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="15dp" />
+
+                <include layout="@layout/shimerwallet" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="15dp" />
+
+                <include layout="@layout/shimerwallet" />
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlnodata"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/nodataimage"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/slide_one" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nodataimage"
+            android:layout_centerHorizontal="true"
+            android:text="No Data"
+            android:textColor="@color/black"
+            android:textSize="20dp">
+
+        </TextView>
+
+
+    </RelativeLayout>
+</RelativeLayout>

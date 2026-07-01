@@ -1,0 +1,33 @@
+buildscript {
+    ext {
+        // Versi AGP yang lebih modern, kompatibel dengan Gradle baru
+        agp_version = '8.11.1'
+        kotlin_version = '1.8.10'
+    }
+    repositories {
+        google()
+        mavenCentral() // Pengganti jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
+        // maven { url "https://maven.aliyun.com/repository/jcenter" } // Ini juga bisa dihapus karena JCenter sudah mati
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$agp_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.4.2'
+        // ▼▼▼ PERBARUI VERSI REALM DI SINI ▼▼▼
+        classpath "io.realm:realm-gradle-plugin:10.19.0"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral() // Pengganti jcenter()
+        maven { url "https://jitpack.io" }
+        // maven { url "https://maven.aliyun.com/repository/jcenter" } // Hapus ini juga
+    }
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.buildDir
+}

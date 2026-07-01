@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:id="@+id/bottom_sheet"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:behavior_hideable="false"
+    android:animateLayoutChanges="true"
+    app:behavior_peekHeight="310dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    android:orientation="vertical"
+    xmlns:card_view="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/header"
+            android:layout_marginStart="7dp"
+            android:layout_marginEnd="7dp"
+            android:background="@drawable/background_chat_other"
+            android:orientation="horizontal"
+            android:padding="@dimen/dimen_10dp">
+
+            <LinearLayout
+                android:id="@+id/lmain"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp">
+
+                    <View
+                        android:layout_width="30dp"
+                        android:layout_height="5dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/button_round_1"
+                        android:backgroundTint="@color/gray" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/laktif"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="gone" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/mStatus"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/dmsans_bold"
+                                android:text="Online"
+                                android:gravity="center"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/dimen_15dp" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="@dimen/dimen_5dp"
+                                android:background="@drawable/bgon"
+                                android:orientation="horizontal">
+
+                                <androidx.appcompat.widget.SwitchCompat
+                                    android:id="@+id/SwithOn"
+                                    style="@style/Switch"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/dimen_5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_30dp"
+                            android:layout_height="@dimen/dimen_30dp"
+                            android:layout_marginEnd="@dimen/dimen_5dp"
+                            android:background="@drawable/circle_shape"
+                            android:backgroundTint="#E6E3E3"
+                            android:padding="@dimen/dimen_5dp"
+                            android:src="@drawable/auto" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:gravity="left"
+                            android:text="Auto Bid"
+                            android:textColor="@color/black"
+                            android:textSize="15dp" />
+
+                        <com.github.angads25.toggle.LabeledSwitch
+                            android:id="@+id/autobid"
+                            android:layout_width="70dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="12sp"
+                            app:colorBorder="@color/colorPrimary"
+                            app:colorOn="@color/colorPrimary"
+                            app:on="false"
+                            app:textOff="Off"
+                            app:textOn="On" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/setbelanja"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="@dimen/dimen_5dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_30dp"
+                            android:layout_height="@dimen/dimen_30dp"
+                            android:layout_marginEnd="@dimen/dimen_5dp"
+                            android:padding="@dimen/dimen_5dp"
+                            android:src="@drawable/walet" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:gravity="left"
+                            android:text="Maksimal Belanja"
+                            android:textColor="@color/black"
+                            android:textSize="15dp" />
+
+                        <TextView
+                            android:id="@+id/limitsaldo"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:gravity="right"
+                            android:text="Maksimal Belanja"
+                            android:textColor="@color/dark"
+                            android:textSize="15dp" />
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_30dp"
+                            android:layout_height="@dimen/dimen_30dp"
+                            android:padding="@dimen/dimen_5dp"
+                            android:src="@drawable/rightarrow"
+                            app:tint="@color/dark" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/viewPoint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="@dimen/dimen_5dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_30dp"
+                            android:layout_height="@dimen/dimen_30dp"
+                            android:layout_marginEnd="@dimen/dimen_5dp"
+                            android:padding="@dimen/dimen_5dp"
+                            android:src="@drawable/tukar" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:gravity="left"
+                            android:text="Tukar Poin"
+                            android:textColor="@color/black"
+                            android:textSize="15dp" />
+
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_30dp"
+                            android:layout_height="@dimen/dimen_30dp"
+                            android:padding="@dimen/dimen_5dp"
+                            android:src="@drawable/rightarrow"
+                            app:tint="@color/dark" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/myqrcode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="@dimen/dimen_5dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_30dp"
+                            android:layout_height="@dimen/dimen_30dp"
+                            android:layout_marginEnd="@dimen/dimen_5dp"
+                            android:background="@drawable/circle_shape"
+                            android:backgroundTint="#E6E3E3"
+                            android:padding="@dimen/dimen_5dp"
+                            android:src="@drawable/qr_code" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:gravity="left"
+                            android:text="QR Code Saya"
+                            android:textColor="@color/black"
+                            android:textSize="15dp" />
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_30dp"
+                            android:layout_height="@dimen/dimen_30dp"
+                            android:padding="@dimen/dimen_5dp"
+                            android:src="@drawable/rightarrow"
+                            app:tint="@color/dark" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/btnscan"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="@dimen/dimen_5dp"
+                        android:orientation="horizontal"
+                        android:visibility="visible">
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_30dp"
+                            android:layout_height="@dimen/dimen_30dp"
+                            android:layout_marginEnd="@dimen/dimen_5dp"
+                            android:padding="@dimen/dimen_5dp"
+                            android:src="@drawable/kirim" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:gravity="left"
+                            android:text="Kirim Saldo"
+                            android:textColor="@color/black"
+                            android:textSize="15dp" />
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_30dp"
+                            android:layout_height="@dimen/dimen_30dp"
+                            android:padding="@dimen/dimen_5dp"
+                            android:src="@drawable/rightarrow"
+                            app:tint="@color/dark" />
+                    </LinearLayout>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:elevation="@dimen/dimen_5dp"
+                        app:cardCornerRadius="8dp"
+                        card_view:cardBackgroundColor="#FDF2D0">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/dimen_5dp">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:layout_width="@dimen/dimen_80dp"
+                                android:layout_height="@dimen/dimen_80dp"
+                                android:background="@drawable/circle_shape"
+                                android:backgroundTint="#FFE79D"
+                                android:src="@drawable/masker" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="@dimen/dimen_5dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/dmsans_bold"
+                                    android:text="Waspada Covid-19"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/dimen_18dp" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/dmsans_regular"
+                                    android:text="Selalu Gunakan Masker Dan Jangan Lupa Pola Hidup Sehat."
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/dimen_15dp" />
+
+
+                            </LinearLayout>
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lwaiting"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:id="@+id/textView15"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:fontFamily="@font/dmsans_bold"
+                        android:gravity="center_horizontal"
+                        android:text="Sedang menunggu konfirmasi"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/imageView4"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="20dp"
+                        app:srcCompat="@drawable/waiting" />
+
+                    <TextView
+                        android:id="@+id/textView14"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/dmsans_medium"
+                        android:gravity="center_horizontal"
+                        android:text="Akun anda sedang dalam konfirmasi admin, anda belum bisa menerima order. Silahkan menunggu konfirmasi dari kami." />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/Slider"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dimen_10dp">
+
+                    <androidx.viewpager.widget.ViewPager
+                        android:id="@+id/viewPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_centerInParent="true"
+                        android:layout_margin="5dp"
+                        android:clipToPadding="false"
+                        android:foregroundGravity="center"
+                        android:overScrollMode="never">
+
+                    </androidx.viewpager.widget.ViewPager>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

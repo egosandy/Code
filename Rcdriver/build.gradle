@@ -1,0 +1,32 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    // PERBAIKAN KRUSIAL: Versi Kotlin dinaikkan agar kompatibel dengan AGP 8.x
+    ext.kotlin_version = '1.9.24'
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Android Gradle Plugin (AGP)
+        classpath 'com.android.tools.build:gradle:8.11.1'
+        // Menggunakan versi stabil terbaru dari AGP 8
+
+        // Plugin pendukung
+        classpath 'com.google.gms:google-services:4.4.2'
+        classpath "io.realm:realm-gradle-plugin:10.19.0"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://www.jitpack.io' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

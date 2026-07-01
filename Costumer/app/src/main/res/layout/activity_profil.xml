@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activity.MainActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="30dp">
+
+        <RelativeLayout
+            android:id="@+id/pro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/lleditprofile"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginRight="10dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/userphoto"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/profile_img"
+                    android:visibility="visible"
+                    app:civ_border_color="@color/colorPrimary"
+                    app:civ_border_width="2dp" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/username"
+                style="@style/viewParent.headerText"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_marginStart="3dp"
+                android:layout_toRightOf="@id/lleditprofile"
+                android:gravity="center"
+                android:text="Nama Customer"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/txtSaldo"
+                style="@style/viewParent.headerText"
+                android:layout_below="@id/username"
+                android:layout_toRightOf="@id/lleditprofile"
+                android:text="Rp10.000"
+                android:textColor="#5D5C5C"
+                android:textSize="16sp"
+                android:visibility="gone"/>
+
+            <ImageView
+                style="@style/viewParent"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="39dp"
+                android:layout_marginBottom="38dp"
+                android:background="@drawable/circle_shape"
+                android:src="@drawable/icon_edit">
+
+            </ImageView>
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Personalisasi anda"
+            android:textSize="18dp"
+            android:gravity="bottom"
+            android:textStyle="normal" />
+
+        <View
+            android:background="@color/light_gray"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:text="Profile"/>
+
+        <TextView
+            android:id="@+id/wasap"
+            style="@style/viewParent.headerText.settingsTextIcon"
+            android:layout_height="40dp"
+            android:drawableLeft="@drawable/phone"
+            android:text="Bantuan"
+            android:textSize="15dp"
+            android:textStyle="normal" />
+        <View
+            android:background="@color/light_gray"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:text="Profile"/>
+
+        <TextView
+            android:id="@+id/favorit"
+            style="@style/viewParent.headerText.settingsTextIcon"
+            android:layout_height="40dp"
+            android:drawableLeft="@drawable/ic_like"
+            android:text="Favorit"
+            android:textSize="15dp"
+            android:textStyle="normal" />
+        <View
+            android:background="@color/light_gray"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:text="Profile"/>
+
+        <TextView
+            android:id="@+id/llpassword"
+            style="@style/viewParent.headerText.settingsTextIcon"
+            android:layout_height="40dp"
+            android:drawableLeft="@drawable/ic_key"
+            android:layout_marginTop="10dp"
+            android:text="Ubah Password"
+            android:textStyle="normal"
+            android:textSize="15dp"/>
+        <View
+            android:background="@color/light_gray"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:text="Profile"/>
+
+        <TextView
+            android:id="@+id/llaboutus"
+            style="@style/viewParent.headerText.settingsTextIcon"
+            android:drawableLeft="@drawable/ic_about"
+            android:layout_height="40dp"
+            android:text="Tentang"
+            android:textStyle="normal"
+            android:textSize="15dp"/>
+        <View
+            android:background="@color/light_gray"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:text="Profile"/>
+        <TextView
+            android:id="@+id/llprivacypolicy"
+            style="@style/viewParent.headerText.settingsTextIcon"
+            android:drawableLeft="@drawable/ic_baseline_privacy_tip_24"
+            android:layout_height="40dp"
+            android:text="Privasi"             android:textStyle="normal"
+            android:textSize="15dp"/>
+        <View
+            android:background="@color/light_gray"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:text="Profile"/>
+
+        <TextView
+            android:id="@+id/shareapp"
+            style="@style/viewParent.headerText.settingsTextIcon"
+            android:drawableLeft="@drawable/ic__share"
+            android:layout_height="40dp"
+            android:text="Bagikan"             android:textStyle="normal"
+            android:textSize="15dp"/>
+        <View
+            android:background="@color/light_gray"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:text="Profile"/>
+
+        <TextView
+            android:id="@+id/rating"
+            style="@style/viewParent.headerText.settingsTextIcon"
+            android:drawableLeft="@drawable/ic_star_rate"
+            android:layout_height="40dp"
+            android:text="Penilaian"             android:textStyle="normal"
+            android:textSize="15dp"/>
+        <View
+            android:background="@color/light_gray"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:text="Profile"/>
+        <TextView
+            android:id="@+id/lllogout"
+            style="@style/viewParent.headerText.settingsTextIcon"
+            android:layout_height="40dp"
+            android:drawableLeft="@drawable/ic_baseline_login"
+            android:text="Logout"             android:textStyle="normal"
+            android:textSize="15dp"/>
+        <View
+            android:background="@color/light_gray"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:text="Profile"/>
+    </LinearLayout>
+</ScrollView>

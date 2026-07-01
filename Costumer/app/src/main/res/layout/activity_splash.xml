@@ -1,0 +1,42 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/splash"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="74dp"
+            android:fontFamily="@font/ardvark"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="@color/transparent"
+            android:textSize="@dimen/dimen_50dp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:src="@drawable/namalogo" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="@dimen/dimen_10dp"
+            android:fontFamily="@font/dmsans_regular"
+            android:gravity="center"
+            android:text="Asia Transportasi"
+            android:textColor="@color/transparent"
+            android:textSize="@dimen/dimen_15dp" />
+    </LinearLayout>
+</RelativeLayout>

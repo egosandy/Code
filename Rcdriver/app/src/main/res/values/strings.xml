@@ -1,0 +1,103 @@
+<resources>
+    <string name="app_name">Asia Driver</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+     AIzaSyAqNjIl7KpYALhZDQamAKHgyyHMANyGOrg
+    </string>
+    <string name="base_url">https://maps.googleapis.com</string>
+    <string name="introtext1">Sign up now!</string>
+    <string name="introdesc1">Where did you go today? we will be ready to drive anywhere and anytime</string>
+    <string name="introtext2">Trackable</string>
+    <string name="introdesc2">Keep track of your packages location and driver, real-time.</string>
+    <string name="introtext3">Speedy delivery</string>
+    <string name="introdesc3">You can stay productive while we pick up and drop off your package, all within hours!</string>
+
+    <string name="exit">Are you sure you want to exit the application??</string>
+    <string name="yes">YES!</string>
+    <string name="no">NO</string>
+
+    <string name="email">Email</string>
+    <string name="norecieve">I did not receive the code!</string>
+    <string name="resend">Resend Code</string>
+    <string name="confirm">Konfirmasi</string>
+    <string name="privacy">By signing in, you agree to the  <![CDATA[<b><font color=#6DC0FF>terms and conditions</font></b>]]></string>
+
+    <string name="lupa">Lupa Password?</string>
+    <string name="button_signIn">Masuk</string>
+    <string name="button_signUp"> Daftar</string>
+    <string name="button_dontHaveAccount">Tidak Memiliki Akun? </string>
+    <string name="wrongnumber">Wrong phone number format </string>
+    <string name="phoneemailwrong">wrong phone or password</string>
+    <string name="phonepass">Phone and Password cannot be empty!</string>
+    <string name="phoneempty">Phone cannot be empty!</string>
+    <string name="passempty">Password cannot be empty!</string>
+    <string name="emailempty">Email cannot be empty!</string>
+
+    <string name="hint_name">Nama</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_phone">Telpon</string>
+    <string name="hint_birthday">Tgl Lahir</string>
+
+    <string name="menu_home">home</string>
+    <string name="menu_topup">topup</string>
+    <string name="menu_saldo">saldo</string>
+    <string name="menu_order">histori</string>
+    <string name="menu_profile">akun</string>
+    <string name="text_cancel">Cancel</string>
+
+    <string name="ride_location">Alamat Ambil</string>
+    <string name="ride_destination">Alamat Tujuan</string>
+
+    <string name="waiting_pleaseWait">Please Wait....</string>
+    <string name="text_noInternet">No internet Access</string>
+
+    <string name="notification_cancel">Order has been canceled</string>
+    <string name="notification_start">Pengantaran</string>
+    <string name="notification_accept">Penjemputan</string>
+    <string name="notification_finish">Order has been Finished</string>
+    <string name="waiting_desc">Waiting</string>
+
+    <!-- OTP -->
+    <string name="otp_title">Please enter the 6 digit verification code</string>
+    <string name="otp_button_text">VERIFY</string>
+    <string name="resend_msg">Didn’t receive the OTP?</string>
+    <string name="resend_again_msg">Resend again</string>
+    <string name="sent_to_91_xxxx_xxx">sent to +62 XXXX XXX</string>
+
+    <!-- Detail order -->
+    <string name="det_order">Detail Pesanan</string>
+    <string name="default_notification_channel_id">driver</string>
+    <string-array name="list_maximum">
+        <item>10000</item>
+        <item>20000</item>
+        <item>30000</item>
+        <item>50000</item>
+        <item>100000</item>
+        <item>Unlimited</item>
+    </string-array>
+
+    <string-array name="gendertype">
+        <item>Select Gender</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string-array name="jobtype">
+        <item>Select Job</item>
+        <item>Ride</item>
+        <item>Car</item>
+    </string-array>
+    <string name="str_item"><u>Nama Item</u></string>
+    <string name="str_harga"><u>Harga</u></string>
+    <string name="str_qty"><u>Jml</u></string>
+
+    <string name="launch_activity">Launch activity</string>
+
+    <string name="remove_location_updates">Remove location updates</string>
+
+    <string name="location_updated">Location Updated: %1$s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="finish_text">Selesai</string>
+
+</resources>

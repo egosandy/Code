@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_margin="@dimen/dimen_10dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/pinbg"/>
+        <TextView
+            android:layout_margin="@dimen/dimen_5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/dimen_18dp"
+            android:fontFamily="@font/dmsans_medium"
+            android:textColor="@color/white"
+            android:text="Masukan PIN Untuk Mengeluarkan Akses Login Dari Perangkat Lain."/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_margin="@dimen/dimen_10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/edt1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="@dimen/dimen_5dp"
+            android:layout_weight="1"
+            android:background="@drawable/round_edittext_background"
+            android:hint=""
+            android:maxLength="1" />
+
+        <EditText
+            android:id="@+id/edt2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint=""
+            android:padding="@dimen/dimen_5dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/round_edittext_background"
+            android:layout_weight="1"
+            android:maxLength="1" />
+
+        <EditText
+            android:id="@+id/edt3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint=""
+            android:padding="@dimen/dimen_5dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/round_edittext_background"
+            android:layout_weight="1"
+            android:maxLength="1" />
+
+        <EditText
+            android:id="@+id/edt4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint=""
+            android:padding="@dimen/dimen_5dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/round_edittext_background"
+            android:layout_weight="1"
+            android:maxLength="1" />
+    </LinearLayout>
+<Button
+    android:id="@+id/konfirmasi"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/colorPrimaryDark"
+    android:background="@drawable/rounded_corners_button"
+    android:layout_margin="@dimen/dimen_10dp"
+    android:textColor="@color/white"
+    android:text="Konfirmasi"/>
+</LinearLayout>

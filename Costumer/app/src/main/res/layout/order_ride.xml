@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/rootLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FDFDFD">
+
+    <TextView
+        android:layout_marginTop="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imganimasi"
+        android:fontFamily="@font/dmsans_bold"
+        android:gravity="center"
+        android:text="Sedang Mencari Driver Disekitar anda"
+        android:textColor="@color/default_badge_background_color"
+        android:textSize="10dp" />
+
+    <ImageView
+        android:id="@+id/imganimasi"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_centerInParent="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/antar_nonaktif" />
+
+    <TextView
+        android:id="@+id/waktu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imganimasi"
+        android:fontFamily="@font/dmsans_bold"
+        android:gravity="center_horizontal"
+        android:text="0"
+        android:textColor="@color/default_badge_background_color"
+        android:textSize="@dimen/dimen_50dp" />
+</RelativeLayout>

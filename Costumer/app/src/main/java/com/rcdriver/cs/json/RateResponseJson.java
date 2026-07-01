@@ -1,0 +1,23 @@
+package com.rcdriver.cs.json;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by Maswend Team on 11/28/2019.
+ */
+
+public class RateResponseJson {
+    @Expose
+    @SerializedName("message")
+    public String mesage;
+
+    @Expose
+    @SerializedName("data")
+    public List<String> data = new ArrayList<>();
+
+
+}

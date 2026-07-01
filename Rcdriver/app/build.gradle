@@ -1,0 +1,180 @@
+// URUTAN PLUGIN SUDAH BENAR
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'realm-android'
+    id 'com.google.gms.google-services'
+}
+
+android {
+    namespace "com.rcdriver.dr"
+    compileSdkVersion 36
+
+    // Menambahkan library Apache HTTP usang untuk kompatibilitas.
+    // Hapus jika sudah tidak ada kode yang bergantung padanya.
+    useLibrary 'org.apache.http.legacy'
+
+    defaultConfig {
+        applicationId "com.rcdriver.dr"
+        minSdkVersion 24
+        targetSdkVersion 36
+        versionCode 1
+        versionName "1.0.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+
+    }
+
+    signingConfigs {
+        debug {
+            storePassword '1234567'
+            keyPassword '1234567'
+            keyAlias 'rcdr'
+            storeFile rootProject.file('rcdr.jks')
+        }
+        release {
+            storeFile rootProject.file('rcdr.jks')
+            storePassword '1234567'
+            keyAlias 'rcdr'
+            keyPassword '1234567'
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue "string", "google_maps_api_key", "AIzaSyC3JMK9MiIfeiF8RuBWUCWL06ivyfSNi-Q"
+        }
+    }
+
+    // AGP modern (8.x) memerlukan minimal Java 17
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // Menyesuaikan target JVM Kotlin ke versi 17
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            jvmTarget = "17"
+        }
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    kapt {
+        correctErrorTypes true
+        generateStubs true
+    }
+
+    packagingOptions {
+        jniLibs {
+            // Native libraries packaged uncompressed/aligned by AGP 8.x for Android 15/16 KB page-size readiness.
+            useLegacyPackaging false
+        }
+        resources {
+            excludes += ['META-INF/DEPENDENCIES', 'META-INF/NOTICE', 'META-INF/LICENSE', 'META-INF/com.android.tools/proguard/coroutines.pro']
+        }
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    // --- AndroidX & Material Design ---
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation "androidx.exifinterface:exifinterface:1.3.7"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.navigation:navigation-runtime:2.7.7'
+
+    // --- Glide (Image Loading) ---
+    def glide_version = "4.16.0"
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
+    implementation "com.github.bumptech.glide:okhttp3-integration:$glide_version"
+
+    // --- Firebase (Gunakan BOM untuk manajemen versi) ---
+    implementation platform('com.google.firebase:firebase-bom:33.1.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-database'
+    implementation 'com.google.firebase:firebase-storage'
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-inappmessaging-display'
+
+    // --- Google Play Services & Maps ---
+    implementation "com.google.android.gms:play-services-location:21.3.0"
+    implementation 'com.google.android.gms:play-services-maps:18.2.0'
+    implementation 'com.google.android.gms:play-services-auth:21.2.0'
+    implementation 'com.google.android.gms:play-services-vision:20.1.3'
+    implementation 'com.google.android.libraries.places:places:3.5.0'
+    implementation 'com.google.maps:google-maps-services:2.2.0'
+    implementation 'com.google.maps.android:android-maps-utils:3.8.0'
+
+    // --- Networking (Modern) ---
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.11.0'
+
+    // --- Library UI & Utilities Lainnya (Modern) ---
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+    implementation 'com.google.zxing:core:3.5.3'
+    implementation 'pub.devrel:easypermissions:3.0.0'
+    implementation 'org.greenrobot:eventbus:3.3.1'
+    implementation 'com.squareup.picasso:picasso:2.8'
+    implementation 'com.github.ismaeldivita:chip-navigation-bar:1.4.0'
+    implementation 'com.makeramen:roundedimageview:2.3.0'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation 'org.jsoup:jsoup:1.17.2'
+    implementation 'com.android.volley:volley:1.2.1'
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+
+    // --- PERHATIAN: Pustaka Usang (Legacy) ---
+    // Pustaka di bawah ini sudah sangat tua atau tidak terawat.
+    // Ini adalah sumber utama potensi error, bug, dan kerentanan keamanan.
+    // Sangat disarankan untuk mencari alternatif yang lebih modern.
+    implementation 'com.loopj.android:android-async-http:1.4.11' // Ganti dengan Retrofit
+    implementation 'com.mobsandgeeks:android-saripaar:2.0.3'
+    implementation('com.mikepenz:fastadapter:2.0.0@aar') { transitive = true }
+    implementation 'me.relex:circleindicator:1.2.1@aar'
+    implementation 'io.github.everythingme:overscroll-decor-android:1.1.1'
+    implementation 'com.github.amitshekhariitbhu:PRDownloader:1.0.2'
+    implementation 'net.the4thdimension:audio-wife:1.0.3'
+    implementation 'com.github.siyamed:android-shape-imageview:0.9.3'
+    implementation 'com.github.yesterselga:country-picker-android:1.0'
+    implementation 'com.paypal.sdk:paypal-android-sdk:2.15.3' // SDK usang, ganti dengan yang baru dari PayPal
+    implementation 'com.wdullaer:materialdatetimepicker:3.2.0'
+    implementation 'com.github.angads25:toggle:1.0.0'
+    implementation 'com.pkmmte.view:circularimageview:1.1'
+    implementation 'com.github.judemanutd:autostarter:1.0.8'
+    implementation 'com.github.jd-alexander:library:1.1.0'
+    implementation 'com.github.gsanthosh91:Google-Map-Floating-Info-Window-Uber:0.1.5'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'com.koushikdutta.ion:ion:2.1.6' // Sangat usang, ganti dengan Retrofit
+    implementation 'com.github.smtrz:UberLikeNavigation-Android:0.1.1'
+    implementation 'com.github.transferwise:sequence-layout:1.1.1'
+    implementation 'com.xendit:xendit-java-lib:1.10.0'
+
+    // --- Testing ---
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}

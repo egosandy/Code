@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="5dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@color/white">
+
+            <ImageView
+                android:id="@+id/back_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|left"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/kembali"
+                app:tint="@color/black" />
+
+            <LinearLayout
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/dmsans_bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/dimen_20dp"
+                    android:layout_marginEnd="@dimen/dimen_5dp"
+                    android:text="Lokasi Pengantaran"/>
+            </LinearLayout>
+        </FrameLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <LinearLayout
+        android:padding="@dimen/dimen_10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:background="@drawable/rounded_edit"
+            android:padding="@dimen/dimen_5dp"
+            android:layout_marginBottom="@dimen/dimen_5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/dimen_25dp"
+                android:layout_height="@dimen/dimen_25dp"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/search"
+                app:tint="@color/dark" />
+
+            <EditText
+                android:id="@+id/locationPicker_autoCompleteText"
+                android:fontFamily="@font/dmsans_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Cari Lokasimu Disini..."
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:maxLines="1"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textColorHint="@color/darkgray"
+                android:textSize="18sp"
+                android:visibility="visible" />
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/mClear"
+                android:layout_marginStart="@dimen/dimen_5dp"
+                android:layout_marginEnd="@dimen/dimen_5dp"
+                android:layout_gravity="center|right"
+                android:layout_width="@dimen/dimen_20dp"
+                android:layout_height="@dimen/dimen_20dp"
+                android:background="@drawable/circle_shape"
+                android:backgroundTint="@color/red"
+                android:src="@drawable/ic_close"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_marginStart="@dimen/dimen_5dp"
+                android:id="@+id/SetHome"
+                android:padding="@dimen/dimen_10dp"
+                android:background="@drawable/rounded_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_marginEnd="@dimen/dimen_5dp"
+                    android:layout_width="@dimen/dimen_30dp"
+                    android:layout_height="@dimen/dimen_30dp"
+                    android:src="@drawable/home"
+                    app:tint="@color/navy" />
+                <TextView
+                    android:gravity="left|center"
+                    android:fontFamily="@font/dmsans_bold"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="Lokasiku"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginStart="@dimen/dimen_5dp"
+                android:id="@+id/map"
+                android:padding="@dimen/dimen_10dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/rounded_edit"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_marginEnd="@dimen/dimen_5dp"
+                    android:layout_width="@dimen/dimen_30dp"
+                    android:layout_height="@dimen/dimen_30dp"
+                    android:src="@drawable/map_loc"
+                    app:tint="@color/greenColor" />
+                <TextView
+                    android:fontFamily="@font/dmsans_bold"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="Map"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_marginStart="@dimen/dimen_5dp"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:gravity="center"
+            android:padding="@dimen/dimen_10dp"
+            android:background="@drawable/text_rounded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_marginEnd="@dimen/dimen_5dp"
+                android:layout_width="@dimen/dimen_20dp"
+                android:layout_height="@dimen/dimen_20dp"
+                android:src="@drawable/menu_home"
+                app:tint="@color/dark" />
+            <TextView
+                android:fontFamily="@font/dmsans_bold"
+                android:layout_gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/dimen_18dp"
+                android:textColor="@color/dark"
+                android:text="Antar Rumah"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_10dp"
+            android:layout_marginStart="@dimen/dimen_5dp"
+            android:layout_marginEnd="@dimen/dimen_5dp"
+            android:layout_marginBottom="@dimen/dimen_5dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/LayoutResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_marginStart="@dimen/dimen_5dp"
+                    android:layout_marginEnd="@dimen/dimen_5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/dmsans_bold"
+                    android:layout_marginBottom="@dimen/dimen_10dp"
+                    android:text="Lokasi Yang Sering Kamu Kunjungi"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/mAlamat"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:visibility="gone"
+                android:id="@+id/mRecycle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FFC107</color>
+    <color name="colorPrimaryDark">#1A1A1A</color>
+    <color name="colorgradient">#FFC107</color>
+    <color name="white">#fff</color>
+    <color name="colorAccent">#FFC107</color>
+    <color name="black">#000000</color>
+    <color name="drawbel">#E1E0E0</color>
+    <color name="navy">#FFC107</color>-
+    <color name="hijau">#FFC107</color>
+    <color name="orange">#000000</color>
+    <color name="red">#000000</color>
+    <color name="yellow">#FFC107</color>
+    <color name="transparentblack">#AE000000</color>
+    <color name="transparentgreen">#6545B39C</color>
+    <color name="buttontrans">#D2000000</color>
+    <color name="backgroundgray">#f2f2f2</color>
+    <color name="parentcolor">#FFC107</color>
+    <color name="kuning">#FFF215</color>
+    <color name="transparent">#00ffffff</color>
+    <color name="graybackground">#e9e9e9</color>
+    <color name="darkgray">#AAAAAA</color>
+    <color name="dark">#7E7D7D</color>
+    <color name="light_gray">#FAF9F9</color>
+    <color name="dark_gray">#c4c4c4</color>
+    <color name="green">#43A047</color>
+    <color name="light_white">#fffefe</color>
+    <color name="gray">#b6b6b6</color>
+    <color name="GreyTransparent">#ADC8C5C5</color>
+    <color name="colorIcons">#FFFFFF</color>
+    <color name="trueBlack">#000000</color>
+    <color name="darker_gray">#7E7D7D</color>
+
+</resources>

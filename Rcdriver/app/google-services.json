@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "141271503761",
+    "firebase_url": "https://rc-driver-2026-default-rtdb.firebaseio.com",
+    "project_id": "rc-driver-2026",
+    "storage_bucket": "rc-driver-2026.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141271503761:android:62ca5d220f239a6e550030",
+        "android_client_info": {
+          "package_name": "com.rcdriver.cs"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDN2mu78_UCwZoxCwficWWKyrlUtPPUyM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141271503761:android:c6feb165a63adee8550030",
+        "android_client_info": {
+          "package_name": "com.rcdriver.dr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDN2mu78_UCwZoxCwficWWKyrlUtPPUyM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141271503761:android:597c0bf9c5e050fa550030",
+        "android_client_info": {
+          "package_name": "com.rcdriver.mt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDN2mu78_UCwZoxCwficWWKyrlUtPPUyM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
