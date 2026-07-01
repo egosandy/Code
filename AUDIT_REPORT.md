@@ -241,13 +241,22 @@ untuk konfirmasi (tidak dapat diverifikasi di lingkungan ini).
    Hasil akhir: **1710/1713 file lulus `php -l`**. 3 sisanya = paket dev-only di `vendor/`
    (PHPUnit/vfsStream) yang tak dimuat runtime.
 
-   **Verifikasi RUNTIME (bonus):** web admin **benar-benar di-boot di PHP 8.4 + MariaDB**
-   dengan DB asli (65 tabel). Login admin sukses; **27 controller + halaman detail/edit/
-   tambah semuanya HTTP 200**; setelah perbaikan **error log server BERSIH TOTAL** (0 fatal/
-   warning/notice/deprecated). Runtime menemukan & memperbaiki **bug #6**:
-   `E_STRICT` deprecated (PHP 8.4) di `system/core/Exceptions.php:75` (+ systemlisensi) →
-   diganti nilai numerik `2048`. Detail lengkap: `docs/WEBADMIN_PHP8_FIXES.md`.
-   Rekomendasi (opsional): upgrade CI core ke 3.1.13. Lihat `docs/DEPLOY_BACKEND.md`.
+   **Verifikasi RUNTIME (di-boot nyata di PHP 8.4 + MariaDB, DB asli 65 tabel):**
+   - Login admin sukses; **27 controller + halaman detail/edit/tambah semuanya HTTP 200**.
+   - **CRUD terverifikasi**: CREATE (`area/tambahcm`→insert), UPDATE (`area/ubahcm`→kolom
+     berubah), DELETE (`area/hapus`→baris hilang), **UPLOAD gambar** (`categorymerchant/
+     tambahcm`→file tersimpan ke `images/` + baris ter-insert). Semua redirect 3xx benar.
+   - Setelah perbaikan, **error log server BERSIH TOTAL** (0 fatal/warning/notice/deprecated).
+
+   Runtime menemukan **3 bug tambahan** (total jadi **8 perbaikan PHP 8**):
+   * **#6** `E_STRICT` deprecated di `system/core/Exceptions.php:75` (+ systemlisensi) → `2048`.
+   * **#7 (KRITIS)** `index.php` default `ENVIRONMENT='development'` → di PHP 8.2+ output
+     deprecation "Creation of dynamic property" tercetak sebelum `header()` sehingga
+     **mematahkan SEMUA redirect save/update/delete**. Diubah ke **`'production'`** → CRUD
+     berfungsi. (Ini bug produksi nyata bila hosting tak set `CI_ENV`.)
+   * **#8** `~E_STRICT` di `index.php` error_reporting → `~2048`.
+
+   Detail lengkap: `docs/WEBADMIN_PHP8_FIXES.md`. Rekomendasi opsional: upgrade CI ke 3.1.13.
 
 ---
 

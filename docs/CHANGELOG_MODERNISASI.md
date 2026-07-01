@@ -40,7 +40,16 @@ diperbaiki** (perilaku identik, hanya mengganti konstruksi yang dihapus PHP 8):
   `get_magic_quotes_runtime()`/`set_magic_quotes_runtime()`.
 - `application/libraries/class.smtp.php` (2 baris): `each()` → `foreach`.
 
-Detail: `docs/WEBADMIN_PHP8_FIXES.md`.
+Perbaikan runtime (ditemukan saat boot nyata di PHP 8.4 + MariaDB):
+- `system/core/Exceptions.php` + `systemlisensi/core/Exceptions.php`: konstanta `E_STRICT`
+  deprecated (PHP 8.4) → nilai numerik `2048`.
+- **`index.php`: default `ENVIRONMENT` `'development'` → `'production'`** (KRITIS) — di PHP 8.2+
+  output deprecation "Creation of dynamic property" mematahkan semua `redirect()`
+  save/update/delete; mode production menyembunyikan E_DEPRECATED sehingga CRUD berfungsi.
+- `index.php`: `~E_STRICT` → `~2048` pada error_reporting.
+
+CRUD (create/update/delete) & upload gambar **terverifikasi berjalan** di PHP 8.4.
+Total 8 perbaikan PHP 8 web admin. Detail: `docs/WEBADMIN_PHP8_FIXES.md`.
 
 ## Database
 - **Tidak ada perubahan skema.** `database/ojol.sql` disertakan sebagai acuan (65 tabel).

@@ -10,6 +10,10 @@ Web admin lengkap (folder `backend/`) sudah tersedia dan diaudit penuh dengan **
 - Hasil lint akhir: **1710 dari 1713 file PHP LULUS**. 3 sisanya adalah paket
   **dev-only** di `vendor/` (PHPUnit, vfsStream, sebastian/diff) yang **tidak dimuat saat
   runtime** — abaikan atau hapus folder test-nya untuk produksi.
+- **Total 8 perbaikan PHP 8** diterapkan: 5 syntax (bug #1–#5) + 3 runtime (bug #6 E_STRICT
+  di Exceptions, **#7 ENVIRONMENT→production yang memperbaiki redirect CRUD**, #8 E_STRICT
+  di index.php). CRUD (create/update/delete) & upload gambar **terverifikasi berjalan** di
+  PHP 8.4 — lihat bagian "Verifikasi RUNTIME".
 
 ## Bug PHP 8 yang ditemukan & diperbaiki (fatal, wajib)
 
@@ -55,18 +59,42 @@ Web admin **benar-benar dijalankan** di PHP 8.4 dengan database asli (import
 Sebelum fix: `Deprecated: Constant E_STRICT is deprecated ... Exceptions.php on line 75`
 di setiap halaman. Sesudah fix: log bersih (diverifikasi ulang, 0 pesan).
 
-### Yang belum bisa diverifikasi via harness ini (bukan indikasi bug)
-- **Operasi tulis POST (save/update)**: aksi seperti `area/tambahcm` dijaga
-  `form_validation->run()`; replikasi POST sintetis tidak selalu memenuhi rule, sehingga
-  insert tidak terpicu. **Tidak ada error PHP** yang tercatat — ini nuansa validasi form,
-  bukan cacat PHP 8. Di produksi (form asli) operasi ini berjalan.
-- **Serve gambar statis** (`/images/...`) & **routing URI multi-segmen** (`c/m/arg`):
-  server bawaan `php -S` merutekan semua request via `index.php`, berbeda dengan Apache +
-  `mod_rewrite` di hosting. Perbedaan ini artefak alat uji, bukan bug kode.
+### Bug #7 (KRITIS) — ditemukan saat menguji tulis: redirect save/update/delete patah
 
-> Kesimpulan: seluruh **jalur render (GET)** web admin **bersih & kompatibel PHP 8.4**.
-> Jalur tulis (POST save/update/delete) & upload gambar perlu diuji dengan form asli di
-> hosting sungguhan — checklist di `docs/DEPLOY_BACKEND.md`.
+Saat menguji `area/hapus`, respons mengembalikan **HTTP 200 berisi blok error**
+`Creation of dynamic property CI_URI::$config is deprecated (core/URI.php:101)` alih-alih
+**302 redirect** — dan **baris tidak terhapus**. Penyebab:
+
+- **`index.php:57` default `ENVIRONMENT = 'development'`.** Di mode ini
+  `display_errors=1` + `error_reporting(-1)`.
+- CI 3.1.11 di **PHP 8.2+** memicu **E_DEPRECATED "Creation of dynamic property"** pada
+  banyak kelas inti (URI, dll.). Output deprecation ini tercetak **sebelum** `header()`,
+  sehingga **semua `redirect()` (save/update/delete) patah** → operasi tampak "gagal".
+- Di hosting tanpa `CI_ENV` diset (umum di shared hosting), situs LIVE berjalan mode
+  development → **bug produksi nyata** di PHP 8.
+
+**Perbaikan:**
+| File | Perubahan |
+|---|---|
+| `index.php:57` | default `ENVIRONMENT` `'development'` → **`'production'`** (set `CI_ENV=development` bila butuh debug). Mode production: `display_errors=0` + `error_reporting` mengecualikan E_DEPRECATED → redirect & CRUD berfungsi, halaman bersih. |
+
+### Bug #8 — `E_STRICT` di `index.php` (error_reporting)
+`index.php` baris 77 & 79 memakai `~E_STRICT` (konstanta deprecated PHP 8.4) → diganti
+`~2048` (nilai numerik E_STRICT). Menghilangkan deprecation di setiap request.
+
+### CRUD + Upload TERVERIFIKASI (setelah bug #7 & #8 diperbaiki)
+Diuji end-to-end di PHP 8.4 + MariaDB dengan redirect kini berfungsi:
+
+| Operasi | Endpoint diuji | Hasil |
+|---|---|---|
+| CREATE | `area/tambahcm` | HTTP 303 → **baris ter-insert** ✓ |
+| UPDATE | `area/ubahcm` | HTTP 303 → **kolom rate1 berubah 1000→9999** ✓ |
+| DELETE | `area/hapus/{id}` | HTTP 307 → **baris terhapus** ✓ |
+| UPLOAD | `categorymerchant/tambahcm` (multipart) | HTTP 303 → **file tersimpan ke `images/kategorimerchant/` (encrypt_name) + baris ter-insert** ✓ |
+
+> Kesimpulan: **render (GET), CRUD (create/update/delete), dan upload gambar terverifikasi
+> berjalan di PHP 8.4** setelah 8 perbaikan. Catatan: `php -S` (alat uji) merutekan via
+> `index.php`; di hosting pakai Apache + `.htaccess`/`mod_rewrite` (sudah tersedia di paket).
 
 ## Rekomendasi (opsional, tidak wajib untuk jalan)
 1. **Upgrade CI core ke 3.1.13** (drop-in): ganti isi folder `system/` (dan
