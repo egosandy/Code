@@ -35,10 +35,12 @@ Yang diaudit terdiri dari 5 komponen:
    (lihat Bagian 6.9 & `docs/WEBADMIN_PHP8_FIXES.md`). CI 3.1.11 mendahului dukungan PHP 8
    penuh (baru di 3.1.13), sehingga inti framework memuat bug yang diperbaiki terarah.
 
-3. **Tidak ada Android SDK maupun kredensial produksi** di lingkungan eksekusi ini,
-   sehingga **build Gradle penuh dan pengujian runtime tidak dapat diverifikasi di sini**.
-   Verifikasi Android bersifat statis (struktur, manifest, gradle, kontrak API). Cara build
-   dan checklist verifikasi manual ada di `docs/BUILD_ANDROID.md`.
+3. **BUILD ANDROID SUDAH TERVERIFIKASI ✅** (update). Android SDK 36 dipasang di lingkungan
+   ini dan **ketiga aplikasi berhasil di-build**: APK **debug & release (signed)** dihasilkan
+   untuk Customer (`com.rcdriver.cs`), Merchant (`com.rcdriver.mt`), dan Driver
+   (`com.rcdriver.dr`) — semua `targetSdk/compileSdk 36` (Android 16), `BUILD SUCCESSFUL`.
+   Detail & cara reproduksi: `docs/BUILD_VERIFIED.md`. Pengujian **runtime** (login, order,
+   Xendit, Digiflazz, FCM, Maps) tetap butuh device + kredensial produksi.
 
 ### Sikap terhadap instruksi "rewrite total"
 
